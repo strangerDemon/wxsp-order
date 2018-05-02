@@ -1,0 +1,141 @@
+<template>
+  <div class="OrderCertificate">
+     <user-info :isShowName="true" :isShowBalance="false"></user-info>
+    <div class="orderList">
+      <span class="title">{{dateStr}}</span>
+      <span class="title">就餐凭证</span>
+      <span class="item" v-for="(lunch,index) in lunchTimes" v-if="lunch>0" :key="index">
+        <span class="lunchName">{{lunchName[index]}}</span>
+        <span class="lunchTimes">{{lunch}}份</span>
+      </span>
+    </div>
+  </div>
+</template>
+<script>
+  const week = [
+    "星期天",
+    "星期一",
+    "星期二",
+    "星期三",
+    "星期四",
+    "星期五",
+    "星期六"
+  ];
+  import userInfo from "@/components/usetInfo"
+  export default {
+    name: "OrderCertificate",
+    directives: {},
+    components: {
+      userInfo
+    },
+    data() {
+      return {
+        dateStr: "",
+        lunchName: [],
+        lunchTimes: []
+      };
+    },
+    props: {},
+    computed: {
+      userInfo() {
+        return this.$store.state.init.userInfo;
+      },
+      orderList() {
+        return this.$store.state.order.orderList;
+      }
+    },
+    watch: {
+      orderList(orderList) {
+        let vm = this;
+        vm.lunchTimes = new Array(3).fill(0);
+        vm.lunchName = new Array(3);
+        orderList.forEach(element => {
+          vm.lunchName[element.orderType - 1] = element.orderName;
+          vm.lunchTimes[element.orderType - 1]++;
+        });
+      }
+    },
+    methods: {},
+    beforeCreate() {},
+    created() {},
+    destroyed() {},
+    mounted() {
+      let vm = this;
+      let today = new Date();
+      vm.dateStr =
+        today.getMonth() +
+        1 +
+        "月" +
+        today.getDate() +
+        "日  " +
+        week[today.getDay()];
+
+      let day = new Date();
+      let yesterday = new Date(
+        day.setTime(day.getTime() - 24 * 60 * 60 * 1000)
+      ).toLocaleDateString();
+      vm.$store.commit("getOrderList", {
+        name: "null",
+        wechatId: vm.userInfo.wechatId,
+        startDate: yesterday,
+        endDate: yesterday,
+        orderType: 0,
+        changeType: 2,
+        page: 0,
+        isCancle: 1,
+      });
+    }
+  };
+</script>
+<style lang="css"
+       scoped>
+  .OrderCertificate {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    font-size: 18px;
+    scroll-behavior: auto;
+  }
+
+  .userInfoDiv {
+    text-align: center;
+    margin: 13px 8px 8px;
+  }
+
+  .userDiv {
+    display: block;
+    margin: 5px 0;
+    position: relative;
+  }
+
+  .balance,
+  .username {
+    font-family: fantasy;
+  }
+
+  .orderList {
+    margin-top: 10px;
+  }
+
+  .item {
+    margin: 35px 10px;
+    font-size: 40px;
+    display: block;
+  }
+
+  .lunchTimes {
+    float: right;
+    margin-right: 25px;
+  }
+
+  .lunchName {
+    margin-left: 25px;
+  }
+
+  .title {
+    font-size: 34px;
+    text-align: center;
+    display: block;
+    margin: 10px;
+  }
+</style>
