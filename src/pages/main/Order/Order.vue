@@ -61,7 +61,7 @@
         return this.$store.state.order.orderParam;
       },
       userInfo() {
-        return this.$store.state.init.userInfo;
+        return this.$store.state.user.userInfo;
       },
       menuList() {
         return this.$store.state.init.menuList;

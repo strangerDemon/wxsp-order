@@ -4,15 +4,12 @@ import * as requestTask from "../../utils/requestTask";
  * @type {Object}
  */
 const state = {
-  isLogin: false, //时候登录
-  //用户信息
-  userInfo: {},
-
   //系统参数
   systemParam: {
-    provider: "厦门众图" //提供服务公司
+    provider: "厦门众图", //提供服务公司
+    relevantUrl: "https://www.ztgis.com" //相关条款连接
   },
-  companyList: [], //公司列表
+  companyList: [{"companyId":"xmzt","label":"厦门众图","value":0,"contacts":"demo"},{"companyId":"fjsdzcyy","label":"福建省地质测绘院","value":1,"contacts":"demo"},{"companyId":"tagtj","label":"同安国土局","value":2,"contacts":"张工"}], //公司列表
 };
 
 /**
@@ -32,6 +29,7 @@ const mutations = {
       requestTask.wxRequest("getSystemParam", info, resolve, reject)
     }).then(res => {
       state.systemParam = res;
+      console.log(res);
     }).catch(err => {
       console.log("getSystemParam", err)
     })
@@ -41,27 +39,12 @@ const mutations = {
     new Promise((resolve, reject) => {
       requestTask.wxRequest("getCompanyList", info, resolve, reject)
     }).then(res => {
-      state.getCompanyList = res;
+      console.log("getCompanyList",res);
+      state.companyList = res.companyList;
     }).catch(err => {
       console.log("getCompanyList", err)
     })
   },
-  //用户信息
-  getUserInfo(state, info) {
-    new Promise((resolve, reject) => {
-      requestTask.wxRequest("getUserInfo", info, resolve, reject)
-    }).then(res => {
-      state.isLogin = true;
-      state.userInfo = res;
-    }).catch(err => {
-      console.log("getUserInfo", err)
-    })
-  },
-
-  setUserInfo(state, info) {
-    state.userInfo = info.userInfo;
-    state.isLogin = info.isLogin;
-  }
 };
 
 /**

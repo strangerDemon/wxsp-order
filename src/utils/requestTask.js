@@ -19,14 +19,14 @@ export const wxRequest = function wxRequest(method, data, resolve, reject) {
 
       if (resp && resp.statusCode == 200 && resp.data) {
         if (resp.data.RespCode == 1) { //请求返回码
-          resolve(resp)
+          resolve(resp.data.Results)
         } else {
           wx.showModal({
             content: resp.data.RespDesc,
             showCancel: false,
             success: function(res) {
               if (res.confirm) {
-                console.log('服务器未返回结果')
+                console.log('服务器未返回结果:'+resp.data.RespDesc)
               }
             }
           });
@@ -43,7 +43,7 @@ export const wxRequest = function wxRequest(method, data, resolve, reject) {
         });
       }
       if (method == "getUserInfo") { //当执行到这里时，说明请求失败，再此处理特殊操作
-        resolve(resp);
+        resolve(resp.data.Results);
       }
     },
     fail: (err) => reject(err)

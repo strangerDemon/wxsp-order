@@ -38,7 +38,7 @@
     props: {},
     computed: {
       userInfo() {
-        return this.$store.state.init.userInfo;
+        return this.$store.state.user.userInfo;
       },
       orderList() {
         return this.$store.state.order.orderList;

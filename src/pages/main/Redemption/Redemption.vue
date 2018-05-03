@@ -62,7 +62,7 @@
     props: {},
     computed: {
       userInfo() {
-        return this.$store.state.init.userInfo;
+        return this.$store.state.user.userInfo;
       },
       redemptionList() {
         return this.$store.state.init.redemptionList;
@@ -115,7 +115,7 @@
         vm.money = 0;
         vm.redemption = [];
         vm.redemptionName = [];
-        vm.$store.commit("getUserInfo", { code: "",wechatId: vm.userInfo.wechatId });
+        vm.$store.commit("getUserInfo", { code: "",openId: vm.userInfo.wechatId });
         vm.isShowResult = false;
       },
 

@@ -13,8 +13,7 @@
       <text class="item" @click="binddivTap(item.value)">{{item.name}}</text>
     </div>
   </div>
-  <div v-show="!isLogin" class="register" @click="userRegister">注册</div>
-  <footer-info></footer-info>
+  <footer-info :isLogin="isLogin" @userRegister="userRegister"></footer-info>
 </div>
 </template>
 <script>
@@ -35,12 +34,12 @@
     components: {
       footerInfo
     },
-    computed: {
+    computed: {   
       isLogin() {
-        return this.$store.state.init.isLogin;
+        return this.$store.state.user.isLogin;
       },
       userInfo() {
-        return this.$store.state.init.userInfo;
+        return this.$store.state.user.userInfo;
       }
     },
     watch: {
@@ -86,9 +85,9 @@
         wx.login({
           success: function(res) { //获得唯一code
             if (res.code) {
-              console.log(res.code);
+              //console.log(res.code);
               //登录后台
-              vm.$store.commit("getUserInfo", { code: res.code, wechatId: "" });
+              vm.$store.commit("getUserInfo", { code: res.code, openId: "" });
             } else {
               vm.getUnloginUserInfo();
             }
@@ -113,19 +112,17 @@
           }
         });
       },
-      clickHandle(msg, ev) {
-        console.log('clickHandle:', msg, ev)
-      },
       userRegister() {
-        //userRegister
+        wx.navigateTo({
+          url: '../userRegister/main'
+        })
       }
     },
-
     created() {
       // 调用应用实例的方法获取全局数据
       this.getUserInfo();
+      this.$store.commit("getSystemParam",{});
     }
-
   }
 </script>
 
@@ -163,12 +160,5 @@
     margin: 20rpx;
     border-radius: 50%;
     display: inline-flex;
-  }
-
-  .register {
-    color: #586c94;
-    position: fixed;
-    bottom: 2em;
-    font-size: 1.5em;
   }
 </style>

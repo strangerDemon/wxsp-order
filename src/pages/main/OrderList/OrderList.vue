@@ -139,8 +139,8 @@
       isAdmin() {
         return this.$store.state.init.isAdmin;
       },
-      systemParam() {
-        return this.$store.state.init.systemParam;
+      orderParam() {
+        return this.$store.state.order.orderParam;
       },
       orderList() {
         return this.$store.state.order.orderList;
@@ -159,15 +159,15 @@
       changeType(val) {
         this.changeTypeStr = this.changeTypeOptions[val].label;
       },
-      systemParam(systemParam) {
+      orderParam(orderParam) {
         let vm = this;
         vm.orderTypeOptions.push({
           value: "0",
           label: "全部"
         });
-        vm.orderTypeOptions.push(systemParam.lunch[0]);
-        vm.orderTypeOptions.push(systemParam.lunch[1]);
-        vm.orderTypeOptions.push(systemParam.lunch[2]);
+        vm.orderTypeOptions.push(orderParam.lunch[0]);
+        vm.orderTypeOptions.push(orderParam.lunch[1]);
+        vm.orderTypeOptions.push(orderParam.lunch[2]);
         vm.orderTypeOptions.push({
           value: "-1",
           label: "其他换购"
@@ -266,7 +266,7 @@
           year == v1 &&
           month == v2 &&
           day == v3 &&
-          (hour >= vm.systemParam.endTime || hour < vm.systemParam.startTime)
+          (hour >= vm.orderParam.endTime || hour < vm.orderParam.startTime)
         ) {
           //当前年月日，18点后不能
           return false;

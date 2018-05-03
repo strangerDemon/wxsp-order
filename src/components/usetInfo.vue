@@ -25,7 +25,7 @@
     },
     computed: {
       userInfo() {
-        return this.$store.state.init.userInfo;
+        return this.$store.state.user.userInfo;
       }
     }
   }
