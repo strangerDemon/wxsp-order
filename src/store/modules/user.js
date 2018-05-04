@@ -4,9 +4,9 @@ import * as requestTask from "../../utils/requestTask";
  * @type {Object}
  */
 const state = {
-  isLogin: false, //时候登录
+  isLogin: false, //是否登录
   //用户信息
-  userInfo: {},
+  userInfo: null,
 
 };
 
@@ -45,7 +45,15 @@ const mutations = {
     new Promise((resolve, reject) => {
       requestTask.wxRequest("userRegister", info, resolve, reject)
     }).then(res => {
-      
+      wx.showModal({
+        content: "用户注册成功，正在审核，请稍后",
+        showCancel: false,
+        success: function(res) {
+          wx.navigateTo({
+            url: '../../pages/index/main'
+          })
+        }
+      });
     }).catch(err => {
       console.log("userRegister", err)
     })

@@ -76,7 +76,7 @@
       ).toLocaleDateString();
       vm.$store.commit("getOrderList", {
         name: "null",
-        wechatId: vm.userInfo.wechatId,
+        openId: vm.userInfo.openId,
         startDate: yesterday,
         endDate: yesterday,
         orderType: 0,

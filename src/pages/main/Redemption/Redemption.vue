@@ -98,7 +98,7 @@
           });
         } else {
           vm.$store.commit("doChangeBuy", {
-            wechatId: vm.userInfo.wechatId,
+            openId: vm.userInfo.openId,
             value: vm.redemption.toString(),
             money: vm.money
           });
@@ -115,7 +115,7 @@
         vm.money = 0;
         vm.redemption = [];
         vm.redemptionName = [];
-        vm.$store.commit("getUserInfo", { code: "",openId: vm.userInfo.wechatId });
+        vm.$store.commit("getUserInfo", { code: "",openId: vm.userInfo.openId });
         vm.isShowResult = false;
       },
 
@@ -140,7 +140,7 @@
     destroyed() {},
     mounted() {
       let vm = this;
-      vm.$store.commit("getRedemptionList", { wechatId: vm.userInfo.wechatId });
+      vm.$store.commit("getRedemptionList", { openId: vm.userInfo.openId });
     }
   };
 </script>

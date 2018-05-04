@@ -26,7 +26,7 @@ export const wxRequest = function wxRequest(method, data, resolve, reject) {
             showCancel: false,
             success: function(res) {
               if (res.confirm) {
-                console.log('服务器未返回结果:'+resp.data.RespDesc)
+                console.log('服务器返回结果:'+resp.data.RespDesc)
               }
             }
           });

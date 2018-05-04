@@ -1,6 +1,6 @@
 <template>
-  <div class="NoUser">
-    <div class="body" v-show="showLoading">
+  <div class="loading">
+    <div class="body">
       <div class="fireflyDiv">
         <div class="checkbox-wrap">
           <input class="checkbox" id="checkbox" type="checkbox" />
@@ -27,12 +27,11 @@
 </template>
 <script>
 export default {
-  name: "NoUser",
+  name: "loading",
   directives: {},
   components: {},
   data() {
     return {
-      showLoading: false,
     };
   },
   props: {},
@@ -44,10 +43,6 @@ export default {
   created() {},
   destroyed() {},
   mounted() {
-    let vm = this;
-    wx.showToast("后台没有您的数据<br\>请联系管理人员添加!").then(action => {
-      vm.showLoading = true;
-    });
   }
 };
 </script>
@@ -58,7 +53,7 @@ export default {
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  height: 100vh;
+  height: 50vh;
   background: radial-gradient(#0a2a43 30%, #09243a);
   font-family: "Asap", sans-serif;
 }
@@ -87,7 +82,7 @@ export default {
   flex: none;
   position: relative;
   width: 10%;
-  min-width: 8rem;
+  min-width: 4rem;
   z-index: 1;
 }
 

@@ -12,7 +12,7 @@
         <span>菜品明细：</span>
         <i class="el-icon-arrow-down isShowMenuButton" @click="isShowMenu=!isShowMenu"></i>
       </div>
-      <div v-show="isShowMenu">
+      <div v-if="isShowMenu">
         <div class="dish" v-for="(dish,index) in menuList" :key="index">{{dish.name}}</div>
       </div>
     </div>
@@ -64,7 +64,7 @@
         return this.$store.state.user.userInfo;
       },
       menuList() {
-        return this.$store.state.init.menuList;
+        return this.$store.state.order.menuList;
       },
       orderList() {
         return this.$store.state.order.orderList;
@@ -94,7 +94,6 @@
         }
       },
       userInfo(userInfo) {
-        console.log(userInfo)
         let vm = this;
         vm.showNoUser = false;
         if (vm.orderList != null) {
@@ -143,7 +142,7 @@
           success: function(res) {
             if (res.confirm) {
               vm.$store.commit("cancle", {
-                wechatId: vm.userInfo.wechatId,
+                openId: vm.userInfo.openId,
                 Id: orderId,
                 func: function() {
                   vm.requestToday();
@@ -234,7 +233,7 @@
           return;
         }
         vm.$store.commit("order", {
-          wechatId: vm.userInfo.wechatId,
+          openId: vm.userInfo.openId,
           orderType: vm.lunchType,
           func: function() {
             vm.requestToday();
@@ -242,9 +241,11 @@
         });
       },
       requestToday() {
-        this.$store.commit("getOrderList", {
+        let vm=this
+        let today = new Date().toLocaleDateString();
+        vm.$store.commit("getOrderList", {
           name: "null",
-          wechatId: vm.userInfo.wechatId,
+          openId: vm.userInfo.openId,
           startDate: today,
           endDate: today,
           orderType: 0,
@@ -259,11 +260,11 @@
     destroyed() {},
     mounted() {
       let vm = this;
-      vm.$store.commit("getorderParam", {
-        wechatId: vm.userInfo.wechatId,
+      vm.$store.commit("getOrderParam", {
+        openId: vm.userInfo.openId,
       });
+      vm.$store.commit("getMeunList", { openId: vm.userInfo.openId });
       vm.requestToday();
-      vm.$store.commit("getMeunList", { wechatId: vm.userInfo.wechatId });
       vm.isOrderOrNot = true;
     }
   };

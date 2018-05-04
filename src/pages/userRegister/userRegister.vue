@@ -6,7 +6,7 @@
             <div class="weui-label">公司<b class="must-write">*</b></div>
           </div>
           <div class="weui-cell__bd">
-            <picker @change="companyChange" :value="selectCompanyId" :range="companys" range-key="label">
+            <picker @change="companyChange"  :range="companys" range-key="label">
               <div class="weui-select weui-select_in-select-after">{{selectCompanyName}}</div>
             </picker>
           </div>
@@ -57,7 +57,7 @@
       </label>
     </checkbox-group>
     <div class="weui-btn-area">
-      <button class="weui-btn" type="primary" @click="register">确定</button>
+      <button class="weui-btn" type="primary" @click="register" :disabled="!isAgree">确定</button>
     </div>
   </div>
 </template>
@@ -70,18 +70,23 @@
       return {
         isAgree: false,
         user: {
-          userAccoount: "",
+          openId: "",
+          userAccount: "",
           userName: "",
+          nickName:"",
+          avatarUrl:"",
           companyId: 0,
           phone: "",
           comment: "",
         },
-        selectCompanyId:0,
-        selectCompanyName: "公司"
+        selectCompanyName: ""
       }
     },
     props: {},
     computed: {
+      userInfo() {
+        return this.$store.state.user.userInfo;
+      },
       companys() {
         return this.$store.state.init.companyList;
       },
@@ -91,38 +96,70 @@
     },
     watch: {},
     methods: {
-      companyChange() {
+      companyChange(e) {
         let vm = this
         for (let i = 0, length = vm.companys.length; i < length; i++) {
-          if (vm.companys[i].value ==vm.selectCompanyId ) {
+          if (vm.companys[i].value == e.target.value) {
             vm.selectCompanyName = vm.companys[i].label;
-            vm.user.companyId=vm.companys[i].companyId
+            vm.user.companyId = vm.companys[i].companyId
             break;
           }
         }
       },
       checkPhone() {
         let vm = this
+        if (vm.user.phone.trim() == "") return true;
         if (!(/^1[3|4|5|8|9][0-9]\d{8}$/.test(vm.user.phone))) {
           wx.showModal({
             content: "手机号码不正确",
             showCancel: false,
-            success: function(res) {
-
-            }
+            success: function(res) {}
           });
+          return false;
         }
+        return true;
+      },
+      checkNull(value) {
+        if (value == null || value == "" || value.trim() == "") {
+          return false;
+        }
+        return true;
+      },
+      showModal(text) {
+        wx.showModal({
+          content: text,
+          showCancel: false,
+          success: function(res) {}
+        });
       },
       agreeChange() {
         this.isAgree = !this.isAgree;
       },
+      checkCommit() {
+        let vm = this
+        if (!vm.checkNull(vm.userInfo.openId)) {
+          vm.showModal("无法创建用户，未获取到用户微信信息，请稍后重试");
+          return false;
+        }
+        if (!vm.checkPhone()) return false;
+        console.log(vm.user)
+        if (!vm.checkNull(vm.user.userAccount)||!vm.checkNull(vm.user.userName)||!vm.checkNull(vm.user.companyId)) {
+          vm.showModal("星标项为必输项");
+          return false;
+        }
+        return true;
+      },
       register() {
-        this.$store.commit("getCompanyList", {});
+        let vm = this
+        if (!vm.checkCommit()) return false;
+        vm.user.openId = vm.userInfo.openId;
+        vm.user.nickName=vm.userInfo.nickName;
+        vm.user.avatarUrl=vm.userInfo.avatarUrl;
+        this.$store.commit("register", vm.user);
       }
     },
     beforeCreate() {},
-    created() {  
-    },
+    created() {},
     destroyed() {},
     mounted() {
       this.$store.commit("getCompanyList", {});

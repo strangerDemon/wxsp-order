@@ -4,12 +4,13 @@ import * as requestTask from "../../utils/requestTask";
  * @type {Object}
  */
 const state = {
+  systemParamInit:false,//因为要初始化默认显示一些，防止空格情况，所以systemParam不为null
   //系统参数
   systemParam: {
     provider: "厦门众图", //提供服务公司
     relevantUrl: "https://www.ztgis.com" //相关条款连接
   },
-  companyList: [{"companyId":"xmzt","label":"厦门众图","value":0,"contacts":"demo"},{"companyId":"fjsdzcyy","label":"福建省地质测绘院","value":1,"contacts":"demo"},{"companyId":"tagtj","label":"同安国土局","value":2,"contacts":"张工"}], //公司列表
+  companyList: [], //公司列表
 };
 
 /**
@@ -28,8 +29,9 @@ const mutations = {
     new Promise((resolve, reject) => {
       requestTask.wxRequest("getSystemParam", info, resolve, reject)
     }).then(res => {
+      state.systemParamInit=true;
       state.systemParam = res;
-      console.log(res);
+      //console.log("getSystemParam",res);
     }).catch(err => {
       console.log("getSystemParam", err)
     })
@@ -39,7 +41,7 @@ const mutations = {
     new Promise((resolve, reject) => {
       requestTask.wxRequest("getCompanyList", info, resolve, reject)
     }).then(res => {
-      console.log("getCompanyList",res);
+      //console.log("getCompanyList",res);
       state.companyList = res.companyList;
     }).catch(err => {
       console.log("getCompanyList", err)

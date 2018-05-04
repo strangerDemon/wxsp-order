@@ -29,7 +29,6 @@ export default {
       "pages/main/Order/main",
       "pages/main/OrderList/main",
       "pages/main/Redemption/main",
-      "pages/main/NoUser/main", 
      
     ],
     window: {

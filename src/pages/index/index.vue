@@ -1,26 +1,31 @@
 <template>
 <div class="container">
-  <div class="userinfo">
-    <button v-if="!hasUserInfo && canIUse" open-type="getUserInfo" bindgetuserinfo="getUserInfo"> 获取头像昵称 </button>
-    <block v-else>
-      <image class="userinfo-avatar" :src="userInfo.avatarUrl" background-size="cover"></image>
-      <text class="userinfo-nickname">{{userInfo.nickName}}</text>
-    </block>
-  </div>
-  <div class="usermotto" >
-    <div class="user-motto" v-for="(item ,index) in buttonTexts" :key="index">
-      <image class="munuImage" :src="item.icon" background-size="cover"></image>
-      <text class="item" @click="binddivTap(item.value)">{{item.name}}</text>
+  <fire-loading v-if="showLoading"></fire-loading>
+  <div v-if="!showLoading">
+    <div class="userinfo">
+      <button v-if="!hasUserInfo && canIUse" open-type="getUnloginUserInfo" bindgetuserinfo="getUnloginUserInfo"> 获取头像昵称 </button>
+      <block v-else>
+        <image class="userinfo-avatar" :src="userInfo.avatarUrl" background-size="cover"></image>
+        <text class="userinfo-nickname">{{userInfo.nickName}}</text>
+      </block>
     </div>
+    <div class="usermotto" >
+      <div class="user-motto" v-for="(item ,index) in buttonTexts" :key="index">
+        <image class="munuImage" :src="item.icon" background-size="cover"></image>
+        <text class="item" @click="binddivTap(item.value)">{{item.name}}</text>
+      </div>
+    </div>
+    <footer-info :isLogin="isLogin" @userRegister="userRegister"></footer-info>
   </div>
-  <footer-info :isLogin="isLogin" @userRegister="userRegister"></footer-info>
 </div>
 </template>
 <script>
   import footerInfo from "@/components/footerInfo"
+  import fireLoading from "@/components/loading"
   export default {
     data() {
       return {
+        showLoading: true,
         dialogMessage: "请先注册",
         buttonTexts: [{ name: 'order', value: 'order', icon: '../../static/images/bee.jpg' },
           { name: 'map', value: 'map', icon: '../../static/images/chicken.jpg' },
@@ -32,21 +37,35 @@
     },
 
     components: {
-      footerInfo
+      footerInfo,
+      fireLoading
     },
-    computed: {   
+    computed: {
       isLogin() {
         return this.$store.state.user.isLogin;
       },
       userInfo() {
         return this.$store.state.user.userInfo;
+      },
+      systemParamInit() {
+        return this.$store.state.init.systemParamInit;
       }
     },
     watch: {
       userInfo(user) {
-        if (user && user.data && user.data.RespCode == 0) {
+        if (user && user.data && user.data.RespCode == 0) { //获取用户异常，后台报错
           this.getUnloginUserInfo();
+        } else if (user && (user.nickName == "" && user.avatarUrl == "")) { //后台没有昵称 图片数据
+          this.getUnloginUserInfo();
+        }else{
+          this.hasUserInfo=true;
         }
+        if (user && this.systemParamInit) {
+          this.showLoading = false;
+        }
+      },
+      systemParamInit(init) {
+        if (this.userInfo != null) this.showLoading = false;
       }
     },
     methods: {
@@ -96,16 +115,23 @@
       },
       getUnloginUserInfo() {
         let vm = this
+        console.log(vm.userInfo);
         // 未登录后台
         wx.login({
           success: () => {
             wx.getUserInfo({
               success: (res) => {
-                vm.userInfo = res.userInfo
+                console.log(res);
+                if (vm.userInfo == null) {
+                  vm.userInfo = res.userInfo
+                } else {
+                  vm.userInfo.nickName = res.userInfo.nickName
+                  vm.userInfo.avatarUrl = res.userInfo.avatarUrl
+                }
                 vm.hasUserInfo = true;
                 vm.$store.commit("setUserInfo", {
-                  userInfo: res.userInfo,
-                  isLogin: false
+                  userInfo: vm.userInfo,
+                  isLogin: vm.isLogin
                 })
               }
             })
@@ -121,7 +147,7 @@
     created() {
       // 调用应用实例的方法获取全局数据
       this.getUserInfo();
-      this.$store.commit("getSystemParam",{});
+      this.$store.commit("getSystemParam", {});
     }
   }
 </script>

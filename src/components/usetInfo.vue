@@ -5,7 +5,7 @@
       <span class="username">{{userInfo.nickName}}</span>
     </view>
     <view v-show="isShowBalance" class="userDiv">余额：
-      <span class="balance">{{userInfo.balance}}元</span>
+      <span class="balance">{{userInfo.money}}元</span>
     </view>
   </view>
 </template>
