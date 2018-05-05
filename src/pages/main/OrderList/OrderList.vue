@@ -181,7 +181,13 @@
         }
         if (list.length == 0) {
           if (vm.page == 1) {
-            wx.showToast("未能查询到数据!", "提示");
+            wx.showModal({
+              title: '提示',
+              content: "未能查询到数据!",
+              success: function(res) {
+                vm.isOrderOrNot = false;
+              }
+            })
           } else {
             vm.page--;
           }

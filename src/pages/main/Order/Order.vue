@@ -20,17 +20,16 @@
       <div>今日点餐情况:</div>
       <div v-for="(order,index) in orderList" :key="index" v-if="order.orderType>0">
         <view class="weui-cells weui-cells_after-title">
-            <view class="weui-cell">
-                <view class="weui-cell__bd">{{order.orderName}}</view>
-                <view class="weui-cells__title">{{order.createDate}}</view>
-                <view v-if="order.isCancle" style="color: red" class="weui-cell__ft buttonText">已退订</view>
-                <view v-else style="color: blue" @click="cancel(order.id)" class="weui-cell__ft buttonText">退订</view>
-            </view>
+          <view class="weui-cell">
+            <view class="weui-cell__bd">{{order.orderName}}</view>
+            <view class="weui-cells__title">{{order.createDate}}</view>
+            <view v-if="order.isCancle" style="color: red" class="weui-cell__ft buttonText">已退订</view>
+            <view v-else style="color: blue" @click="cancel(order.id)" class="weui-cell__ft buttonText">退订</view>
+          </view>
         </view>
       </div>
       <span class="space"></span>
     </div>
-   
     <picker @change="commitAction" :value="lunchType" :range="lunchTypeOptions">
         <!-- <button id="pickerButton" v-show="false" class="weui-btn saveButton" type="primary"></button>-->
          <button v-if="!showNoUser&&isOrderOrNot" class="weui-btn saveButton" type="primary" @click="commit">点餐</button>
@@ -84,8 +83,13 @@
       orderParam(orderParam) {
         let vm = this;
         if (!orderParam.isOrderOrNot) {
-          wx.showToast("点餐程序已关闭", "提示");
-          vm.isOrderOrNot = false;
+          wx.showModal({
+            title: '提示',
+            content: "点餐程序已关闭",
+            success: function(res) {
+              vm.isOrderOrNot = false;
+            }
+          })
         } else {
           vm.isOrderOrNot = true;
         }
@@ -126,15 +130,14 @@
       cancel(orderId) {
         let vm = this;
         if (!vm.checkDate()) {
-          wx.showToast(
-            "只能在 " +
-            vm.orderParam.startTime +
-            " 至 " +
-            vm.orderParam.endTime +
-            " 间退餐",
-            "提示"
-          );
-          return;
+          wx.showModal({
+            title: '提示',
+            content: "只能在 " + vm.orderParam.startTime + " 至 " +
+              vm.orderParam.endTime + " 间退餐",
+            success: function(res) {
+              return;
+            }
+          })
         }
         wx.showModal({
           title: '提示',
@@ -166,15 +169,14 @@
       commit() {
         let vm = this;
         if (!vm.checkDate()) {
-          wx.showToast(
-            "只能在 " +
-            vm.orderParam.startTime +
-            " 至 " +
-            vm.orderParam.endTime +
-            " 间点餐",
-            "提示"
-          );
-          return;
+          wx.showModal({
+            title: '提示',
+            content: "只能在 " + vm.orderParam.startTime + " 至 " +
+              vm.orderParam.endTime + " 间退餐",
+            success: function(res) {
+              return;
+            }
+          })
         }
         /*if (vm.orderTimes > 0) {
           wx.showModal({
@@ -217,7 +219,13 @@
         if (canOrder) {
           // document.getElementById("pickerButton").click();
         } else {
-          wx.showToast("无法点餐（点餐次数已满或金额不足）");
+          wx.showModal({
+            title: '提示',
+            content: "无法点餐（点餐次数已满或金额不足）",
+            success: function(res) {
+              vm.isOrderOrNot = false;
+            }
+          })
         }
       },
       commitAction() {
@@ -229,8 +237,13 @@
           }
         }
         if (!isSelect) {
-          wx.showToast("请选择订餐类别", "提示");
-          return;
+          wx.showModal({
+            title: '提示',
+            content: "请选择订餐类别",
+            success: function(res) {
+              return;
+            }
+          })
         }
         vm.$store.commit("order", {
           openId: vm.userInfo.openId,
@@ -241,7 +254,7 @@
         });
       },
       requestToday() {
-        let vm=this
+        let vm = this
         let today = new Date().toLocaleDateString();
         vm.$store.commit("getOrderList", {
           name: "null",
