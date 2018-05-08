@@ -120,6 +120,9 @@
       orderParam() {
         return this.$store.state.order.orderParam;
       },
+      currentPage() {
+        return this.$store.state.init.currentPage;
+      },
       orderList() {
         return this.$store.state.order.orderList;
       }
@@ -139,7 +142,8 @@
       },
       orderParam(orderParam) {
         let vm = this;
-        if (vm.currentPage != vm.$options.name) return;
+        if (vm.currentPage.toUpperCase() != vm.$options.name.toUpperCase())
+          return;
         vm.orderTypeOptions = [];
         vm.orderTypeOptions.push({
           value: "0",
@@ -155,7 +159,8 @@
       },
       orderList(list) {
         let vm = this;
-        if (vm.currentPage != vm.$options.name) return;
+        if (vm.currentPage.toUpperCase() != vm.$options.name.toUpperCase())
+          return;
         if (vm.page == 1) {
           vm.list = [];
         }

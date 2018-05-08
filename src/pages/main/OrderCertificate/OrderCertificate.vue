@@ -50,7 +50,7 @@
     watch: {
       orderList(orderList) {
         let vm = this;
-        if (vm.currentPage != vm.$options.name) return;
+        if (vm.currentPage.toUpperCase() != vm.$options.name.toUpperCase()) return;
         vm.lunchTimes = new Array(3).fill(0);
         vm.lunchName = new Array(3);
         orderList.forEach(element => {

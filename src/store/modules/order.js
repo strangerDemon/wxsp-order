@@ -42,7 +42,7 @@ const mutations = {
       state.orderParam = res;
     }).catch(err => {
       wx.navigateTo({
-        url: '/pages/msg/msg_fail/main?title=获取点餐参数失败&details='+err
+        url: '/pages/msg/msg_fail/main?title=获取点餐参数失败&details='+err.errMsg
       });
     })
   },
@@ -54,7 +54,7 @@ const mutations = {
       state.menuList = res;
     }).catch(err => {
       wx.navigateTo({
-        url: '/pages/msg/msg_fail/main?title=获取菜单列表失败&details='+err
+        url: '/pages/msg/msg_fail/main?title=获取菜单列表失败&details='+err.errMsg
       });
     })
   },
@@ -66,7 +66,7 @@ const mutations = {
       state.redemptionList = res;
     }).catch(err => {
       wx.navigateTo({
-        url: '/pages/msg/msg_fail/main?title=获取换购记录失败&details='+err
+        url: '/pages/msg/msg_fail/main?title=获取换购记录失败&details='+err.errMsg
       });
     })
   },
@@ -78,7 +78,7 @@ const mutations = {
       state.orderList = res;
     }).catch(err => {
       wx.navigateTo({
-        url: '/pages/msg/msg_fail/main?title=获取订餐记录失败&details='+err
+        url: '/pages/msg/msg_fail/main?title=获取订餐记录失败&details='+err.errMsg
       });
     })
   },
@@ -94,7 +94,7 @@ const mutations = {
       }
     }).catch(err => {
       wx.navigateTo({
-        url: '/pages/msg/msg_fail/main?title=点餐失败&details='+err
+        url: '/pages/msg/msg_fail/main?title=点餐失败&details='+err.errMsg
       });
     })
   },
@@ -110,7 +110,7 @@ const mutations = {
       }
     }).catch(err => {
       wx.navigateTo({
-        url: '/pages/msg/msg_fail/main?title=取消点餐失败&details='+err
+        url: '/pages/msg/msg_fail/main?title=取消点餐失败&details='+err.errMsg
       });
     })
   },
@@ -121,7 +121,7 @@ const mutations = {
       state.redemptionResult =  res + ":" + new Date();
     }).catch(err => {
       wx.navigateTo({
-        url: '/pages/msg/msg_fail/main?title=换购失败&details='+err
+        url: '/pages/msg/msg_fail/main?title=换购失败&details='+err.errMsg
       });
     })
   }

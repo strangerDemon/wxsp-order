@@ -36,7 +36,7 @@ const mutations = {
     }).catch(err => {
       wx.navigateTo({
         url: '/pages/msg/msg_fail/main?title=获取系统参数失败&details=' +
-          err
+          err.errMsg
       });
     })
   },
@@ -50,7 +50,7 @@ const mutations = {
     }).catch(err => {
       wx.navigateTo({
         url: '/pages/msg/msg_fail/main?title=获取公司列表失败&details=' +
-          err
+          err.errMsg
       });
     })
   },

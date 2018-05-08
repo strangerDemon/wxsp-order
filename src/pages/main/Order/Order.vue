@@ -72,14 +72,16 @@
     watch: {
       orderList(list) {
         let vm = this;
-        if (vm.currentPage != vm.$options.name) return;
+        if (vm.currentPage.toUpperCase() != vm.$options.name.toUpperCase())
+          return;
         if (vm.orderParam != null) {
           vm.updatelunchTypeTimes();
         }
       },
       orderParam(orderParam) {
         let vm = this;
-        if (vm.currentPage != vm.$options.name) return;
+        if (vm.currentPage.toUpperCase() != vm.$options.name.toUpperCase())
+          return;
         if (!orderParam.isOrderOrNot) {
           wx.showModal({
             title: '提示',

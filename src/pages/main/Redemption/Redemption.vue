@@ -71,7 +71,6 @@
     },
     methods: {
       resetEedemptionList(list) {
-        console.log("list", list)
         list.forEach(function(item) {
           item["checked"] = false;
         })

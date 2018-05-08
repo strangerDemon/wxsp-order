@@ -67,7 +67,9 @@ const mutations = {
       });
       state.isLogin = true;
     }).catch(err => {
-      console.log("userRegister", err)
+      wx.navigateTo({
+        url: '/pages/msg/msg_fail/main?title='+err.errMsg+'&redirect=/pages/index/main'
+      });
     })
   }
 };
