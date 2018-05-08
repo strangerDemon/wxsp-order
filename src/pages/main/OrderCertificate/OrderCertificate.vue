@@ -37,6 +37,9 @@
     },
     props: {},
     computed: {
+      currentPage() {
+        return this.$store.state.init.currentPage;
+      },
       userInfo() {
         return this.$store.state.user.userInfo;
       },
@@ -47,6 +50,7 @@
     watch: {
       orderList(orderList) {
         let vm = this;
+        if (vm.currentPage != vm.$options.name) return;
         vm.lunchTimes = new Array(3).fill(0);
         vm.lunchName = new Array(3);
         orderList.forEach(element => {

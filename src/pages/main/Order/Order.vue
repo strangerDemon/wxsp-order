@@ -31,7 +31,7 @@
     </div>
     <picker @change="commitAction" :range="lunchTypeOptions" range-key="label">
         <!-- <button id="pickerButton" v-show="false" class="weui-btn saveButton" type="primary"></button>-->
-         <button v-if="isOrderOrNot" class="weui-btn saveButton" type="primary" @click="commit">点餐</button>
+         <button v-if="isOrderOrNot" class="weui-btn saveButton" type="primary">点餐</button>
     </picker>
   </div>
 </template>
@@ -53,6 +53,9 @@
     },
     props: {},
     computed: {
+      currentPage() {
+        return this.$store.state.init.currentPage;
+      },
       orderParam() {
         return this.$store.state.order.orderParam;
       },
@@ -69,13 +72,14 @@
     watch: {
       orderList(list) {
         let vm = this;
-
+        if (vm.currentPage != vm.$options.name) return;
         if (vm.orderParam != null) {
           vm.updatelunchTypeTimes();
         }
       },
       orderParam(orderParam) {
         let vm = this;
+        if (vm.currentPage != vm.$options.name) return;
         if (!orderParam.isOrderOrNot) {
           wx.showModal({
             title: '提示',
@@ -148,34 +152,6 @@
         }
         return true;
       },
-      commit() {
-        let vm = this;
-        if (!vm.checkDate()) {
-          wx.showModal({
-            title: '提示',
-            content: "只能在 " + vm.orderParam.startTime + " 至 " +
-              vm.orderParam.endTime + " 间退餐",
-            success: function(res) {
-              return;
-            }
-          })
-        }
-        /*if (vm.orderTimes > 0) {
-          wx.showModal({
-            title: '提示',
-            content: "今日已点餐" + vm.orderTimes + "次, 是否继续点餐?",
-            success: function(res) {
-              if (res.confirm) {
-                vm.setDialoglunchType();
-              } else if (res.cancel) {
-                console.log('用户点击取消')
-              }
-            }
-          })
-        } else {
-        vm.setDialoglunchType();
-        }*/
-      },
       setLunchPicker() {
         let vm = this;
         vm.lunchTypeOptions = [];
@@ -208,14 +184,24 @@
       },
       commitAction(e) {
         let vm = this;
-        let isSelect = false;
-        vm.$store.commit("order", {
-          openId: vm.userInfo.openId,
-          orderType: vm.orderParam.lunch[e.target.value].value,
-          func: function() {
-            vm.requestToday();
-          }
-        });
+        if (!vm.checkDate()) {
+          wx.showModal({
+            title: '提示',
+            content: "只能在 " + vm.orderParam.startTime + " 至 " +
+              vm.orderParam.endTime + " 间退餐",
+            success: function(res) {
+              return;
+            }
+          })
+        } else {
+          vm.$store.commit("order", {
+            openId: vm.userInfo.openId,
+            orderType: vm.orderParam.lunch[e.target.value].value,
+            func: function() {
+              vm.requestToday();
+            }
+          });
+        }
       },
       requestToday() {
         let vm = this
@@ -238,8 +224,8 @@
     destroyed() {},
     mounted() {
       let vm = this;
-      vm.$store.commit("getOrderParam", {openId: vm.userInfo.openId});
-      vm.$store.commit("getMeunList", { openId: vm.userInfo.openId});
+      vm.$store.commit("getOrderParam", { openId: vm.userInfo.openId });
+      vm.$store.commit("getMeunList", { openId: vm.userInfo.openId });
       vm.requestToday();
       vm.isOrderOrNot = true;
     }

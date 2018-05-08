@@ -109,7 +109,7 @@
       checkPhone() {
         let vm = this
         if (vm.user.phone.trim() == "") return true;
-        if (!(/^1[3|4|5|8|9][0-9]\d{8}$/.test(vm.user.phone))) {
+        if (!(/^1[3|4|5|7|8|9][0-9]\d{8}$/.test(vm.user.phone))) {
           wx.showModal({
             content: "手机号码不正确",
             showCancel: false,
@@ -142,7 +142,6 @@
           return false;
         }
         if (!vm.checkPhone()) return false;
-        console.log(vm.user)
         if (!vm.checkNull(vm.user.userAccount)||!vm.checkNull(vm.user.userName)||!vm.checkNull(vm.user.companyCode)) {
           vm.showModal("星标项为必输项");
           return false;

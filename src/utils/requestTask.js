@@ -24,7 +24,7 @@ export const wxRequest = function wxRequest(method, data, resolve, reject) {
           resolve(resp.data.Results)
         } else {
           wx.navigateTo({
-            url: '../../msg/msg_fail/main?title=操作失败&details=服务器返回结果:'+resp.data.RespDesc
+            url: '/pages/msg/msg_fail/main?title=操作失败&details=服务器返回结果:'+resp.data.RespDesc
           });
           /*wx.showModal({
             content: resp.data.RespDesc,
@@ -38,7 +38,7 @@ export const wxRequest = function wxRequest(method, data, resolve, reject) {
         }
       } else {
         wx.navigateTo({
-          url: '../../msg/msg_fail/main?title=操作失败&details=请求失败:'+resp.data.RespDesc
+          url: '/pages/msg/msg_fail/main?title=操作失败&details=请求失败:'+resp.data.RespDesc
         });
         /*wx.showModal({
           content: '服务器返回结果:'+resp.data.Message,

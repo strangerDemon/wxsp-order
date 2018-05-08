@@ -139,6 +139,7 @@
       },
       orderParam(orderParam) {
         let vm = this;
+        if (vm.currentPage != vm.$options.name) return;
         vm.orderTypeOptions = [];
         vm.orderTypeOptions.push({
           value: "0",
@@ -154,6 +155,7 @@
       },
       orderList(list) {
         let vm = this;
+        if (vm.currentPage != vm.$options.name) return;
         if (vm.page == 1) {
           vm.list = [];
         }
@@ -318,28 +320,6 @@
       let vm = this;
       vm.init();
       vm.$store.commit("getOrderParam", { openId: vm.userInfo.openId });
-      //滚轮滚动到最底部的事件
-      /*window.onscroll = function() {
-        //总的高度
-        let sh = document.body.scrollHeight;
-        //窗口高度
-        let ch = window.innerHeight;
-        //相对顶部的高度
-        let h = this.scrollY;
-        if (vm.lastRequestTime == null) {
-          vm.lastRequestTime = new Date();
-        } else {
-          let now = new Date();
-          if (now - vm.lastRequestTime < 500) {
-            return;
-          }
-          vm.lastRequestTime = now;
-        }
-        if (h >= sh - ch) {
-          vm.page++;
-          vm.search(vm.page);
-        }
-      };*/
     },
     /**
      * 页面相关事件处理函数--监听用户下拉动作
@@ -373,8 +353,6 @@
   .search {
     position: relative;
     width: 100%;
-    /* height: 42%;
-  min-height: 280px; */
     top: 30px;
     margin-top: 10px;
   }
@@ -434,6 +412,36 @@
     }
     to {
       transform: rotate(360deg);
+    }
+  }
+
+  .searchTabOpen {
+    /*动画*/
+    animation: openTab 1s;
+    -webkit-animation: openTab 1s;
+  }
+
+  .searchTabClose {
+    /*动画*/
+    animation: closeTab 1s;
+    -webkit-animation: closeTab 1s;
+  }
+
+  @keyframes openTab {
+    from {
+      height: 0px;
+    }
+    to {
+      height: auto;
+    }
+  }
+
+  @keyframes closeTab {
+    from {
+      height: auto;
+    }
+    to {
+      height: 0px;
     }
   }
 

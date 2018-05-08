@@ -61,16 +61,11 @@
       redemptionResult(result) {
         let vm = this
         let answer = result.split(":");
-        if (answer[0] == "true") {
-          wx.navigateTo({
-            url: '../../msg/msg_success/main?title=' + answer[1] +
-              '&details= 换购列表:' + vm.redemptionName + '\n换购金额:' + vm.money+'元',
-          });
-        } else {
-          wx.navigateTo({
-            url: '../../msg/msg_fail/main?title=' + answer[1]
-          });
-        }
+        wx.navigateTo({
+          url: '../../msg/msg_success/main?title=' + answer[0] +
+            '&details= 换购列表:' + vm.redemptionName + '\n换购金额:' + vm.money +
+            '元',
+        });
         vm.returnRedemption();
       }
     },
@@ -94,8 +89,8 @@
               }
             }
           });
-        } else if(!/^[0-9]*$/.test(vm.money)){
-           wx.showModal({
+        } else if (!/^[0-9]*$/.test(vm.money)) {
+          wx.showModal({
             content: "金额只能是数字",
             showCancel: false,
             success: function(res) {
@@ -104,7 +99,7 @@
               }
             }
           });
-          }else if (vm.redemption.length == 0) {
+        } else if (vm.redemption.length == 0) {
           wx.showModal({
             content: "请选择换购物品",
             showCancel: false,

@@ -4,7 +4,8 @@ import * as requestTask from "../../utils/requestTask";
  * @type {Object}
  */
 const state = {
-  systemParamInit:false,//因为要初始化默认显示一些，防止空格情况，所以systemParam不为null
+  currentPage: "main", //暂时处理，小程序在打开一个页面后，请求一个接口，其他页面（未渲染）有监听这个接口的赋值变量也会运行
+  systemParamInit: false, //因为要初始化默认显示一些，防止空格情况，所以systemParam不为null
   //系统参数
   systemParam: {
     provider: "厦门众图", //提供服务公司
@@ -29,14 +30,13 @@ const mutations = {
     new Promise((resolve, reject) => {
       requestTask.wxRequest("getSystemParam", info, resolve, reject)
     }).then(res => {
-      state.systemParamInit=true;
+      state.systemParamInit = true;
       state.systemParam = res;
       //console.log("getSystemParam",res);
     }).catch(err => {
-      wx.showToast({
-        title: '获取系统参数失败:' + err,
-        icon: 'warning',
-        duration: 1500
+      wx.navigateTo({
+        url: '/pages/msg/msg_fail/main?title=获取系统参数失败&details=' +
+          err
       });
     })
   },
@@ -48,13 +48,15 @@ const mutations = {
       //console.log("getCompanyList",res);
       state.companyList = res.companyList;
     }).catch(err => {
-      wx.showToast({
-        title: '获取公司列表失败:' + err,
-        icon: 'warning',
-        duration: 1500
+      wx.navigateTo({
+        url: '/pages/msg/msg_fail/main?title=获取公司列表失败&details=' +
+          err
       });
     })
   },
+  setCurrentPage(state, info) {
+    state.currentPage = info.currentPage;
+  }
 };
 
 /**

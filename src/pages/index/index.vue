@@ -1,23 +1,23 @@
 <template>
-<div class="container">
-  <fire-loading v-if="showLoading"></fire-loading>
-  <div v-if="!showLoading">
-    <div class="userinfo">
-      <button v-if="!hasUserInfo && canIUse" open-type="getUnloginUserInfo" bindgetuserinfo="getUnloginUserInfo"> 获取头像昵称 </button>
-      <block v-else>
-        <image class="userinfo-avatar" :src="userInfo.avatarUrl" background-size="cover"></image>
-        <text class="userinfo-nickname">{{userInfo.nickName}}</text>
-      </block>
-    </div>
-    <div class="usermotto" >
-      <div class="user-motto" v-for="(item ,index) in buttonTexts" :key="index">
-        <image class="munuImage" :src="item.icon" background-size="cover"></image>
-        <text class="item" @click="binddivTap(item.value)">{{item.name}}</text>
+  <view class="container">
+    <fire-loading v-if="showLoading"></fire-loading>
+    <div v-if="!showLoading">
+      <div class="userinfo">
+        <button v-if="!hasUserInfo && canIUse" open-type="getUnloginUserInfo" bindgetuserinfo="getUnloginUserInfo"> 获取头像昵称 </button>
+        <block v-else>
+          <image class="userinfo-avatar" :src="userInfo.avatarUrl" background-size="cover"></image>
+          <text class="userinfo-nickname">{{userInfo.nickName}}</text>
+        </block>
       </div>
+      <div class="usermotto" >
+        <div class="user-motto" v-for="(item ,index) in buttonTexts" :key="index">
+          <image class="munuImage" :src="item.icon" background-size="cover"></image>
+          <text class="item" @click="binddivTap(item.value)">{{item.name}}</text>
+        </div>
+      </div>
+      <footer-info :isLogin="isLogin" @userRegister="userRegister"></footer-info>
     </div>
-    <footer-info :isLogin="isLogin" @userRegister="userRegister"></footer-info>
-  </div>
-</div>
+  </view>
 </template>
 <script>
   import footerInfo from "@/components/footerInfo"
@@ -138,6 +138,30 @@
     methods: {
       binddivTap(type) {
         let vm = this
+        if (vm.userInfo.isExamine == 0) {
+          wx.showModal({
+            content: "该账号未审核，请联系管理人员",
+            showCancel: false,
+            success: function(res) {}
+          });
+          return;
+        }
+        if (vm.userInfo.isExamine == 2) {
+          wx.showModal({
+            content: "该账号审核未通过，请联系管理人员",
+            showCancel: false,
+            success: function(res) {}
+          });
+          return;
+        }
+        if (vm.userInfo.isForbidden == 1) {
+          wx.showModal({
+            content: "该账号已被禁用，请联系管理人员",
+            showCancel: false,
+            success: function(res) {}
+          });
+          return;
+        }
         if (!vm.isLogin) {
           wx.showModal({
             content: vm.dialogMessage,
@@ -146,6 +170,7 @@
           });
           return;
         }
+
         switch (type) {
           case 'order':
             wx.navigateTo({
@@ -182,13 +207,13 @@
       },
       getUnloginUserInfo() {
         let vm = this
-        console.log(vm.userInfo);
+        //console.log(vm.userInfo);
         // 未登录后台
         wx.login({
           success: () => {
             wx.getUserInfo({
               success: (res) => {
-                console.log(res);
+                //console.log(res);
                 if (vm.userInfo == null) {
                   vm.userInfo = res.userInfo
                 } else {

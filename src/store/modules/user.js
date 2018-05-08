@@ -5,7 +5,7 @@ import * as requestTask from "../../utils/requestTask";
  */
 const state = {
   isLogin: false, //是否登录
-  isAdmin:false,//时候为管理员
+  isAdmin: false, //时候为管理员
   //用户信息
   userInfo: null,
 
@@ -30,6 +30,22 @@ const mutations = {
       state.userInfo = res;
       if (res.userName != "") {
         state.isLogin = true;
+        if (res.isExamine != 1 || res.isForbidden == 1) {
+          let title = "";
+          if (res.isExamine == 0) {
+            title = "账号未审核"
+          } else if (res.isExamine == 2) {
+            title = "账号审核未通过"
+          } else if (res.isForbidden == 1) {
+            title = "账号被禁用"
+          }
+          wx.navigateTo({
+            url: '/pages/msg/msg_fail/main?title=' + title +
+              '&redirect=/pages/index/main'
+          });
+        }
+      } else {
+        state.isLogin = false; //用户登录的时候被删掉
       }
     }).catch(err => {
       console.log("getUserInfo", err)
@@ -42,19 +58,14 @@ const mutations = {
   },
 
   //注册
-  register(state,info){
+  register(state, info) {
     new Promise((resolve, reject) => {
       requestTask.wxRequest("userRegister", info, resolve, reject)
     }).then(res => {
-      wx.showModal({
-        content: "用户注册成功，正在审核，请稍后",
-        showCancel: false,
-        success: function(res) {
-          wx.navigateTo({
-            url: '../../pages/index/main'
-          })
-        }
+      wx.navigateTo({
+        url: '/pages/msg/msg_success/main?title=用户注册成功，正在审核，请稍后&redirect=/pages/index/main'
       });
+      state.isLogin = true;
     }).catch(err => {
       console.log("userRegister", err)
     })

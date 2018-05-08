@@ -1,7 +1,7 @@
 <template>
   <div class="actionBtn">
     <div class="menuItem" v-for="(item,index) in pages" :key="index">
-      <div @click="binddivTap(item.url)" hover-class="navigator-hover">
+      <div @click="binddivTap(item.url,item.value)" hover-class="navigator-hover">
         <image class="menuImage" :src="item.icon" mode="aspectFit"></image>
         <div class="menuText">{{item.name}}</div>
       </div>
@@ -19,25 +19,25 @@
             icon: "/static/images/bee.jpg",
             url: "/pages/main/Order/main",
             name: "点餐",
-            value: "order"
+            value: "Order"
           },
           {
             icon: "/static/images/chicken.jpg",
             url: "/pages/main/OrderList/main",
             name: "点餐记录",
-            value: "orderlist"
+            value: "OrderList"
           },
           {
             icon: "/static/images/dog.jpg",
             url: "/pages/main/OrderCertificate/main",
             name: "就餐凭证",
-            value: "ordercertificate"
+            value: "OrderCertificate"
           },
           {
             icon: "/static/images/lion.jpg",
             url: "/pages/main/Redemption/main",
             name: "换购",
-            value: "redemption"
+            value: "Redemption"
           }
         ]
       }
@@ -46,12 +46,12 @@
     computed: {},
     watch: {},
     methods: {
-      binddivTap(url) {
+      binddivTap(url, page) {
         let vm = this
         wx.navigateTo({
           url: url
-        })
-
+        });
+        vm.$store.commit("setCurrentPage", { currentPage: page })
       },
     },
     beforeCreate() {},

@@ -20,10 +20,7 @@ const state = {
   orderList: [],
 
   //result 根据结果返回 判断是否弹页面
-  orderResult:"",
-  cancleResult:"",
   redemptionResult: "",
-  isErrorResult:"",
 };
 
 /**
@@ -44,7 +41,9 @@ const mutations = {
     }).then(res => {
       state.orderParam = res;
     }).catch(err => {
-      state.isErrorResult='获取点餐参数失败:' + err+ ":" + new Date();
+      wx.navigateTo({
+        url: '/pages/msg/msg_fail/main?title=获取点餐参数失败&details='+err
+      });
     })
   },
   //获取菜单列表
@@ -54,7 +53,9 @@ const mutations = {
     }).then(res => {
       state.menuList = res;
     }).catch(err => {
-      state.isErrorResult='获取菜单列表失败:' + err+ ":" + new Date();
+      wx.navigateTo({
+        url: '/pages/msg/msg_fail/main?title=获取菜单列表失败&details='+err
+      });
     })
   },
   //获取换购列表
@@ -64,7 +65,9 @@ const mutations = {
     }).then(res => {
       state.redemptionList = res;
     }).catch(err => {
-      state.isErrorResult='获取换购记录失败:' + err+ ":" + new Date();
+      wx.navigateTo({
+        url: '/pages/msg/msg_fail/main?title=获取换购记录失败&details='+err
+      });
     })
   },
   //获取订单列表，时间、
@@ -74,25 +77,24 @@ const mutations = {
     }).then(res => {
       state.orderList = res;
     }).catch(err => {
-      state.isErrorResult='获取订餐记录失败:' + err+ ":" + new Date();
+      wx.navigateTo({
+        url: '/pages/msg/msg_fail/main?title=获取订餐记录失败&details='+err
+      });
     })
   },
   order(state, info) {
     new Promise((resolve, reject) => {
       requestTask.wxRequest("doOrder", info, resolve, reject)
     }).then(res => {
-      wx.showModal({
-        content: '点餐成功',
-        showCancel: false
+      wx.navigateTo({
+        url: '/pages/msg/msg_success/main?title=点餐成功'
       });
       if (info.func != undefined) {
         info.func();
       }
     }).catch(err => {
-      wx.showToast({
-        title: '点餐失败:' + err,
-        icon: 'warning',
-        duration: 1500
+      wx.navigateTo({
+        url: '/pages/msg/msg_fail/main?title=点餐失败&details='+err
       });
     })
   },
@@ -100,24 +102,27 @@ const mutations = {
     new Promise((resolve, reject) => {
       requestTask.wxRequest("doCancle", info, resolve, reject)
     }).then(res => {
-      wx.showModal({
-        content: '取消点餐成功',
-        showCancel: false
+      wx.navigateTo({
+        url: '/pages/msg/msg_success/main?title=取消点餐成功'
       });
       if (info.func != undefined) {
         info.func();
       }
     }).catch(err => {
-      state.isErrorResult='取消点餐失败:' + err+ ":" + new Date();
+      wx.navigateTo({
+        url: '/pages/msg/msg_fail/main?title=取消点餐失败&details='+err
+      });
     })
   },
   doChangeBuy(state, info) {
     new Promise((resolve, reject) => {
       requestTask.wxRequest("doChangeBuy", info, resolve, reject)
     }).then(res => {
-      state.redemptionResult = "true:" + res + ":" + new Date();
+      state.redemptionResult =  res + ":" + new Date();
     }).catch(err => {
-      state.redemptionResult = "false:" + err + ":" + new Date();
+      wx.navigateTo({
+        url: '/pages/msg/msg_fail/main?title=换购失败&details='+err
+      });
     })
   }
 };

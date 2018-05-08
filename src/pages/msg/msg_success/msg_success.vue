@@ -28,12 +28,14 @@
       return {
         title: "",
         details: [],
+        redirect: "",
       }
     },
     onLoad: function(options) {
       let vm = this
       vm.title = options.title;
       vm.details = options.details;
+      vm.redirect = options.redirect;
     },
     props: {},
     computed: {
@@ -44,7 +46,12 @@
     watch: {},
     methods: {
       back() {
-        wx.navigateBack();
+        let vm = this
+        if (vm.redirect != undefined && vm.redirect != "") {
+          wx.redirectTo({ url: vm.redirect });
+        } else {
+          wx.navigateBack();
+        }
       }
     },
     beforeCreate() {},

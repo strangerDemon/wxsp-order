@@ -36,8 +36,9 @@ export default {
     window: {
       backgroundTextStyle: 'light',
       navigationBarBackgroundColor: '#fff',
-      navigationBarTitleText: 'WeChat',
-      navigationBarTextStyle: 'black'
+      navigationBarTitleText: '报餐系统',
+      navigationBarTextStyle: 'black',
+      enablePullDownRefresh:true  
     }
   }
 }
