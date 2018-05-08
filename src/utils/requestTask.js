@@ -18,10 +18,15 @@ export const wxRequest = function wxRequest(method, data, resolve, reject) {
     success: function(resp) { //无论失败成功都是走success
 
       if (resp && resp.statusCode == 200 && resp.data) {
+        //不在统计处理请求失败，交给store内自己处理
+        //resolve(resp.data);
         if (resp.data.RespCode == 1) { //请求返回码
           resolve(resp.data.Results)
         } else {
-          wx.showModal({
+          wx.navigateTo({
+            url: '../../msg/msg_fail/main?title=操作失败&details=服务器返回结果:'+resp.data.RespDesc
+          });
+          /*wx.showModal({
             content: resp.data.RespDesc,
             showCancel: false,
             success: function(res) {
@@ -29,18 +34,21 @@ export const wxRequest = function wxRequest(method, data, resolve, reject) {
                 console.log('服务器返回结果:'+resp.data.RespDesc)
               }
             }
-          });
+          });*/
         }
       } else {
-        wx.showModal({
-          content: resp.data.Message,
+        wx.navigateTo({
+          url: '../../msg/msg_fail/main?title=操作失败&details=请求失败:'+resp.data.RespDesc
+        });
+        /*wx.showModal({
+          content: '服务器返回结果:'+resp.data.Message,
           showCancel: false,
           success: function(res) {
             if (res.confirm) {
               console.log('请求失败')
             }
           }
-        });
+        });*/
       }
       if (method == "getUserInfo") { //当执行到这里时，说明请求失败，再此处理特殊操作
         resolve(resp.data.Results);

@@ -33,7 +33,11 @@ const mutations = {
       state.systemParam = res;
       //console.log("getSystemParam",res);
     }).catch(err => {
-      console.log("getSystemParam", err)
+      wx.showToast({
+        title: '获取系统参数失败:' + err,
+        icon: 'warning',
+        duration: 1500
+      });
     })
   },
   //公司列表
@@ -44,7 +48,11 @@ const mutations = {
       //console.log("getCompanyList",res);
       state.companyList = res.companyList;
     }).catch(err => {
-      console.log("getCompanyList", err)
+      wx.showToast({
+        title: '获取公司列表失败:' + err,
+        icon: 'warning',
+        duration: 1500
+      });
     })
   },
 };

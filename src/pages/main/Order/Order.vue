@@ -5,8 +5,6 @@
       <div class="prompt">就餐时间：下一个工作日中午</div>
       <div class="prompt">点餐时间：早 {{orderParam.startTime}}点 至 晚 {{orderParam.endTime}}点</div>
     </div>
-    <!--<div class="admire" v-show="isAdmire">金额不足，请先充值</div>-->
-    <div class="admire" v-show="showNoUser">没有点餐账户，请联系管理员添加</div>
     <div class="menuDiv">
       <div slot="header" class="clearfix">
         <span>菜品明细：</span>
@@ -28,11 +26,12 @@
           </view>
         </view>
       </div>
+      <div v-if="orderList.length==0" class="unOrderList">未查询到记录</div>
       <span class="space"></span>
     </div>
-    <picker @change="commitAction" :value="lunchType" :range="lunchTypeOptions">
+    <picker @change="commitAction" :range="lunchTypeOptions" range-key="label">
         <!-- <button id="pickerButton" v-show="false" class="weui-btn saveButton" type="primary"></button>-->
-         <button v-if="!showNoUser&&isOrderOrNot" class="weui-btn saveButton" type="primary" @click="commit">点餐</button>
+         <button v-if="isOrderOrNot" class="weui-btn saveButton" type="primary" @click="commit">点餐</button>
     </picker>
   </div>
 </template>
@@ -45,13 +44,11 @@
     data() {
       return {
         isAdmire: false,
-        showNoUser: true,
         isOrderOrNot: false,
         isShowMenu: true,
         orderTimes: 0,
-        lunchType: "c",
         lunchTypeTimes: [],
-        lunchTypeOptions: ["a餐", "b餐", "c餐"],
+        lunchTypeOptions: [],
       };
     },
     props: {},
@@ -76,9 +73,6 @@
         if (vm.orderParam != null) {
           vm.updatelunchTypeTimes();
         }
-        // if (vm.userInfo != null) {
-        //   vm.updateIsAdmire();
-        // }
       },
       orderParam(orderParam) {
         let vm = this;
@@ -95,23 +89,11 @@
         }
         if (vm.orderList != null) {
           vm.updatelunchTypeTimes();
+          vm.setLunchPicker();
         }
       },
-      userInfo(userInfo) {
-        let vm = this;
-        vm.showNoUser = false;
-        if (vm.orderList != null) {
-          // vm.updateIsAdmire();
-          vm.updatelunchTypeTimes();
-        }
-      }
     },
     methods: {
-      updateIsAdmire() {
-        let vm = this;
-        let balance = vm.userInfo.balance;
-
-      },
       updatelunchTypeTimes() {
         let vm = this;
         vm.orderTimes = 0;
@@ -190,21 +172,20 @@
               }
             }
           })
-        } else {*/
+        } else {
         vm.setDialoglunchType();
-        //}
+        }*/
       },
-      setDialoglunchType() {
+      setLunchPicker() {
         let vm = this;
         vm.lunchTypeOptions = [];
-        vm.lunchType = "c";
-        let balance = vm.userInfo.balance;
+        let money = vm.userInfo.money;
         let canOrder = false;
         for (let i = 0, length = vm.orderParam.lunch.length; i < length; i++) {
           if (
             vm.lunchTypeTimes[i] >= vm.orderParam.lunch[i].maxOrderTimes ||
             vm.userInfo.userType > vm.orderParam.lunch[i].value ||
-            balance < vm.orderParam.lunch[i].money
+            money < vm.orderParam.lunch[i].money
           ) {
             vm.lunchTypeOptions.push({
               value: vm.orderParam.lunch[i].value,
@@ -216,38 +197,21 @@
             canOrder = true;
           }
         }
-        if (canOrder) {
-          // document.getElementById("pickerButton").click();
-        } else {
+        if (!canOrder) {
           wx.showModal({
             title: '提示',
             content: "无法点餐（点餐次数已满或金额不足）",
-            success: function(res) {
-              vm.isOrderOrNot = false;
-            }
+            success: function(res) {}
           })
+          vm.isOrderOrNot = false;
         }
       },
-      commitAction() {
+      commitAction(e) {
         let vm = this;
         let isSelect = false;
-        for (let i = 0, length = vm.orderParam.lunch.length; i < length; i++) {
-          if (vm.orderParam.lunch[i].value == vm.lunchType) {
-            isSelect = true;
-          }
-        }
-        if (!isSelect) {
-          wx.showModal({
-            title: '提示',
-            content: "请选择订餐类别",
-            success: function(res) {
-              return;
-            }
-          })
-        }
         vm.$store.commit("order", {
           openId: vm.userInfo.openId,
-          orderType: vm.lunchType,
+          orderType: vm.orderParam.lunch[e.target.value].value,
           func: function() {
             vm.requestToday();
           }
@@ -266,6 +230,7 @@
           page: 0,
           isCancle: 1
         });
+        vm.$store.commit("getUserInfo", { code: "", openId: vm.userInfo.openId });
       }
     },
     beforeCreate() {},
@@ -273,10 +238,8 @@
     destroyed() {},
     mounted() {
       let vm = this;
-      vm.$store.commit("getOrderParam", {
-        openId: vm.userInfo.openId,
-      });
-      vm.$store.commit("getMeunList", { openId: vm.userInfo.openId });
+      vm.$store.commit("getOrderParam", {openId: vm.userInfo.openId});
+      vm.$store.commit("getMeunList", { openId: vm.userInfo.openId});
       vm.requestToday();
       vm.isOrderOrNot = true;
     }
@@ -344,5 +307,12 @@
 
   .buttonText {
     cursor: pointer;
+  }
+
+  .unOrderList {
+    display: block;
+    margin: 25px;
+    position: relative;
+    font-family: fantasy;
   }
 </style>

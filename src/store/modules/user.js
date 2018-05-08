@@ -5,6 +5,7 @@ import * as requestTask from "../../utils/requestTask";
  */
 const state = {
   isLogin: false, //是否登录
+  isAdmin:false,//时候为管理员
   //用户信息
   userInfo: null,
 

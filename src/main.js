@@ -30,6 +30,8 @@ export default {
       "pages/main/OrderList/main",
       "pages/main/Redemption/main",
      
+      "pages/msg/msg_fail/main",
+      "pages/msg/msg_success/main"
     ],
     window: {
       backgroundTextStyle: 'light',

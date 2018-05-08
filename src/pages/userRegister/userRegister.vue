@@ -75,7 +75,7 @@
           userName: "",
           nickName:"",
           avatarUrl:"",
-          companyId: 0,
+          companyCoce: 0,
           phone: "",
           comment: "",
         },
@@ -101,7 +101,7 @@
         for (let i = 0, length = vm.companys.length; i < length; i++) {
           if (vm.companys[i].value == e.target.value) {
             vm.selectCompanyName = vm.companys[i].label;
-            vm.user.companyId = vm.companys[i].companyId
+            vm.user.companyCode = vm.companys[i].companyCode
             break;
           }
         }
@@ -143,7 +143,7 @@
         }
         if (!vm.checkPhone()) return false;
         console.log(vm.user)
-        if (!vm.checkNull(vm.user.userAccount)||!vm.checkNull(vm.user.userName)||!vm.checkNull(vm.user.companyId)) {
+        if (!vm.checkNull(vm.user.userAccount)||!vm.checkNull(vm.user.userName)||!vm.checkNull(vm.user.companyCode)) {
           vm.showModal("星标项为必输项");
           return false;
         }

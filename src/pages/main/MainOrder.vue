@@ -1,10 +1,10 @@
 <template>
   <div class="actionBtn">
     <div class="menuItem" v-for="(item,index) in pages" :key="index">
-      <navigator :url="item.url" hover-class="navigator-hover">
+      <div @click="binddivTap(item.url)" hover-class="navigator-hover">
         <image class="menuImage" :src="item.icon" mode="aspectFit"></image>
         <div class="menuText">{{item.name}}</div>
-      </navigator>
+      </div>
     </div>
   </div>
 </template>
@@ -45,12 +45,19 @@
     props: {},
     computed: {},
     watch: {},
-    methods: {},
+    methods: {
+      binddivTap(url) {
+        let vm = this
+        wx.navigateTo({
+          url: url
+        })
+
+      },
+    },
     beforeCreate() {},
     created() {},
     destroyed() {},
-    mounted() {
-    }
+    mounted() {}
   }
 </script>
 <style lang="css"

@@ -17,7 +17,13 @@ const state = {
   //换购列表
   redemptionList: [],
   //订餐列表
-  orderList: []
+  orderList: [],
+
+  //result 根据结果返回 判断是否弹页面
+  orderResult:"",
+  cancleResult:"",
+  redemptionResult: "",
+  isErrorResult:"",
 };
 
 /**
@@ -38,7 +44,7 @@ const mutations = {
     }).then(res => {
       state.orderParam = res;
     }).catch(err => {
-      console.log("orderParam", err)
+      state.isErrorResult='获取点餐参数失败:' + err+ ":" + new Date();
     })
   },
   //获取菜单列表
@@ -48,7 +54,7 @@ const mutations = {
     }).then(res => {
       state.menuList = res;
     }).catch(err => {
-      console.log("getMeunList", err)
+      state.isErrorResult='获取菜单列表失败:' + err+ ":" + new Date();
     })
   },
   //获取换购列表
@@ -58,7 +64,7 @@ const mutations = {
     }).then(res => {
       state.redemptionList = res;
     }).catch(err => {
-      console.log("getRedemptionList", err)
+      state.isErrorResult='获取换购记录失败:' + err+ ":" + new Date();
     })
   },
   //获取订单列表，时间、
@@ -68,7 +74,7 @@ const mutations = {
     }).then(res => {
       state.orderList = res;
     }).catch(err => {
-      console.log("getOrderList", err)
+      state.isErrorResult='获取订餐记录失败:' + err+ ":" + new Date();
     })
   },
   order(state, info) {
@@ -83,7 +89,11 @@ const mutations = {
         info.func();
       }
     }).catch(err => {
-      console.log("order", err)
+      wx.showToast({
+        title: '点餐失败:' + err,
+        icon: 'warning',
+        duration: 1500
+      });
     })
   },
   cancle(state, info) {
@@ -98,19 +108,16 @@ const mutations = {
         info.func();
       }
     }).catch(err => {
-      console.log("cancle", err)
+      state.isErrorResult='取消点餐失败:' + err+ ":" + new Date();
     })
   },
   doChangeBuy(state, info) {
     new Promise((resolve, reject) => {
       requestTask.wxRequest("doChangeBuy", info, resolve, reject)
     }).then(res => {
-      wx.showModal({
-        content: '换购成功',
-        showCancel: false
-      });
+      state.redemptionResult = "true:" + res + ":" + new Date();
     }).catch(err => {
-      console.log("doChangeBuy", err)
+      state.redemptionResult = "false:" + err + ":" + new Date();
     })
   }
 };

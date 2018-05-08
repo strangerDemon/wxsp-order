@@ -1,16 +1,15 @@
 <template>
   <div class="Redemption">
-    <div v-show="!isShowResult">
+    <div>
       <user-info :isShowName="true" :isShowBalance="true"></user-info>
       <div class="admire">请现场与工作人员操作</div>
-      <div class="admire" v-show="!showCommit">没有点餐账户，请联系管理员添加</div>
       <div class="param">
           <div slot="header" class="clearfix">
             <span>换购类型（多选）</span>
             <i class="el-icon-arrow-down isShowButton" @click="isShowRedemption=!isShowRedemption"></i>
           </div>
           <div v-show="isShowRedemption">
-            <checkbox-group v-model="redemption" @change="checkboxChange">
+            <checkbox-group @change="checkboxChange">
               <label class="checkbox" v-for="(item,index) in redemptionList" :key="item">
                 <checkbox :value="item.value" :checked="item.checked"/>{{item.label}}
               </label>
@@ -21,23 +20,11 @@
               <div class="weui-label">金额</div>
             </div>
             <div class="weui-cell__bd">
-              <input class="weui-input clearfix" :placeholder="'成交金额[0~'+userInfo.balance+'元]'" type="number" onKeypress="return (/[\d]/.test(String.fromCharCode(event.keyCode)))" v-model="money"/>
+              <input class="weui-input clearfix" :placeholder="'成交金额[0~'+userInfo.money+'元]'" type="number" onkeypress="return (/[\d]/.test(String.fromCharCode(event.keyCode)))" v-model="money"/>
             </div>
           </div>
       </div>
-      <button v-show="showCommit" class="weui-btn saveButton" type="primary" size="large" @click="commit">确定</button>
-    </div>
-    <div class="result" v-show="isShowResult">
-      <div class="redemptionDetails">
-        <h2 class="titles">换购详细单</h2>
-        <span class="title">换购详细：</span>
-        <ul>
-          <li class="item" v-for="(item,index) in redemptionName" :key="index">{{item}}</li>
-        </ul>
-        <span class="title">换购金额：</span>
-        <span class="money">{{money}}元</span>
-      </div>
-      <button class="weui-btn saveButton" size="large" type="primary" @click="returnRedemption">返回继续换购</button>
+      <button class="weui-btn saveButton" type="primary" size="large" @click="commit">确定</button>
     </div>
   </div>
 </template>
@@ -54,9 +41,7 @@
         isShowRedemption: true,
         redemption: [],
         redemptionName: [],
-        money: 0,
-        isShowResult: false,
-        showCommit: false
+        money: null,
       };
     },
     props: {},
@@ -65,20 +50,43 @@
         return this.$store.state.user.userInfo;
       },
       redemptionList() {
-        return this.$store.state.init.redemptionList;
+        let list = this.$store.state.order.redemptionList;
+        return this.resetEedemptionList(list)
+      },
+      redemptionResult() {
+        return this.$store.state.order.redemptionResult;
       }
     },
     watch: {
-      userInfo(userInfo) {
-        this.showCommit = true;
+      redemptionResult(result) {
+        let vm = this
+        let answer = result.split(":");
+        if (answer[0] == "true") {
+          wx.navigateTo({
+            url: '../../msg/msg_success/main?title=' + answer[1] +
+              '&details= 换购列表:' + vm.redemptionName + '\n换购金额:' + vm.money+'元',
+          });
+        } else {
+          wx.navigateTo({
+            url: '../../msg/msg_fail/main?title=' + answer[1]
+          });
+        }
+        vm.returnRedemption();
       }
     },
     methods: {
+      resetEedemptionList(list) {
+        console.log("list", list)
+        list.forEach(function(item) {
+          item["checked"] = false;
+        })
+        return list
+      },
       commit() {
         let vm = this;
-        if (vm.money > vm.userInfo.balance) {
+        if (vm.money > vm.userInfo.money) {
           wx.showModal({
-            content: "成交金额不能大于" + vm.userInfo.balance,
+            content: "成交金额不能大于" + vm.userInfo.money,
             showCancel: false,
             success: function(res) {
               if (res.confirm) {
@@ -86,7 +94,17 @@
               }
             }
           });
-        } else if (vm.redemption.length == 0) {
+        } else if(!/^[0-9]*$/.test(vm.money)){
+           wx.showModal({
+            content: "金额只能是数字",
+            showCancel: false,
+            success: function(res) {
+              if (res.confirm) {
+                return;
+              }
+            }
+          });
+          }else if (vm.redemption.length == 0) {
           wx.showModal({
             content: "请选择换购物品",
             showCancel: false,
@@ -97,17 +115,16 @@
             }
           });
         } else {
-          vm.$store.commit("doChangeBuy", {
-            openId: vm.userInfo.openId,
-            value: vm.redemption.toString(),
-            money: vm.money
-          });
           vm.redemptionList.forEach(element => {
             if (vm.redemption.includes(element.value)) {
               vm.redemptionName.push(element.label);
             }
           });
-          vm.isShowResult = true;
+          vm.$store.commit("doChangeBuy", {
+            openId: vm.userInfo.openId,
+            value: vm.redemption.toString(),
+            money: vm.money
+          });
         }
       },
       returnRedemption() {
@@ -115,24 +132,19 @@
         vm.money = 0;
         vm.redemption = [];
         vm.redemptionName = [];
-        vm.$store.commit("getUserInfo", { code: "",openId: vm.userInfo.openId });
-        vm.isShowResult = false;
+        vm.$store.commit("getUserInfo", { code: "", openId: vm.userInfo.openId });
+        vm.resetEedemptionList(vm.redemptionList);
       },
-
       checkboxChange(e) {
         let vm = this
-        let checkboxItems = this.redemptionList;
-        let values = e.target.value;
-        // for (let i = 0, lenI = checkboxItems.length; i < lenI; ++i) {
-        //     checkboxItems[i].checked = false;
-        //     for (let j = 0, lenJ = values.length; j < lenJ; ++j) {
-        //         if(checkboxItems[i].value == values[j]){
-        //             checkboxItems[i].checked = true;
-        //             break;
-        //         }
-        //     }
-        // }
-        // console.log(values);
+        vm.redemption = e.target.value;
+        vm.redemptionList.forEach(function(item) {
+          if (e.target.value.includes(item.value)) {
+            item["checked"] = true;
+          } else {
+            item["checked"] = false;
+          }
+        })
       }
     },
     beforeCreate() {},
@@ -217,7 +229,7 @@
   }
 
   .item {
-    margin: 10px 10px;
+    margin: 20px 10px;
   }
 
   .money {

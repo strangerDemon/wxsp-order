@@ -23,6 +23,73 @@
   import footerInfo from "@/components/footerInfo"
   import fireLoading from "@/components/loading"
   export default {
+    ///
+    // 微信原始的函数 
+    ///
+    /**
+     * 页面的初始数据
+     */
+    data: {
+
+    },
+
+    /**
+     * 生命周期函数--监听页面加载
+     */
+    onLoad: function(options) {
+
+    },
+
+    /**
+     * 生命周期函数--监听页面初次渲染完成
+     */
+    onReady: function() {
+
+    },
+
+    /**
+     * 生命周期函数--监听页面显示
+     */
+    onShow: function() {
+
+    },
+
+    /**
+     * 生命周期函数--监听页面隐藏
+     */
+    onHide: function() {
+
+    },
+
+    /**
+     * 生命周期函数--监听页面卸载
+     */
+    onUnload: function() {
+
+    },
+
+    /**
+     * 页面相关事件处理函数--监听用户下拉动作
+     */
+    onPullDownRefresh: function() {
+      this.getUserInfo();
+      this.$store.commit("getSystemParam", {});
+    },
+
+    /**
+     * 页面上拉触底事件的处理函数
+     */
+    onReachBottom: function() {
+
+    },
+
+    /**
+     * 用户点击右上角分享
+     */
+    onShareAppMessage: function() {
+
+    },
+
     data() {
       return {
         showLoading: true,
@@ -57,8 +124,8 @@
           this.getUnloginUserInfo();
         } else if (user && (user.nickName == "" && user.avatarUrl == "")) { //后台没有昵称 图片数据
           this.getUnloginUserInfo();
-        }else{
-          this.hasUserInfo=true;
+        } else {
+          this.hasUserInfo = true;
         }
         if (user && this.systemParamInit) {
           this.showLoading = false;
