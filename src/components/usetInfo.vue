@@ -1,10 +1,10 @@
 <template>
  <view class="userInfo">
     <image class="userinfo-avatar" :src="userInfo.avatarUrl"></image>
-    <view v-show="isShowName" class="userDiv"> 账户：
+    <view v-if="isShowName" class="userDiv"> 账户：
       <span class="username">{{userInfo.nickName}}</span>
     </view>
-    <view v-show="isShowBalance" class="userDiv">余额：
+    <view v-if="isShowBalance" class="userDiv">余额：
       <span class="balance">{{userInfo.money}}元</span>
     </view>
   </view>

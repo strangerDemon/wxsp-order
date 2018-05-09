@@ -326,6 +326,18 @@
       vm.init();
       vm.$store.commit("getOrderParam", { openId: vm.userInfo.openId });
     },
+      /*
+     * 生命周期函数--监听页面显示
+     */
+    onShow() {
+       this.$store.commit("setCurrentPage", { currentPage: "OrderList" })
+    },
+
+    /*
+     * 生命周期函数--监听页面隐藏
+     */
+    onHide() {
+    },
     /**
      * 页面相关事件处理函数--监听用户下拉动作
      */

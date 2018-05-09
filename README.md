@@ -24,3 +24,5 @@ For detailed explanation on how things work, checkout the [guide](http://vuejs-t
 # wx_sp_order
 wechat small project about order lunch
 
+mpvue 版本的微信小程序 点餐系统前端demo
+

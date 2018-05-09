@@ -9,8 +9,8 @@
           <text class="userinfo-nickname">{{userInfo.nickName}}</text>
         </block>
       </div>
-      <div class="usermotto" >
-        <div class="user-motto" v-for="(item ,index) in buttonTexts" :key="index">
+      <div class="application" >
+        <div class="app-item" v-for="(item ,index) in buttonTexts" :key="index">
           <image class="munuImage" :src="item.icon" background-size="cover"></image>
           <text class="item" @click="binddivTap(item.value)">{{item.name}}</text>
         </div>
@@ -29,44 +29,32 @@
     /**
      * 页面的初始数据
      */
-    data: {
-
-    },
+    data: {},
 
     /**
      * 生命周期函数--监听页面加载
      */
-    onLoad: function(options) {
-
-    },
+    onLoad: function(options) {},
 
     /**
      * 生命周期函数--监听页面初次渲染完成
      */
-    onReady: function() {
-
-    },
+    onReady: function() {},
 
     /**
      * 生命周期函数--监听页面显示
      */
-    onShow: function() {
-
-    },
+    onShow: function() {},
 
     /**
      * 生命周期函数--监听页面隐藏
      */
-    onHide: function() {
-
-    },
+    onHide: function() {},
 
     /**
      * 生命周期函数--监听页面卸载
      */
-    onUnload: function() {
-
-    },
+    onUnload: function() {},
 
     /**
      * 页面相关事件处理函数--监听用户下拉动作
@@ -79,24 +67,21 @@
     /**
      * 页面上拉触底事件的处理函数
      */
-    onReachBottom: function() {
-
-    },
+    onReachBottom: function() {},
 
     /**
      * 用户点击右上角分享
      */
-    onShareAppMessage: function() {
-
-    },
+    onShareAppMessage: function() {},
 
     data() {
       return {
         showLoading: true,
         dialogMessage: "请先注册",
-        buttonTexts: [{ name: 'order', value: 'order', icon: '../../static/images/bee.jpg' },
-          { name: 'map', value: 'map', icon: '../../static/images/chicken.jpg' },
-          { name: 'music', value: 'music', icon: '../../static/images/dog.jpg' }
+        buttonTexts: [
+          /*{ name: '点餐入口', value: 'order', icon: '../../static/images/bee.jpg' },
+                             { name: 'map', value: 'map', icon: '../../static/images/chicken.jpg' },
+                             { name: 'music', value: 'music', icon: '../../static/images/dog.jpg' }*/
         ],
         hasUserInfo: false,
         canIUse: wx.canIUse('button.open-type.getUserInfo')
@@ -262,7 +247,11 @@
     color: #aaa;
   }
 
-  .user-motto {
+  .application {
+    margin-top: 40px;
+  }
+
+  .app-item {
     margin-top: 20px;
     display: block;
   }

@@ -147,7 +147,19 @@
     mounted() {
       let vm = this;
       vm.$store.commit("getRedemptionList", { openId: vm.userInfo.openId });
-    }
+    },
+      /*
+     * 生命周期函数--监听页面显示
+     */
+    onShow() {
+       this.$store.commit("setCurrentPage", { currentPage: "Redemption" })
+    },
+
+    /*
+     * 生命周期函数--监听页面隐藏
+     */
+    onHide() {
+    },
   };
 </script>
 <style lang="css"

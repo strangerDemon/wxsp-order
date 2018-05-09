@@ -88,7 +88,19 @@
         page: 0,
         isCancle: 1,
       });
-    }
+    },
+      /*
+     * 生命周期函数--监听页面显示
+     */
+    onShow() {
+       this.$store.commit("setCurrentPage", { currentPage: "OrderCertificate" })
+    },
+
+    /*
+     * 生命周期函数--监听页面隐藏
+     */
+    onHide() {
+    },
   };
 </script>
 <style lang="css"
