@@ -44,32 +44,32 @@ export default {
       "selectedColor": "#9999FF",
       "list": [{
           "pagePath": "pages/main/Order/main",
-          "text": "",
-          "iconPath": "/static/images/tabbar_order_unselected.jpg",
-          "selectedIconPath": "/static/images/tabbar_order_selected.jpg"
+          "text": "点餐",
+          "iconPath": "/static/images/tabbar_order_unselected.png",
+          "selectedIconPath": "/static/images/tabbar_order_selected.png"
         },
         {
           "pagePath": "pages/main/OrderList/main",
-          "text": "",
-          "iconPath": "/static/images/tabbar_search_unselected.jpg",
-          "selectedIconPath": "/static/images/tabbar_search_selected.jpg"
+          "text": "查询",
+          "iconPath": "/static/images/tabbar_search_unselected.png",
+          "selectedIconPath": "/static/images/tabbar_search_selected.png"
         },
         {
           "pagePath": "pages/main/OrderCertificate/main",
-          "text": "",
-          "iconPath": "/static/images/tabbar_certificate_unselected.jpg",
-          "selectedIconPath": "/static/images/tabbar_certificate_selected.jpg"
+          "text": "凭证",
+          "iconPath": "/static/images/tabbar_certificate_unselected.png",
+          "selectedIconPath": "/static/images/tabbar_certificate_selected.png"
         },
         {
           "pagePath": "pages/main/Redemption/main",
-          "text": "",
-          "iconPath": "/static/images/tabbar_redemption_unselected.jpg",
-          "selectedIconPath": "/static/images/tabbar_redemption_selected.jpg"
+          "text": "换购",
+          "iconPath": "/static/images/tabbar_redemption_unselected.png",
+          "selectedIconPath": "/static/images/tabbar_redemption_selected.png"
         }, {
           "pagePath": "pages/index/main",
-          "text": "",
-          "iconPath": "/static/images/tabbar_my_unselected.jpg",
-          "selectedIconPath": "/static/images/tabbar_my_selected.jpg"
+          "text": "主页",
+          "iconPath": "/static/images/tabbar_my_unselected.png",
+          "selectedIconPath": "/static/images/tabbar_my_selected.png"
         },
       ]
     }

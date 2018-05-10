@@ -24,7 +24,12 @@
             </div>
           </div>
       </div>
-      <button class="weui-btn saveButton" type="primary" size="large" @click="commit">确定</button>
+      <div style="text-align:center;margin: 13px 8px 8px;">
+        <block @click="commit">
+          <image  src="/static/images/orderCommit.png"  class="orderCommit commitImage"></image>
+          <text class="orderCommit commitText">确定</text>
+        </block>
+      </div>
     </div>
   </div>
 </template>
@@ -148,18 +153,17 @@
       let vm = this;
       vm.$store.commit("getRedemptionList", { openId: vm.userInfo.openId });
     },
-      /*
+    /*
      * 生命周期函数--监听页面显示
      */
     onShow() {
-       this.$store.commit("setCurrentPage", { currentPage: "Redemption" })
+      this.$store.commit("setCurrentPage", { currentPage: "Redemption" })
     },
 
     /*
      * 生命周期函数--监听页面隐藏
      */
-    onHide() {
-    },
+    onHide() {},
   };
 </script>
 <style lang="css"
@@ -191,12 +195,22 @@
     padding-bottom: 75px;
   }
 
-  .saveButton {
+  .orderCommit {
     position: fixed;
-    bottom: 0;
-    min-height: 48px;
-    border-radius: 0px;
-    width: 100%;
+    bottom: 5px;
+    flex-direction: column;
+    align-items: center;
+    width: 130rpx;
+    height: 130rpx;
+    margin-left: -65rpx;
+    border-radius: 50%;
+  }
+
+  .commitImage {}
+
+  .commitText {
+    height: 95rpx;
+    color: #fff;
   }
 
   .clearfix {

@@ -1,37 +1,44 @@
 <template>
   <div class="order">
     <user-info :isShowName="true" :isShowBalance="true"></user-info>
-    <div class="promptDiv">
-      <div class="prompt">就餐时间：下一个工作日中午</div>
-      <div class="prompt">点餐时间：早 {{orderParam.startTime}}点 至 晚 {{orderParam.endTime}}点</div>
-    </div>
     <div class="menuDiv">
-      <div slot="header" class="clearfix">
-        <span>菜品明细：</span>
-        <i class="el-icon-arrow-down isShowMenuButton" @click="isShowMenu=!isShowMenu"></i>
+      <div  class="weui-flex kind-list__item-hd kind-list__item-hd_show">
+          <div class="weui-flex__item">菜品明细：</div>
+          <image class="kind-list__img" src="/static/images/icon_nav_nav.png" @click="isShowMenu=!isShowMenu"></image>
       </div>
-      <div v-if="isShowMenu">
+      <div v-if="isShowMenu" class="page__bd">
+        <div class="weui-grids">
+          <div v-for="(dish,index) in menuList" :key="index" class="weui-grid">
+            <image class="weui-grid__icon" :src="dish.image==undefined||dish.image==''?'/static/images/undefined.png':dish.image" />
+            <div class="weui-grid__label">{{dish.name}}</div>
+          </div>
+        </div>
+      </div>
+      <div v-if="!isShowMenu" class="page__bd">
         <div class="dish" v-for="(dish,index) in menuList" :key="index">{{dish.name}}</div>
       </div>
     </div>
-    <div class="todayOrderList">
-      <div>今日点餐情况:</div>
-      <div v-for="(order,index) in orderList" :key="index" v-if="order.orderType>0">
-        <view class="weui-cells weui-cells_after-title">
-          <view class="weui-cell">
-            <view class="weui-cell__bd">{{order.orderName}}</view>
-            <view class="weui-cells__title">{{order.createDate}}</view>
-            <view v-if="order.isCancle" style="color: red" class="weui-cell__ft buttonText">已退订</view>
-            <view v-else style="color: blue" @click="cancel(order.id)" class="weui-cell__ft buttonText">退订</view>
-          </view>
-        </view>
+    <blobk>
+      <div class="weui-flex kind-list__item-hd kind-list__item-hd_show" v-if="orderList.length>0">
+        <span class="weui-flex__item title">今日点餐情况:</span>
       </div>
-      <div v-if="orderList.length==0" class="unOrderList">未查询到记录</div>
+      <div v-for="(order,index) in orderList" :key="index" v-if="order.orderType>0">
+        <div class="weui-cells weui-cells_after-title">
+          <div class="weui-cell">
+            <div class="weui-cell__bd">{{order.orderName}}</div>
+            <div class="weui-cells__title">{{order.createDate}}</div>
+            <div v-if="order.isCancle" style="color: red" class="weui-cell__ft buttonText">已退订</div>
+            <div v-else style="color: blue" @click="cancel(order.id)" class="weui-cell__ft buttonText">退订</div>
+          </div>
+        </div>
+      </div>
       <span class="space"></span>
-    </div>
-    <picker @change="commitAction" :range="lunchTypeOptions" range-key="label">
-        <!-- <button id="pickerButton" v-show="false" class="weui-btn saveButton" type="primary"></button>-->
-         <button v-if="isOrderOrNot" class="weui-btn saveButton" type="primary">点餐</button>
+    </blobk>
+    <picker style="text-align:center;margin: 13px 8px 8px;" @change="commitAction" :range="lunchTypeOptions" range-key="label">
+      <block v-if="isOrderOrNot">
+        <image  src="/static/images/orderCommit.png"  class="orderCommit commitImage"></image>
+        <text class="orderCommit commitText">点餐</text>
+      </block>
     </picker>
   </div>
 </template>
@@ -43,7 +50,6 @@
     components: { userInfo },
     data() {
       return {
-        isAdmire: false,
         isOrderOrNot: false,
         isShowMenu: true,
         orderTimes: 0,
@@ -235,14 +241,13 @@
      * 生命周期函数--监听页面显示
      */
     onShow() {
-       this.$store.commit("setCurrentPage", { currentPage: "Order" })
+      this.$store.commit("setCurrentPage", { currentPage: "Order" })
     },
 
     /*
      * 生命周期函数--监听页面隐藏
      */
-    onHide() {
-    },
+    onHide() {},
   };
 </script>
 <style lang="css"
@@ -255,30 +260,6 @@
     scroll-behavior: auto;
   }
 
-  .promptDiv {
-    text-align: center;
-    margin: 5px 0;
-    position: relative;
-  }
-
-  .prompt {
-    margin: 3px 0;
-  }
-
-  .admire {
-    text-align: center;
-    font-size: 16px;
-    color: red;
-    margin: 5px;
-  }
-
-  /* 菜品列表 */
-
-  .clearfix {
-    font-size: 20px;
-    margin: 5px 10px;
-  }
-
   .dish {
     position: relative;
     left: 5vw;
@@ -287,16 +268,22 @@
     display: inline-table;
   }
 
-  .isShowMenuButton {
-    float: right;
+  .orderCommit {
+    position: fixed;
+    bottom: 5px;
+    flex-direction: column;
+    align-items: center;
+    width: 130rpx;
+    height: 130rpx;
+    margin-left: -65rpx;
+    border-radius: 50%;
   }
 
-  .saveButton {
-    position: fixed;
-    bottom: 0;
-    min-height: 48px;
-    border-radius: 0px;
-    width: 100%;
+  .commitImage {}
+
+  .commitText {
+    height: 95rpx;
+    color: #fff;
   }
 
   .space {
@@ -309,10 +296,24 @@
     cursor: pointer;
   }
 
-  .unOrderList {
-    display: block;
-    margin: 25px;
-    position: relative;
-    font-family: fantasy;
+  .weui-flex {
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    align-items: center
+  }
+
+  .kind-list__img {
+    width: 30px;
+    height: 30px
+  }
+
+  .kind-list__item-hd {
+    padding: 20px;
+    -webkit-transition: opacity .3s;
+    transition: opacity .3s
+  }
+
+  .kind-list__item-hd_show {
+    opacity: .4
   }
 </style>

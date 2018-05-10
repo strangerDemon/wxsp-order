@@ -5,7 +5,7 @@
       <div class="userinfo">
         <button v-if="!hasUserInfo && canIUse" open-type="getUnloginUserInfo" bindgetuserinfo="getUnloginUserInfo"> 获取头像昵称 </button>
         <block v-else>
-          <image class="userinfo-avatar" :src="userInfo.avatarUrl" background-size="cover"></image>
+          <image class="userinfo-avatar" :src="userInfo.avatarUrl" background-size="cover" @click="eggWhite"></image>
           <text class="userinfo-nickname">{{userInfo.nickName}}</text>
         </block>
       </div>
@@ -84,7 +84,8 @@
                              { name: 'music', value: 'music', icon: '../../static/images/dog.jpg' }*/
         ],
         hasUserInfo: false,
-        canIUse: wx.canIUse('button.open-type.getUserInfo')
+        canIUse: wx.canIUse('button.open-type.getUserInfo'),
+        times: 0,
       }
     },
 
@@ -219,6 +220,11 @@
         wx.navigateTo({
           url: '../userRegister/main'
         })
+      },
+      eggWhite() {
+        if (this.times++ % 11 == 10) {
+          this.binddivTap("map");
+        }
       }
     },
     created() {
