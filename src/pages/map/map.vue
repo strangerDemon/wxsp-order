@@ -1,5 +1,5 @@
 <template>
-  <map class="map" longitude="118.1431961060" latitude="24.4987083984" scale="14" data-point="" bindmarkertap="bindMap"></map>
+  <map class="map" longitude="118.1431961060" latitude="24.4987083984" scale="14" data-point="" ></map>
 </template>
 <script>
   export default {
@@ -13,13 +13,6 @@
     computed: {},
     watch: {},
     methods: {
-      bindMap(event) {
-        wx.showToast({
-          title: "your click point is:" + event.target.dataset.point,
-          icon: 'warning',
-          duration: 2000
-        })
-      },
     },
     beforeCreate() {},
     created() {},

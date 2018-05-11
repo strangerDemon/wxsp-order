@@ -1,5 +1,10 @@
 <template>
   <div class="order">
+    <div v-if="isInitWaining" class="warning-background">
+      <div class="warning-text">
+        {{initWarningText}}
+      </div>
+      </div>
     <user-info :isShowName="true" :isShowBalance="true"></user-info>
     <div class="menuDiv">
       <div  class="weui-flex kind-list__item-hd kind-list__item-hd_show">
@@ -50,6 +55,8 @@
     components: { userInfo },
     data() {
       return {
+        isInitWaining: false,
+        initWarningText: "warning",
         isOrderOrNot: false,
         isShowMenu: true,
         orderTimes: 0,
@@ -89,14 +96,11 @@
         if (vm.currentPage.toUpperCase() != vm.$options.name.toUpperCase())
           return;
         if (!orderParam.isOrderOrNot) {
-          wx.showModal({
-            title: '提示',
-            content: "点餐程序已关闭",
-            success: function(res) {
-              vm.isOrderOrNot = false;
-            }
-          })
+          vm.isInitWaining = true;
+          vm.initWarningText = "点餐程序已关闭";
+          vm.isOrderOrNot = false;
         } else {
+          vm.isInitWaining = false;
           vm.isOrderOrNot = true;
         }
         if (vm.orderList != null) {
@@ -132,24 +136,25 @@
               return;
             }
           })
-        }
-        wx.showModal({
-          title: '提示',
-          content: "确定取消订餐?",
-          success: function(res) {
-            if (res.confirm) {
-              vm.$store.commit("cancle", {
-                openId: vm.userInfo.openId,
-                Id: orderId,
-                func: function() {
-                  vm.requestToday();
-                }
-              });
-            } else if (res.cancel) {
-              console.log('用户点击取消')
+        } else {
+          wx.showModal({
+            title: '提示',
+            content: "确定取消订餐?",
+            success: function(res) {
+              if (res.confirm) {
+                vm.$store.commit("cancle", {
+                  openId: vm.userInfo.openId,
+                  Id: orderId,
+                  func: function() {
+                    vm.requestToday();
+                  }
+                });
+              } else if (res.cancel) {
+                console.log('用户点击取消')
+              }
             }
-          }
-        })
+          })
+        }
       },
       checkDate() {
         let vm = this;
@@ -182,12 +187,12 @@
           }
         }
         if (!canOrder) {
-          wx.showModal({
-            title: '提示',
-            content: "无法点餐（点餐次数已满或金额不足）",
-            success: function(res) {}
-          })
+          vm.isInitWaining = true;
+          vm.initWarningText = "无法点餐（点餐次数已满或金额不足）";
           vm.isOrderOrNot = false;
+        }else{
+          vm.isInitWaining = false;
+          vm.isOrderOrNot = true;
         }
       },
       commitAction(e) {
@@ -252,6 +257,19 @@
 </script>
 <style lang="css"
        scoped>
+  .warning-background {
+    width: 100%;
+    height: 35px;
+    background-color: red;
+  }
+
+  .warning-text {
+    color: #fff;
+    text-align: center;
+    width: 100%;
+    font-size: 22px;
+  }
+
   .order {
     position: absolute;
     height: 100%;

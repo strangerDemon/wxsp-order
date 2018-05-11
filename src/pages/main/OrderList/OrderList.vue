@@ -1,14 +1,51 @@
 <template>
   <div class="orderList">
-    <i :class="isShowSearch?'up dropDown':'down dropDown'" @click="isShowSearch=!isShowSearch"></i>
-      <div class="search" v-show="isShowSearch">
-        <div v-show="isAdmin" class="weui-cell weui-cell_input">
+    <block>
+      <div class="nav">
+        <div class="nav-son" :class="shownavindex == 1? 'active' : ''" @click="naviAction(1)">
+            <div class="content">账户变动</div>
+            <div class="icon"></div>
+        </div>
+        <div class="nav-son" :class="shownavindex == 2? 'active' : ''" @click="naviAction(2)">
+            <div class="content">消费类别</div>
+            <div class="icon"></div>
+        </div>
+        <div class="nav-son" :class="shownavindex == 3? 'active' : ''" @click="naviAction(3)">
+            <div class="content">更多</div>
+            <div class="icon"></div>
+        </div>
+      </div>
+      <div class="temp temp1 temp2" :class="changeTypeOpen||changeTypeShow?changeTypeOpen?changeTypeShow? 'slidown disappear':'slidown':'slidup disappear':'slidup' ">
+        <radio-group @change="radioChange">
+          <label class="weui-check__label" v-for="(item,index) in changeTypeOptions" :key="index">
+            <radio class="weui-check" :value="item.value" :checked="item.checked"/>
+            <div class="weui-cell__bd">{{item.label}}</div>
+            <div class="weui-cell__ft weui-cell__ft_in-radio radio-icon" v-if="item.checked">
+              <icon class="weui-icon-radio" type="success_no_circle" size="16"></icon>
+            </div>
+          </label>
+        </radio-group>
+      </div>
+      <div class="temp temp1 temp2" :class="orderTypeOpen||orderTypeShow?orderTypeOpen?orderTypeShow? 'slidown disappear':'slidown':'slidup disappear':'slidup'" >
+        <radio-group @change="radioOrder">
+          <label class="weui-check__label" v-for="(item,index) in orderTypeOptions" :key="index">
+            <radio class="weui-check" :value="item.value" :checked="item.checked"/>
+            <div class="weui-cell__bd" >{{item.label}}</div>
+            <div class="weui-cell__ft weui-cell__ft_in-radio radio-icon" v-if="item.checked">
+              <icon class="weui-icon-radio" type="success_no_circle" size="16"></icon>
+            </div>
+          </label>
+        </radio-group>
+      </div>
+      <div class="temp temp1" :class="moreOpen||moreShow?moreOpen?moreShow? 'slidown disappear':'slidown':'slidup disappear':'slidup'">
+        <div v-if="isAdmin" class="weui-cell weui-cell_input">
             <div class="weui-cell__hd">
               <div class="weui-label">用户名</div>
             </div>
             <div class="weui-cell__bd">
               <input v-model="username" class="weui-input" placeholder="请输入用户名"/>
             </div>
+            <icon v-if="username!=''" type="cancel" size="23" @click="clearInput('username')"></icon>
         </div>
         <div class="weui-cell weui-cell_input">
             <div class="weui-cell__hd">
@@ -19,6 +56,7 @@
                   <div class="weui-input">{{startDate}}</div>
               </picker>
             </div>
+            <icon v-if="startDate!=''" class="clearInput" type="cancel" size="23" @click="clearInput('startDate')"></icon>
         </div>
         <div class="weui-cell weui-cell_input">
             <div class="weui-cell__hd">
@@ -29,31 +67,14 @@
                   <div class="weui-input">{{endDate}}</div>
               </picker>
             </div>
+            <icon v-if="endDate!=''" type="cancel" size="23" @click="clearInput('endDate')"></icon>
         </div>
-        <div class="weui-cell weui-cell_input">
-            <div class="weui-cell__hd">
-              <div class="weui-label">消费类别</div>
-            </div>
-            <div class="weui-cell__bd">
-              <picker  @change="updatePicker" data-key="orderType" :range="orderTypeOptions" range-key="label">
-                <div class="weui-input">{{orderTypeStr}}</div>
-              </picker>
-            </div>
-        </div>
-        <div class="weui-cell weui-cell_input">
-            <div class="weui-cell__hd">
-              <div class="weui-label">账户记录</div>
-            </div>
-            <div class="weui-cell__bd">
-              <picker @change="updatePicker" data-key="changeType" :range="changeTypeOptions" range-key="label">
-                <div class="weui-input">{{changeTypeStr}}</div>
-              </picker>
-            </div>
-        </div>
-        <button class="weui-btn mini-btn searchButton" type="primary" size="mini" @click="search(1)">查询</button>
+        <button class="mini-btn searchButton" type="primary" size="mini" @click="search(1)">确定</button>
       </div>
+      <div class="fullbg" :class="isfull? 'fullopacity':''" @click="naviAction(0)"></div>
+    </block>
     <div class="list">
-      <ul style="padding:10px 0;" infinite-scroll-disabled="loading" infinite-scroll-distance="10">
+      <ul infinite-scroll-disabled="loading" infinite-scroll-distance="10">
         <div v-for="(order,index) in list" :key="index">
           <div class="weui-cells weui-cells_after-title">
             <div class="weui-cell">
@@ -75,34 +96,44 @@
     components: {},
     data() {
       return {
+        //nav
+        shownavindex: '',
+        changeTypeOpen: false,
+        orderTypeOpen: false,
+        moreOpen: false,
+        changeTypeShow: false,
+        orderTypeShow: false,
+        moreShow: false,
+        isfull: false,
         page: 1,
-        isShowSearch: true,
         //search option
         username: "",
-        startDate: null,
-        endDate: null,
+        startDate: "",
+        endDate: "",
         changeType: "0", //0全部 1充值 2消费
-        changeTypeStr: "全部",
         changeBoolean: false,
         changeTypeOptions: [{
             value: "0",
-            label: "全部"
+            label: "全部",
+            checked: false
           },
           {
             value: "1",
-            label: "充值"
+            label: "充值",
+            checked: false
           },
           {
             value: "2",
-            label: "消费"
+            label: "消费",
+            checked: false
           },
           {
             value: "3",
-            label: "扣款"
+            label: "扣款",
+            checked: false
           }
         ],
         orderType: "0", //0全部 1a 2b 3c
-        orderTypeStr: "全部",
         orderBoolean: false,
         orderTypeOptions: [],
         lastRequestTime: null,
@@ -128,18 +159,6 @@
       }
     },
     watch: {
-      orderType(val) {
-        if (val < 0) {
-          this.orderTypeStr = this.orderTypeOptions[
-            this.orderTypeOptions.length - 1
-          ].label;
-        } else {
-          this.orderTypeStr = this.orderTypeOptions[val].label;
-        }
-      },
-      changeType(val) {
-        this.changeTypeStr = this.changeTypeOptions[val].label;
-      },
       orderParam(orderParam) {
         let vm = this;
         if (vm.currentPage.toUpperCase() != vm.$options.name.toUpperCase())
@@ -147,14 +166,20 @@
         vm.orderTypeOptions = [];
         vm.orderTypeOptions.push({
           value: "0",
-          label: "全部"
+          label: "全部",
+          checked: false,
         });
         for (let i = 0, length = orderParam.lunch.length; i < length; i++) {
-          vm.orderTypeOptions.push(orderParam.lunch[i]);
+          vm.orderTypeOptions.push({
+            value: orderParam.lunch[i].value,
+            label: orderParam.lunch[i].label,
+            checked: false,
+          });
         }
         vm.orderTypeOptions.push({
           value: "-1",
-          label: "其他换购"
+          label: "其他换购",
+          checked: false,
         });
       },
       orderList(list) {
@@ -190,9 +215,99 @@
       init() {
         let vm = this;
         vm.list = [];
-        vm.startDate = vm.handleConfirm(new Date());
-        vm.endDate = vm.handleConfirm(new Date());
+        //let dd=new Date();
+        //dd.setDate(dd.getDate()-7)
+        //vm.startDate = vm.handleConfirm(dd);
+        //vm.endDate = vm.handleConfirm(new Date());
         vm.search(1);
+      },
+      naviAction(nav) {
+        let vm = this
+        if (vm.shownavindex == nav) { //再次点击
+          vm.changeTypeOpen = false;
+          vm.orderTypeOpen = false;
+          vm.moreOpen = false;
+          vm.changeTypeShow = true;
+          vm.orderTypeShow = true;
+          vm.moreShow = true;
+          switch (nav) {
+            case 1:
+              vm.changeTypeShow = false;
+              break;
+            case 2:
+              vm.orderTypeShow = false;
+              break;
+            case 3:
+              vm.moreShow = false;
+              break;
+            default:
+              break;
+          }
+          vm.isfull = false;
+          vm.shownavindex = 0;
+        } else {
+          vm.shownavindex = nav;
+          vm.isfull = true;
+          vm.changeTypeOpen = false;
+          vm.orderTypeOpen = false;
+          vm.moreOpen = false;
+          vm.changeTypeShow = true;
+          vm.orderTypeShow = true;
+          vm.moreShow = true;
+          switch (nav) {
+            case 1:
+              vm.changeTypeOpen = true;
+              vm.changeTypeShow = false;
+              break;
+            case 2:
+              vm.orderTypeOpen = true;
+              vm.orderTypeShow = false;
+              break;
+            case 3:
+              vm.moreOpen = true;
+              vm.moreShow = false;
+              break;
+            default:
+              vm.isfull = false;
+              break;
+          }
+        }
+      },
+      radioChange(e) {
+        let vm = this
+        for (var i = 0, len = vm.changeTypeOptions.length; i < len; ++i) {
+          vm.changeTypeOptions[i].checked = vm.changeTypeOptions[i].value == e.target
+            .value;
+        }
+        vm.changeType = e.target.value;
+        vm.search(1);
+        vm.naviAction(1);
+      },
+      radioOrder(e) {
+        let vm = this
+        for (var i = 0, len = vm.orderTypeOptions.length; i < len; ++i) {
+          vm.orderTypeOptions[i].checked = vm.orderTypeOptions[i].value == e.target
+            .value;
+        }
+        vm.orderType = e.target.value;
+        vm.search(1);
+        vm.naviAction(2);
+      },
+      clearInput(input) {console.log(input);
+        let vm = this
+        switch (input) {
+          case "startDate":
+            vm.startDate = "";
+            break;
+          case "endDate":
+            vm.endDate = "";
+            break;
+          case "username":
+            vm.username = "";
+            break;
+          default:
+            break;
+        }
       },
       updatePicker(e) {
         let vm = this;
@@ -202,14 +317,6 @@
             break;
           case "endDate":
             vm.endDate = e.target.value
-            break;
-          case "orderType":
-            vm.orderType = vm.orderTypeOptions[e.target.value].value;
-            vm.orderTypeStr = vm.orderTypeOptions[e.target.value].label;
-            break;
-          case "changeType":
-            vm.changeType = vm.changeTypeOptions[e.target.value].value;
-            vm.changeTypeStr = vm.changeTypeOptions[e.target.value].label;
             break;
           default:
             break;
@@ -326,18 +433,17 @@
       vm.init();
       vm.$store.commit("getOrderParam", { openId: vm.userInfo.openId });
     },
-      /*
+    /*
      * 生命周期函数--监听页面显示
      */
     onShow() {
-       this.$store.commit("setCurrentPage", { currentPage: "OrderList" })
+      this.$store.commit("setCurrentPage", { currentPage: "OrderList" })
     },
 
     /*
      * 生命周期函数--监听页面隐藏
      */
-    onHide() {
-    },
+    onHide() {},
     /**
      * 页面相关事件处理函数--监听用户下拉动作
      */
@@ -367,69 +473,8 @@
     font-size: 18px;
   }
 
-  .search {
-    position: relative;
-    width: 100%;
-    top: 30px;
-    margin-top: 10px;
-  }
-
   .searchButton {
-    left: 45vw;
-  }
-
-  .dropDown {
-    background-image: url("../../../../static/images/dropDown.png");
-    background-size: cover;
-    /*等比缩放*/
-    position: absolute;
-    width: 25px;
-    height: 25px;
-    right: -5px;
-    top: -12px;
-  }
-
-  .up {
-    z-index: 9999;
-    left: 45vw;
-    height: 60px;
-    width: 60px;
-    transform: rotate(180deg);
-    /*动画*/
-    animation: upRotate 1s;
-    -webkit-animation: upRotate 1s;
-  }
-
-  .down {
-    z-index: 9999;
-    left: 45vw;
-    height: 60px;
-    width: 60px;
-    /*动画*/
-    animation: downRotate 1s;
-    -webkit-animation: downRotate 1s;
-  }
-
-  /*动画*/
-
-  @keyframes upRotate {
-    from {
-      transform: rotate(0deg);
-    }
-    to {
-      transform: rotate(180deg);
-    }
-  }
-
-  /*动画*/
-
-  @keyframes downRotate {
-    from {
-      transform: rotate(180deg);
-    }
-    to {
-      transform: rotate(360deg);
-    }
+    left: 40vw;
   }
 
   .searchTabOpen {
@@ -444,25 +489,147 @@
     -webkit-animation: closeTab 1s;
   }
 
-  @keyframes openTab {
+  .list {}
+
+  .nav {
+    position: fixed;
+    width: 100%;
+    z-index: 99;
+    display: flex;
+    border-bottom: 1px solid #d1d3d4;
+    background: #fff;
+  }
+
+  .nav-son {
+    display: flex;
+    flex: 1;
+    text-align: center;
+    height: 40px;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+  }
+
+  .borders {
+    border-left: 1px solid #e6e6e6;
+    border-right: 1px solid #e6e6e6;
+  }
+
+  .content {
+    display: inline-block;
+  }
+
+  .icon {
+    display: inline-block;
+    border: 4px solid transparent;
+    border-top: 4px solid #9b9b9b;
+    margin-left: 5px;
+  }
+
+  .temp {
+    position: fixed;
+    width: 100%;
+    z-index: 4;
+    margin-top: 41px;
+  }
+
+  .temp1 {
+    display: none;
+    /*width: 100%;*/
+    max-height: 550rpx;
+    overflow-y: scroll;
+    padding: 0 20rpx 0 20rpx;
+    line-height: 90rpx;
+    background: #fff;
+  }
+
+  .temp2 {}
+
+  .slidedown {
+    transform: translateY(0%);
+  }
+
+  .temp2 view {
+    border-bottom: 1px solid #d1d3d4;
+    font-size: 14px;
+    color: #666;
+  }
+
+  .current {
+    background: #e0e0e0;
+  }
+
+  .current2 {
+    background: #fff;
+  }
+
+  .fullbg {
+    position: fixed;
+    top: 0;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    background: rgb(1, 1, 1);
+    transition: all 2s;
+    opacity: 0;
+  }
+
+  .fullopacity {
+    opacity: .5;
+  }
+
+  .nav-son.active .content {
+    color: #61beff;
+  }
+
+  .nav-son.active .icon {
+    border-bottom: 4px solid #61beff;
+    border-top: 0;
+  }
+
+  @keyframes slidown {
     from {
-      height: 0px;
+      transform: translateY(-100%);
     }
     to {
-      height: auto;
+      transform: translateY(0%);
     }
   }
 
-  @keyframes closeTab {
+  .slidown {
+    display: block;
+    animation: slidown .7s ease-in both;
+  }
+
+  @keyframes slidup {
     from {
-      height: auto;
+      transform: translateY(0%);
     }
     to {
-      height: 0px;
+      transform: translateY(-100%);
     }
   }
 
-  .list {
-    padding-top: 15px;
+  .slidup {
+    /*display: block;*/
+    animation: slidup .7s ease-in both;
+  }
+
+  .disappear {
+    display: none;
+  }
+
+  .radio-icon {
+    position: relative;
+    float: right;
+    border-bottom: 0rpx solid #fff !important;
+    margin: -40px 20px 0 0;
+  }
+
+  .clearInput {
+    position: relative;
+    float: right;
+    top: 10px;
+    right: 10px;
   }
 </style>
