@@ -1,10 +1,10 @@
 <template>
   <div class="order">
-    <div v-if="isInitWaining" class="warning-background">
+    <div v-if="isInitWaining" :class="isInitWaining?'slidown warning-background':'warning-background'">
       <div class="warning-text">
         {{initWarningText}}
       </div>
-      </div>
+    </div>
     <user-info :isShowName="true" :isShowBalance="true"></user-info>
     <div class="menuDiv">
       <div  class="weui-flex kind-list__item-hd kind-list__item-hd_show">
@@ -66,6 +66,9 @@
     },
     props: {},
     computed: {
+      isLogin() {
+        return this.$store.state.user.isLogin;
+      },
       currentPage() {
         return this.$store.state.init.currentPage;
       },
@@ -188,9 +191,9 @@
         }
         if (!canOrder) {
           vm.isInitWaining = true;
-          vm.initWarningText = "无法点餐（点餐次数已满或金额不足）";
+          vm.initWarningText = "无法点餐";
           vm.isOrderOrNot = false;
-        }else{
+        } else {
           vm.isInitWaining = false;
           vm.isOrderOrNot = true;
         }
@@ -237,16 +240,29 @@
     destroyed() {},
     mounted() {
       let vm = this;
-      vm.$store.commit("getOrderParam", { openId: vm.userInfo.openId });
-      vm.$store.commit("getMeunList", { openId: vm.userInfo.openId });
-      vm.requestToday();
-      vm.isOrderOrNot = true;
+      if (!vm.isLogin) {
+        wx.navigateTo({
+          url: '../../userRegister/main'
+        })
+      } else {
+        vm.$store.commit("getOrderParam", { openId: vm.userInfo.openId });
+        vm.$store.commit("getMeunList", { openId: vm.userInfo.openId });
+        vm.requestToday();
+        vm.isOrderOrNot = true;
+      }
     },
     /*
      * 生命周期函数--监听页面显示
      */
     onShow() {
-      this.$store.commit("setCurrentPage", { currentPage: "Order" })
+      if (!this.isLogin) {
+        wx.navigateTo({
+          url: '../../userRegister/main'
+        })
+      } else {
+        this.$store.commit("setCurrentPage", { currentPage: "Order" });
+        this.requestToday();
+      }
     },
 
     /*
@@ -258,6 +274,8 @@
 <style lang="css"
        scoped>
   .warning-background {
+    position: fixed;
+    top: 0px;
     width: 100%;
     height: 35px;
     background-color: red;
@@ -333,5 +351,19 @@
 
   .kind-list__item-hd_show {
     opacity: .4
+  }
+
+  @keyframes slidown {
+    from {
+      transform: translateY(-100%);
+    }
+    to {
+      transform: translateY(0%);
+    }
+  }
+
+  .slidown {
+    display: block;
+    animation: slidown .7s ease-in both;
   }
 </style>

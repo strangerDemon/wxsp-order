@@ -45,7 +45,7 @@
             <div class="weui-cell__bd">
               <input v-model="username" class="weui-input" placeholder="请输入用户名"/>
             </div>
-            <icon v-if="username!=''" type="cancel" size="23" @click="clearInput('username')"></icon>
+            <icon v-if="username!=''" class="clearInput" type="cancel" size="23" @click="clearInput('username')"></icon>
         </div>
         <div class="weui-cell weui-cell_input">
             <div class="weui-cell__hd">
@@ -67,7 +67,7 @@
                   <div class="weui-input">{{endDate}}</div>
               </picker>
             </div>
-            <icon v-if="endDate!=''" type="cancel" size="23" @click="clearInput('endDate')"></icon>
+            <icon v-if="endDate!=''" class="clearInput" type="cancel" size="23" @click="clearInput('endDate')"></icon>
         </div>
         <button class="mini-btn searchButton" type="primary" size="mini" @click="search(1)">确定</button>
       </div>
@@ -84,6 +84,9 @@
                 <div v-else-if="order.canCancle" style="color: blue" @click="cancel(order.id)" class="weui-cell__ft buttonText">退订</div>
             </div>
           </div>
+        </div>
+        <div v-if="list.length==0" style="position:absoulte;margin:30px;">
+          <image src="/static/images/undefined.png" />
         </div>
       </ul>    
     </div>
@@ -142,6 +145,9 @@
     },
     props: {},
     computed: {
+      isLogin() {
+        return this.$store.state.user.isLogin;
+      },
       userInfo() {
         return this.$store.state.user.userInfo;
       },
@@ -191,11 +197,11 @@
         }
         if (list.length == 0) {
           if (vm.page == 1) {
-            wx.showModal({
+            /*wx.showModal({
               title: '提示',
               content: "未查询到数据!",
               success: function(res) {}
-            })
+            })*/
           } else {
             vm.page--;
           }
@@ -293,7 +299,8 @@
         vm.search(1);
         vm.naviAction(2);
       },
-      clearInput(input) {console.log(input);
+      clearInput(input) {
+        console.log(input);
         let vm = this
         switch (input) {
           case "startDate":
@@ -430,14 +437,27 @@
     destroyed() {},
     mounted() {
       let vm = this;
-      vm.init();
-      vm.$store.commit("getOrderParam", { openId: vm.userInfo.openId });
+      if (!vm.isLogin) {
+        wx.navigateTo({
+          url: '../../userRegister/main'
+        })
+      } else {
+        vm.init();
+        vm.$store.commit("getOrderParam", { openId: vm.userInfo.openId });
+      }
     },
     /*
      * 生命周期函数--监听页面显示
      */
     onShow() {
-      this.$store.commit("setCurrentPage", { currentPage: "OrderList" })
+      if (!this.isLogin) {
+        wx.navigateTo({
+          url: '../../userRegister/main'
+        })
+      } else {
+        this.$store.commit("setCurrentPage", { currentPage: "OrderList" });
+        this.search(1);
+      }
     },
 
     /*
@@ -489,7 +509,10 @@
     -webkit-animation: closeTab 1s;
   }
 
-  .list {}
+  .list {
+    position: absolute;
+    margin-top: 41px;
+  }
 
   .nav {
     position: fixed;

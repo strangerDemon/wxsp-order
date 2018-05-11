@@ -32,7 +32,6 @@ const mutations = {
     }).then(res => {
       state.systemParamInit = true;
       state.systemParam = res;
-      //console.log("getSystemParam",res);
     }).catch(err => {
       wx.navigateTo({
         url: '/pages/msg/msg_fail/main?title=获取系统参数失败&details=' +

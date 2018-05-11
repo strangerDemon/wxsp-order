@@ -15,7 +15,7 @@
           <text class="item" @click="binddivTap(item.value)">{{item.name}}</text>
         </div>
       </div>
-      <footer-info :isLogin="isLogin" @userRegister="userRegister"></footer-info>
+      <footer-info :isLogin="isLogin" @userRegister="userRegister" @userUpdate="userUpdate"></footer-info>
     </div>
   </view>
 </template>
@@ -219,6 +219,15 @@
       userRegister() {
         wx.navigateTo({
           url: '../userRegister/main'
+        })
+      },
+      userUpdate() {
+        let vm = this;
+        vm.getUnloginUserInfo();
+        vm.$store.commit("userUpdate", {
+          openId: vm.userInfo.openId,
+          nickName: vm.userInfo.nickName,
+          avatarUrl:vm.userInfo.avatarUrl
         })
       },
       eggWhite() {

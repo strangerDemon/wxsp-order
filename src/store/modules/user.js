@@ -68,7 +68,24 @@ const mutations = {
       state.isLogin = true;
     }).catch(err => {
       wx.navigateTo({
-        url: '/pages/msg/msg_fail/main?title='+err.errMsg+'&redirect=/pages/index/main'
+        url: '/pages/msg/msg_fail/main?title=' + err.errMsg +
+          '&redirect=/pages/index/main'
+      });
+    })
+  },
+
+  //更新用户
+  userUpdate(state, info) {
+    new Promise((resolve, reject) => {
+      requestTask.wxRequest("userUpdate", info, resolve, reject)
+    }).then(res => {
+      wx.navigateTo({
+        url: '/pages/msg/msg_success/main?title=用户更新成功'
+      });
+    }).catch(err => {
+      wx.navigateTo({
+        url: '/pages/msg/msg_fail/main?title=' + err.errMsg +
+          '&redirect=/pages/index/main'
       });
     })
   }

@@ -1,34 +1,42 @@
 <template>
   <div class="Redemption">
-    <div>
-      <user-info :isShowName="true" :isShowBalance="true"></user-info>
-      <div class="admire">请现场与工作人员操作</div>
-      <div class="param">
-          <div slot="header" class="clearfix">
-            <span>换购类型（多选）</span>
-            <i class="el-icon-arrow-down isShowButton" @click="isShowRedemption=!isShowRedemption"></i>
-          </div>
-          <div v-show="isShowRedemption">
-            <checkbox-group @change="checkboxChange">
-              <label class="checkbox" v-for="(item,index) in redemptionList" :key="item">
-                <checkbox :value="item.value" :checked="item.checked"/>{{item.label}}
+    <div v-if="isWarning" :class="isWarning?'warning-background slidown':'warning-background'">
+      <div class="warning-text">
+        {{warningText}}
+      </div>
+    </div>
+    <user-info :isShowName="true" :isShowBalance="true"></user-info>
+    <div class="admire">请现场与工作人员操作</div>
+    <div class="param" slot="header">
+      <div  class="weui-flex kind-list__item-hd kind-list__item-hd_show">
+          <div class="weui-flex__item">换购物品（多选）</div>
+          <image class="kind-list__img" src="/static/images/icon_nav_nav.png" @click="isShowRedemption=!isShowRedemption"></image>
+      </div>
+      <div v-if="isShowRedemption" class="weui-cells weui-cells_after-title">
+          <checkbox-group @change="checkboxChange">
+              <label class="weui-cell weui-check__label" v-for="(item,index) in redemptionList" :key="item">
+                <checkbox  class="weui-check" :value="item.value" :checked="item.checked"/>
+                <div class="weui-cell__hd weui-check__hd_in-checkbox">
+                  <icon class="weui-icon-checkbox_circle" type="circle" size="23" v-if="!item.checked"></icon>
+                  <icon class="weui-icon-checkbox_success" type="success" size="23" v-if="item.checked"></icon>
+                </div>
+                <div class="weui-cell__bd">{{item.label}}</div>
               </label>
             </checkbox-group>
-          </div>
-          <div class="weui-cell weui-cell_input">
+      </div>
+      <div class="weui-cell weui-cell_input">
             <div class="weui-cell__hd">
               <div class="weui-label">金额</div>
             </div>
             <div class="weui-cell__bd">
-              <input class="weui-input clearfix" :placeholder="'成交金额[0~'+userInfo.money+'元]'" type="number" onkeypress="return (/[\d]/.test(String.fromCharCode(event.keyCode)))" v-model="money"/>
+              <input class="weui-input" :placeholder="'成交金额[0~'+userInfo.money+'元]'" type="number" onkeypress="return (/[\d]/.test(String.fromCharCode(event.keyCode)))" v-model="money"/>
             </div>
-          </div>
       </div>
-      <div style="text-align:center;margin: 13px 8px 8px;">
-        <block @click="commit">
-          <image  src="/static/images/orderCommit.png"  class="orderCommit commitImage"></image>
-          <text class="orderCommit commitText">确定</text>
-        </block>
+    </div>
+    <div style="text-align:center;margin: 13px 8px 8px;">
+      <div :disable="money<=0?true:false" @click="commit">
+        <image src="/static/images/orderCommit.png"  class="orderCommit commitImage"></image>
+        <text class="orderCommit commitText">确定</text>
       </div>
     </div>
   </div>
@@ -43,6 +51,8 @@
     },
     data() {
       return {
+        isWarning: false,
+        warningText: "",
         isShowRedemption: true,
         redemption: [],
         redemptionName: [],
@@ -51,6 +61,9 @@
     },
     props: {},
     computed: {
+      isLogin() {
+        return this.$store.state.user.isLogin;
+      },
       userInfo() {
         return this.$store.state.user.userInfo;
       },
@@ -84,35 +97,27 @@
       commit() {
         let vm = this;
         if (vm.money > vm.userInfo.money) {
-          wx.showModal({
-            content: "成交金额不能大于" + vm.userInfo.money,
-            showCancel: false,
-            success: function(res) {
-              if (res.confirm) {
-                return;
-              }
-            }
-          });
+          vm.isWarning = true;
+          vm.warningText = "成交金额不能大于" + vm.userInfo.money;
+          setTimeout(function() {
+            vm.isWarning = false;
+            return;
+          }, 3000);
+
         } else if (!/^[0-9]*$/.test(vm.money)) {
-          wx.showModal({
-            content: "金额只能是数字",
-            showCancel: false,
-            success: function(res) {
-              if (res.confirm) {
-                return;
-              }
-            }
-          });
+          vm.isWarning = true;
+          vm.warningText = vm.money == null ? "请输入金额" : "金额只能是数字";
+          setTimeout(function() {
+            vm.isWarning = false;
+            return;
+          }, 3000);
         } else if (vm.redemption.length == 0) {
-          wx.showModal({
-            content: "请选择换购物品",
-            showCancel: false,
-            success: function(res) {
-              if (res.confirm) {
-                return;
-              }
-            }
-          });
+          vm.isWarning = true;
+          vm.warningText = "请选择换购物品";
+          setTimeout(function() {
+            vm.isWarning = false;
+            return;
+          }, 3000);
         } else {
           vm.redemptionList.forEach(element => {
             if (vm.redemption.includes(element.value)) {
@@ -151,13 +156,25 @@
     destroyed() {},
     mounted() {
       let vm = this;
-      vm.$store.commit("getRedemptionList", { openId: vm.userInfo.openId });
+      if (!vm.isLogin) {
+        wx.navigateTo({
+          url: '../../userRegister/main'
+        })
+      } else {
+        vm.$store.commit("getRedemptionList", { openId: vm.userInfo.openId });
+      }
     },
     /*
      * 生命周期函数--监听页面显示
      */
     onShow() {
-      this.$store.commit("setCurrentPage", { currentPage: "Redemption" })
+      if (!this.isLogin) {
+        wx.navigateTo({
+          url: '../../userRegister/main'
+        })
+      } else {
+        this.$store.commit("setCurrentPage", { currentPage: "Redemption" })
+      }
     },
 
     /*
@@ -168,6 +185,21 @@
 </script>
 <style lang="css"
        scoped>
+  .warning-background {
+    position: fixed;
+    width: 100%;
+    height: 35px;
+    background-color: red;
+    top: 0px;
+  }
+
+  .warning-text {
+    color: #fff;
+    text-align: center;
+    width: 100%;
+    font-size: 22px;
+  }
+
   .userInfoDiv {
     text-align: center;
     margin: 13px 8px 8px;
@@ -204,6 +236,7 @@
     height: 130rpx;
     margin-left: -65rpx;
     border-radius: 50%;
+    z-index: 999;
   }
 
   .commitImage {}
@@ -213,13 +246,10 @@
     color: #fff;
   }
 
-  .clearfix {
-    font-size: 20px;
-    margin: 5px 10px;
-  }
-
   .isShowButton {
     float: right;
+    width: 30px;
+    height: 30px
   }
 
   .moneyInput {
@@ -262,6 +292,40 @@
 
   .checkbox {
     display: block;
-    margin: 5px 10vw;
+  }
+
+  .weui-flex {
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    align-items: center
+  }
+
+  .kind-list__img {
+    width: 30px;
+    height: 30px
+  }
+
+  .kind-list__item-hd {
+    padding: 20px;
+    -webkit-transition: opacity .3s;
+    transition: opacity .3s
+  }
+
+  .kind-list__item-hd_show {
+    opacity: .4
+  }
+
+  @keyframes slidown {
+    from {
+      transform: translateY(-100%);
+    }
+    to {
+      transform: translateY(0%);
+    }
+  }
+
+  .slidown {
+    display: block;
+    animation: slidown .7s ease-in both;
   }
 </style>

@@ -3,7 +3,6 @@
      <user-info :isShowName="true" :isShowBalance="false"></user-info>
     <div class="orderList">
       <span class="title">{{dateStr}}</span>
-      <span class="title">就餐凭证</span>
       <span class="item" v-for="(lunch,index) in lunchTimes" v-if="lunch>0" :key="index">
         <span class="lunchName">{{lunchName[index]}}</span>
         <span class="lunchTimes">{{lunch}}份</span>
@@ -37,6 +36,9 @@
     },
     props: {},
     computed: {
+      isLogin() {
+        return this.$store.state.user.isLogin;
+      },
       currentPage() {
         return this.$store.state.init.currentPage;
       },
@@ -50,7 +52,8 @@
     watch: {
       orderList(orderList) {
         let vm = this;
-        if (vm.currentPage.toUpperCase() != vm.$options.name.toUpperCase()) return;
+        if (vm.currentPage.toUpperCase() != vm.$options.name.toUpperCase())
+          return;
         vm.lunchTimes = new Array(3).fill(0);
         vm.lunchName = new Array(3);
         orderList.forEach(element => {
@@ -65,42 +68,53 @@
     destroyed() {},
     mounted() {
       let vm = this;
-      let today = new Date();
-      vm.dateStr =
-        today.getMonth() +
-        1 +
-        "月" +
-        today.getDate() +
-        "日  " +
-        week[today.getDay()];
+      if (!vm.isLogin) {
+        wx.navigateTo({
+          url: '../../userRegister/main'
+        })
+      } else {
+        let today = new Date();
+        vm.dateStr =
+          today.getMonth() +
+          1 +
+          "月" +
+          today.getDate() +
+          "日  " +
+          week[today.getDay()];
 
-      let day = new Date();
-      let yesterday = new Date(
-        day.setTime(day.getTime() - 24 * 60 * 60 * 1000)
-      ).toLocaleDateString();
-      vm.$store.commit("getOrderList", {
-        name: "null",
-        openId: vm.userInfo.openId,
-        startDate: yesterday,
-        endDate: yesterday,
-        orderType: 0,
-        changeType: 2,
-        page: 0,
-        isCancle: 1,
-      });
+        let day = new Date();
+        let yesterday = new Date(
+          day.setTime(day.getTime() - 24 * 60 * 60 * 1000)
+        ).toLocaleDateString();
+        vm.$store.commit("getOrderList", {
+          name: "null",
+          openId: vm.userInfo.openId,
+          startDate: yesterday,
+          endDate: yesterday,
+          orderType: 0,
+          changeType: 2,
+          page: 0,
+          isCancle: 1,
+        });
+      }
     },
-      /*
+    /*
      * 生命周期函数--监听页面显示
      */
     onShow() {
-       this.$store.commit("setCurrentPage", { currentPage: "OrderCertificate" })
+      if (!this.isLogin) {
+        wx.navigateTo({
+          url: '../../userRegister/main'
+        })
+      } else {
+        this.$store.commit("setCurrentPage", { currentPage: "OrderCertificate" })
+      }
     },
 
     /*
      * 生命周期函数--监听页面隐藏
      */
-    onHide() {
-    },
+    onHide() {},
   };
 </script>
 <style lang="css"

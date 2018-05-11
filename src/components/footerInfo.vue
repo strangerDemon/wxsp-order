@@ -3,6 +3,7 @@
        <view class="weui-footer__links">
           <navigator url="https://www.ztgis.com" class="weui-footer__link">{{systemParam.provider}}</navigator> 
           <div v-if="!isLogin" class="weui-footer__link" @click="toRegister">注册</div>
+          <div v-if="isLogin" class="weui-footer__link" @click="toUpdate">更新</div>
        </view>
       <view class="weui-footer__text">Copyright © 2018 ztgis</view>
   </view>
@@ -24,6 +25,9 @@
     methods: {
       toRegister() {
         this.$emit("userRegister");
+      },
+      toUpdate(){
+        this.$emit("userUpdate");
       }
     }
   }
