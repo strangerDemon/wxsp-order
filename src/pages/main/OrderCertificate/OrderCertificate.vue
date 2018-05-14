@@ -4,7 +4,9 @@
     <block v-if="!showLoading">
       <user-info :isShowName="true" :isShowBalance="false"></user-info>
       <div class="orderList">
-        <span class="title">{{dateStr}}</span>
+        <picker mode="date" @change="updatePicker">
+          <span class="title">{{dateStr}}</span>
+        </picker>  
         <span class="item" v-for="(lunch,index) in lunchTimes" v-if="lunch>0" :key="index">
           <span class="lunchName">{{lunchName[index]}}</span>
           <span class="lunchTimes">{{lunch}}份</span>
@@ -34,6 +36,7 @@
     },
     data() {
       return {
+        pickerDate: "",
         dateStr: "",
         lunchName: [],
         lunchTimes: []
@@ -70,7 +73,42 @@
         });
       }
     },
-    methods: {},
+    methods: {
+      formatDate(date) {
+        let vm = this;
+        vm.dateStr =
+          date.getMonth() +
+          1 +
+          "月" +
+          date.getDate() +
+          "日  " +
+          week[date.getDay()];
+        vm.pickerDate = (date.getYear() + 1900) + "-" + (date.getMonth() + 1) +
+          "-" + date.getDate();
+      },
+      updatePicker(e) {
+        let vm = this;
+        vm.pickerDate = e.target.value
+        let dd=new Date(vm.pickerDate);
+        vm.formatDate(dd);
+        vm.getCertificate(new Date(
+          dd.setTime(dd.getTime() - 24 * 60 * 60 * 1000)
+        ).toLocaleDateString());
+      },
+      getCertificate(day) {
+        let vm = this;
+        vm.$store.commit("getOrderList", {
+          name: "null",
+          openId: vm.userInfo.openId,
+          startDate: day,
+          endDate: day,
+          orderType: 0,
+          changeType: 2,
+          page: 0,
+          isCancle: 1,
+        });
+      },
+    },
     beforeCreate() {},
     created() {},
     destroyed() {},
@@ -78,28 +116,10 @@
       let vm = this;
       if (vm.isLogin) {
         let today = new Date();
-        vm.dateStr =
-          today.getMonth() +
-          1 +
-          "月" +
-          today.getDate() +
-          "日  " +
-          week[today.getDay()];
-
-        let day = new Date();
-        let yesterday = new Date(
-          day.setTime(day.getTime() - 24 * 60 * 60 * 1000)
-        ).toLocaleDateString();
-        vm.$store.commit("getOrderList", {
-          name: "null",
-          openId: vm.userInfo.openId,
-          startDate: yesterday,
-          endDate: yesterday,
-          orderType: 0,
-          changeType: 2,
-          page: 0,
-          isCancle: 1,
-        });
+        vm.formatDate(today);
+        vm.getCertificate(new Date(
+          today.setTime(today.getTime() - 24 * 60 * 60 * 1000)
+        ).toLocaleDateString());
       }
     },
     /*

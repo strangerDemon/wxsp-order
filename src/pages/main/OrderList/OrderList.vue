@@ -54,7 +54,7 @@
               <div class="weui-label">起始时间</div>
             </div>
             <div class="weui-cell__bd">
-              <picker mode="date" @change="updatePicker" data-key="startDate">
+              <picker mode="date" @change="updatePicker" data-key="startDate" :end="maxDate">
                   <div class="weui-input">{{startDate}}</div>
               </picker>
             </div>
@@ -65,7 +65,7 @@
               <div class="weui-label">终止时间</div>
             </div>
             <div class="weui-cell__bd">
-              <picker mode="date" @change="updatePicker" data-key="endDate">
+              <picker mode="date" @change="updatePicker" data-key="endDate" :end="maxDate">
                   <div class="weui-input">{{endDate}}</div>
               </picker>
             </div>
@@ -82,7 +82,7 @@
                 <div class="weui-cell__bd">{{userInfo.isAdmin?order.name+' : '+order.orderName:order.orderName}}</div>
                 <div class="weui-cells__title">{{order.createDate}}</div>
                 <div v-if="order.isCancle" style="color: red" class="weui-cell__ft buttonText">已退订</div>
-                <div v-else-if="order.canCancle" style="color: blue" @click="cancel(order.id)" class="weui-cell__ft buttonText">退订</div>
+                <div v-else-if="!userInfo.isAdmin&&order.canCancle" style="color: blue" @click="cancel(order.id)" class="weui-cell__ft buttonText">退订</div>
               </div>
           </div>
           <div v-if="list.length==0" style="position:absoulte;margin:30px;">
@@ -95,11 +95,11 @@
   </div>
 </template>
 <script>
- import loveLoading from "@/components/loading";
+  import loveLoading from "@/components/loading";
   export default {
     name: "orderList",
     directives: {},
-    components: {loveLoading},
+    components: { loveLoading },
     data() {
       return {
         //nav
@@ -139,6 +139,7 @@
             checked: false
           }
         ],
+        maxDate: "",
         orderType: "0", //0全部 1a 2b 3c
         orderBoolean: false,
         orderTypeOptions: [],
@@ -148,7 +149,7 @@
     },
     props: {},
     computed: {
-      showLoading(){
+      showLoading() {
         return this.$store.state.init.showLoading;
       },
       isLogin() {
@@ -220,6 +221,16 @@
         vm.list = [];
         vm.search(1);
       },
+      reset() { //查询参数重置
+        let vm = this;
+        vm.name = "";
+        vm.startDate = "";
+        vm.endDate = "";
+        vm.orderType = "0";
+        vm.changeType = "0";
+        vm.page = 1;
+        vm.isCancle = 0;
+      },
       naviAction(nav) {
         let vm = this
         if (vm.shownavindex == nav) { //再次点击
@@ -272,7 +283,7 @@
           }
         }
       },
-      backToTop(){
+      backToTop() {
         console.log(this.shownavindex);
         wx.pageScrollTo({
           scrollTop: 0,
@@ -440,6 +451,9 @@
     destroyed() {},
     mounted() {
       let vm = this;
+      let today = new Date();
+      vm.maxDate = (today.getYear()+1900) + "-" + (today.getMonth() + 1) + "-" + today
+        .getDate();
       if (vm.isLogin) {
         vm.init();
         vm.$store.commit("getOrderParam", { openId: vm.userInfo.openId });
@@ -449,6 +463,7 @@
      * 生命周期函数--监听页面显示
      */
     onShow() {
+      this.reset() ;
       if (this.isLogin) {
         this.$store.commit("setCurrentPage", { currentPage: "OrderList" });
         this.search(1);
@@ -507,6 +522,7 @@
   .list {
     position: absolute;
     margin-top: 41px;
+    width: 100%;
   }
 
   .nav {

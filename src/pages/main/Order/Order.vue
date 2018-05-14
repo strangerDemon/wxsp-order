@@ -18,7 +18,7 @@
           <div class="weui-grids">
             <div v-for="(dish,index) in menuList" :key="index" class="weui-grid">
               <block v-if="dish.name!=''">
-                <image class="weui-grid__icon" :src="dish.image==undefined||dish.image==''?'/static/images/undefined.png':dish.image" />
+                <image class="weui-grid__icon" :src="dish.image"  @click="previewImage(index)"/>
                 <div class="weui-grid__label">{{dish.name}}</div>
               </block>
               <block v-else>
@@ -71,6 +71,7 @@
         orderTimes: 0,
         lunchTypeTimes: [],
         lunchTypeOptions: [],
+        imageList:[],
       };
     },
     props: {},
@@ -105,14 +106,24 @@
     },
     watch: {
       menuList(list) {
-        let ROW=3;
-        let length=list.length 
+        let vm=this
+        let ROW = 3;
+        let length = list.length
+        //不全行缺失
         if (length % ROW != 0) {
-          let addItemNum=ROW-length % ROW;
-          for(let i=0;i<addItemNum;i++){
-            list.push({name:"",image:""});
+          let addItemNum = ROW - length % ROW;
+          for (let i = 0; i < addItemNum; i++) {
+            list.push({ name: "", image: "" });
           }
         }
+        //提取图片
+        vm.imageList=[];
+        list.forEach(function(item){
+          if(item.name!=""){
+            item.image=item.image==undefined?'/static/images/undefined.png':item.image;
+            vm.imageList.push(item.image)
+          }
+        })
       },
       orderList(list) {
         let vm = this;
@@ -149,6 +160,18 @@
       }
     },
     methods: {
+      //预览图片
+      previewImage(index) {
+        let vm=this;
+        wx.previewImage({
+          current: vm.imageList[index], //当前图片地址
+          urls: vm.imageList, //所有要预览的图片的地址集合 数组形式
+          success: function(res) {},
+          fail: function(res) {},
+          complete: function(res) {},
+        })
+      },
+      //更新点餐次数
       updatelunchTypeTimes() {
         let vm = this;
         vm.orderTimes = 0;
@@ -164,6 +187,7 @@
           }
         }
       },
+      //取消点餐次数
       cancel(orderId) {
         let vm = this;
         if (!vm.checkDate()) {
@@ -195,6 +219,7 @@
           })
         }
       },
+      //校验时间
       checkDate() {
         let vm = this;
         var current = new Date(); //当前时间
@@ -204,6 +229,7 @@
         }
         return true;
       },
+      //设置午餐选择
       setLunchPicker() {
         let vm = this;
         vm.lunchTypeOptions = [];
@@ -234,6 +260,7 @@
           vm.isOrderOrNot = true;
         }
       },
+      //提交点餐
       commitAction(e) {
         let vm = this;
         if (!vm.checkDate()) {
@@ -255,6 +282,7 @@
           });
         }
       },
+      //请求今日点餐
       requestToday() {
         let vm = this
         let today = new Date().toLocaleDateString();

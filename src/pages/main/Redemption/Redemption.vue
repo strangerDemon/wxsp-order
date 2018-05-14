@@ -148,7 +148,7 @@
       },
       returnRedemption() {
         let vm = this;
-        vm.money = 0;
+        vm.money = null;
         vm.redemption = [];
         vm.redemptionName = [];
         vm.$store.commit("getUserInfo", { code: "", openId: vm.userInfo.openId });
