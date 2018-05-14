@@ -48,7 +48,8 @@
       back() {
         let vm = this
         if (vm.redirect != undefined && vm.redirect != "") {
-          wx.redirectTo({ url: vm.redirect });
+          //wx.redirectTo({ url: vm.redirect });//和navigateTo,只能打开非tabbar页面,switchTab只能打开tabbar页面 reLaunch打开任意页面
+          wx.reLaunch({ url: vm.redirect });
         } else {
           wx.navigateBack();
         }

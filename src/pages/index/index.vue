@@ -1,6 +1,6 @@
 <template>
   <view class="container">
-    <fire-loading v-if="showLoading"></fire-loading>
+    <love-loading v-if="showLoading"></love-loading>
     <div v-if="!showLoading">
       <div class="userinfo">
         <button v-if="!hasUserInfo && canIUse" open-type="getUnloginUserInfo" bindgetuserinfo="getUnloginUserInfo"> 获取头像昵称 </button>
@@ -21,7 +21,7 @@
 </template>
 <script>
   import footerInfo from "@/components/footerInfo"
-  import fireLoading from "@/components/loading"
+  import loveLoading from "@/components/loading"
   export default {
     ///
     // 微信原始的函数 
@@ -76,7 +76,6 @@
 
     data() {
       return {
-        showLoading: true,
         dialogMessage: "请先注册",
         buttonTexts: [
           /*{ name: '点餐入口', value: 'order', icon: '../../static/images/bee.jpg' },
@@ -91,7 +90,7 @@
 
     components: {
       footerInfo,
-      fireLoading
+      loveLoading
     },
     computed: {
       isLogin() {
@@ -102,6 +101,9 @@
       },
       systemParamInit() {
         return this.$store.state.init.systemParamInit;
+      },
+      showLoading(){
+        return this.$store.state.init.showLoading;
       }
     },
     watch: {
@@ -114,11 +116,11 @@
           this.hasUserInfo = true;
         }
         if (user && this.systemParamInit) {
-          this.showLoading = false;
+          this.$store.commit("setShowLoading",{showLoading:false});
         }
       },
       systemParamInit(init) {
-        if (this.userInfo != null) this.showLoading = false;
+        if (this.userInfo != null)  this.$store.commit("setShowLoading",{showLoading:false});
       }
     },
     methods: {
@@ -191,7 +193,7 @@
           }
         });
       },
-      getUnloginUserInfo() {
+      getUnloginUserInfo(callback) {
         let vm = this
         //console.log(vm.userInfo);
         // 未登录后台
@@ -211,6 +213,9 @@
                   userInfo: vm.userInfo,
                   isLogin: vm.isLogin
                 })
+                if (callback != undefined) {
+                  callback();
+                }
               }
             })
           }
@@ -223,11 +228,22 @@
       },
       userUpdate() {
         let vm = this;
-        vm.getUnloginUserInfo();
-        vm.$store.commit("userUpdate", {
-          openId: vm.userInfo.openId,
-          nickName: vm.userInfo.nickName,
-          avatarUrl:vm.userInfo.avatarUrl
+        wx.showModal({
+          title: '提示',
+          content: "确定更新用户信息？",
+          success: function(res) {
+            if (res.confirm) {
+              vm.getUnloginUserInfo(function() {
+                vm.$store.commit("userUpdate", {
+                  openId: vm.userInfo.openId,
+                  nickName: vm.userInfo.nickName,
+                  avatarUrl: vm.userInfo.avatarUrl
+                })
+              });
+            } else if (res.cancel) {
+              console.log('用户点击取消')
+            }
+          }
         })
       },
       eggWhite() {

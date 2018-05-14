@@ -1,44 +1,46 @@
 <template>
   <div class="orderList">
-    <block>
-      <div class="nav">
-        <div class="nav-son" :class="shownavindex == 1? 'active' : ''" @click="naviAction(1)">
+    <love-loading v-if="showLoading"></love-loading>
+    <block v-if="!showLoading">
+      <block>
+        <div class="nav">
+          <div class="nav-son" :class="shownavindex == 1? 'active' : ''" @click="naviAction(1)">
             <div class="content">账户变动</div>
             <div class="icon"></div>
-        </div>
-        <div class="nav-son" :class="shownavindex == 2? 'active' : ''" @click="naviAction(2)">
+          </div>
+          <div class="nav-son" :class="shownavindex == 2? 'active' : ''" @click="naviAction(2)">
             <div class="content">消费类别</div>
             <div class="icon"></div>
-        </div>
-        <div class="nav-son" :class="shownavindex == 3? 'active' : ''" @click="naviAction(3)">
+          </div>
+          <div class="nav-son" :class="shownavindex == 3? 'active' : ''" @click="naviAction(3)">
             <div class="content">更多</div>
             <div class="icon"></div>
+          </div>
         </div>
-      </div>
-      <div class="temp temp1 temp2" :class="changeTypeOpen||changeTypeShow?changeTypeOpen?changeTypeShow? 'slidown disappear':'slidown':'slidup disappear':'slidup' ">
-        <radio-group @change="radioChange">
-          <label class="weui-check__label" v-for="(item,index) in changeTypeOptions" :key="index">
-            <radio class="weui-check" :value="item.value" :checked="item.checked"/>
-            <div class="weui-cell__bd">{{item.label}}</div>
-            <div class="weui-cell__ft weui-cell__ft_in-radio radio-icon" v-if="item.checked">
-              <icon class="weui-icon-radio" type="success_no_circle" size="16"></icon>
-            </div>
-          </label>
-        </radio-group>
-      </div>
-      <div class="temp temp1 temp2" :class="orderTypeOpen||orderTypeShow?orderTypeOpen?orderTypeShow? 'slidown disappear':'slidown':'slidup disappear':'slidup'" >
-        <radio-group @change="radioOrder">
-          <label class="weui-check__label" v-for="(item,index) in orderTypeOptions" :key="index">
-            <radio class="weui-check" :value="item.value" :checked="item.checked"/>
-            <div class="weui-cell__bd" >{{item.label}}</div>
-            <div class="weui-cell__ft weui-cell__ft_in-radio radio-icon" v-if="item.checked">
-              <icon class="weui-icon-radio" type="success_no_circle" size="16"></icon>
-            </div>
-          </label>
-        </radio-group>
-      </div>
-      <div class="temp temp1" :class="moreOpen||moreShow?moreOpen?moreShow? 'slidown disappear':'slidown':'slidup disappear':'slidup'">
-        <div v-if="isAdmin" class="weui-cell weui-cell_input">
+        <div class="temp temp1 temp2" :class="changeTypeOpen||changeTypeShow?changeTypeOpen?changeTypeShow? 'slidown disappear':'slidown':'slidup disappear':'slidup' ">
+          <radio-group @change="radioChange">
+            <label class="weui-check__label" v-for="(item,index) in changeTypeOptions" :key="index">
+              <radio class="weui-check" :value="item.value" :checked="item.checked"/>
+              <div class="weui-cell__bd">{{item.label}}</div>
+              <div class="weui-cell__ft weui-cell__ft_in-radio radio-icon" v-if="item.checked">
+                <icon class="weui-icon-radio" type="success_no_circle" size="16"></icon>
+              </div>
+            </label>
+          </radio-group>
+        </div>
+        <div class="temp temp1 temp2" :class="orderTypeOpen||orderTypeShow?orderTypeOpen?orderTypeShow? 'slidown disappear':'slidown':'slidup disappear':'slidup'" >
+          <radio-group @change="radioOrder">
+            <label class="weui-check__label" v-for="(item,index) in orderTypeOptions" :key="index">
+              <radio class="weui-check" :value="item.value" :checked="item.checked"/>
+              <div class="weui-cell__bd" >{{item.label}}</div>
+              <div class="weui-cell__ft weui-cell__ft_in-radio radio-icon" v-if="item.checked">
+                <icon class="weui-icon-radio" type="success_no_circle" size="16"></icon>
+              </div>
+            </label>
+          </radio-group>
+        </div>
+        <div class="temp temp1" :class="moreOpen||moreShow?moreOpen?moreShow? 'slidown disappear':'slidown':'slidup disappear':'slidup'">
+          <div v-if="userInfo.isAdmin" class="weui-cell weui-cell_input">
             <div class="weui-cell__hd">
               <div class="weui-label">用户名</div>
             </div>
@@ -46,8 +48,8 @@
               <input v-model="username" class="weui-input" placeholder="请输入用户名"/>
             </div>
             <icon v-if="username!=''" class="clearInput" type="cancel" size="23" @click="clearInput('username')"></icon>
-        </div>
-        <div class="weui-cell weui-cell_input">
+          </div>
+          <div class="weui-cell weui-cell_input">
             <div class="weui-cell__hd">
               <div class="weui-label">起始时间</div>
             </div>
@@ -57,8 +59,8 @@
               </picker>
             </div>
             <icon v-if="startDate!=''" class="clearInput" type="cancel" size="23" @click="clearInput('startDate')"></icon>
-        </div>
-        <div class="weui-cell weui-cell_input">
+          </div>
+          <div class="weui-cell weui-cell_input">
             <div class="weui-cell__hd">
               <div class="weui-label">终止时间</div>
             </div>
@@ -68,35 +70,36 @@
               </picker>
             </div>
             <icon v-if="endDate!=''" class="clearInput" type="cancel" size="23" @click="clearInput('endDate')"></icon>
+          </div>
+          <button class="mini-btn searchButton" type="primary" size="mini" @click="search(1)">确定</button>
         </div>
-        <button class="mini-btn searchButton" type="primary" size="mini" @click="search(1)">确定</button>
-      </div>
-      <div class="fullbg" :class="isfull? 'fullopacity':''" @click="naviAction(0)"></div>
-    </block>
-    <div class="list">
-      <ul infinite-scroll-disabled="loading" infinite-scroll-distance="10">
-        <div v-for="(order,index) in list" :key="index">
+        <div class="fullbg" :class="isfull? 'fullopacity':''" @click="naviAction(0)"></div>
+      </block>
+      <div class="list">
+        <ul infinite-scroll-disabled="loading" infinite-scroll-distance="10">
           <div class="weui-cells weui-cells_after-title">
-            <div class="weui-cell">
-                <div class="weui-cell__bd">{{isAdmin?order.name+' : '+order.orderName:order.orderName}}</div>
+              <div class="weui-cell" v-for="(order,index) in list" :key="index">
+                <div class="weui-cell__bd">{{userInfo.isAdmin?order.name+' : '+order.orderName:order.orderName}}</div>
                 <div class="weui-cells__title">{{order.createDate}}</div>
                 <div v-if="order.isCancle" style="color: red" class="weui-cell__ft buttonText">已退订</div>
                 <div v-else-if="order.canCancle" style="color: blue" @click="cancel(order.id)" class="weui-cell__ft buttonText">退订</div>
-            </div>
+              </div>
           </div>
-        </div>
-        <div v-if="list.length==0" style="position:absoulte;margin:30px;">
-          <image src="/static/images/undefined.png" />
-        </div>
-      </ul>    
-    </div>
+          <div v-if="list.length==0" style="position:absoulte;margin:30px;">
+            <image src="/static/images/undefined.png" />
+          </div>
+       <!-- <div v-if="page>1" class="backToTop" @click="backToTop()">点击返回顶部</div>-->
+        </ul>
+      </div>
+    </block>
   </div>
 </template>
 <script>
+ import loveLoading from "@/components/loading";
   export default {
     name: "orderList",
     directives: {},
-    components: {},
+    components: {loveLoading},
     data() {
       return {
         //nav
@@ -145,14 +148,14 @@
     },
     props: {},
     computed: {
+      showLoading(){
+        return this.$store.state.init.showLoading;
+      },
       isLogin() {
         return this.$store.state.user.isLogin;
       },
       userInfo() {
         return this.$store.state.user.userInfo;
-      },
-      isAdmin() {
-        return this.$store.state.user.isAdmin;
       },
       orderParam() {
         return this.$store.state.order.orderParam;
@@ -196,13 +199,7 @@
           vm.list = [];
         }
         if (list.length == 0) {
-          if (vm.page == 1) {
-            /*wx.showModal({
-              title: '提示',
-              content: "未查询到数据!",
-              success: function(res) {}
-            })*/
-          } else {
+          if (vm.page > 1) {
             vm.page--;
           }
         }
@@ -221,10 +218,6 @@
       init() {
         let vm = this;
         vm.list = [];
-        //let dd=new Date();
-        //dd.setDate(dd.getDate()-7)
-        //vm.startDate = vm.handleConfirm(dd);
-        //vm.endDate = vm.handleConfirm(new Date());
         vm.search(1);
       },
       naviAction(nav) {
@@ -279,6 +272,13 @@
           }
         }
       },
+      backToTop(){
+        console.log(this.shownavindex);
+        wx.pageScrollTo({
+          scrollTop: 0,
+          duration: 300
+        })
+      },
       radioChange(e) {
         let vm = this
         for (var i = 0, len = vm.changeTypeOptions.length; i < len; ++i) {
@@ -300,7 +300,6 @@
         vm.naviAction(2);
       },
       clearInput(input) {
-        console.log(input);
         let vm = this
         switch (input) {
           case "startDate":
@@ -419,9 +418,10 @@
       search(page) {
         let vm = this;
         vm.page = page;
-        let name = vm.isAdmin ? vm.username : "null";
+        let name = vm.userInfo.isAdmin ? vm.username : "null";
+        let openId = vm.userInfo.isAdmin ? "" : vm.userInfo.openId;
         vm.$store.commit("getOrderList", {
-          openId: vm.userInfo.openId,
+          openId: openId,
           name: name,
           startDate: vm.startDate,
           endDate: vm.endDate,
@@ -430,6 +430,9 @@
           page: page,
           isCancle: 0
         });
+        if (vm.shownavindex == 3) {
+          vm.naviAction(3);
+        }
       }
     },
     beforeCreate() {},
@@ -437,11 +440,7 @@
     destroyed() {},
     mounted() {
       let vm = this;
-      if (!vm.isLogin) {
-        wx.navigateTo({
-          url: '../../userRegister/main'
-        })
-      } else {
+      if (vm.isLogin) {
         vm.init();
         vm.$store.commit("getOrderParam", { openId: vm.userInfo.openId });
       }
@@ -450,11 +449,7 @@
      * 生命周期函数--监听页面显示
      */
     onShow() {
-      if (!this.isLogin) {
-        wx.navigateTo({
-          url: '../../userRegister/main'
-        })
-      } else {
+      if (this.isLogin) {
         this.$store.commit("setCurrentPage", { currentPage: "OrderList" });
         this.search(1);
       }
@@ -654,5 +649,13 @@
     float: right;
     top: 10px;
     right: 10px;
+  }
+
+  .backToTop {
+    text-align: center;
+    margin: 4px;
+    font-size: 12px;
+    color: blue;
+    cursor: pointer;
   }
 </style>

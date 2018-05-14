@@ -11,6 +11,7 @@
       <div class="heart-7"></div>
       <div class="heart-8"></div>
     </div>
+    <div class="text">加载中...<!--<span v-for="n in dotNum" :key="n">.</span>--></div>
   </div>
 </template>
 <script>
@@ -19,7 +20,9 @@
     directives: {},
     components: {},
     data() {
-      return {}
+      return {
+        // dotNum: 1,
+      }
     },
     props: {},
     computed: {},
@@ -28,11 +31,16 @@
     beforeCreate() {},
     created() {},
     destroyed() {},
-    mounted() {}
+    mounted() {
+      /*let vm = this
+      setInterval(function() {
+        vm.dotNum = (vm.dotNum) % 6 + 1
+      }, 1000);*/
+    }
   }
-
 </script>
-<style lang="css" scoped>
+<style lang="css"
+       scoped>
   .container {
     position: fixed;
     width: 100%;
@@ -213,4 +221,10 @@
     }
   }
 
+  .text {
+    color: #aaa;
+    position: fixed;
+    bottom: 50px;
+    font-size:20px;
+  }
 </style>

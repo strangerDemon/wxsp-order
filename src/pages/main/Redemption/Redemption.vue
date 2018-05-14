@@ -1,18 +1,21 @@
 <template>
   <div class="Redemption">
-    <div v-if="isWarning" :class="isWarning?'warning-background slidown':'warning-background'">
-      <div class="warning-text">
-        {{warningText}}
+    <love-loading v-if="showLoading"></love-loading>
+    <block v-if="!showLoading">
+      <div v-if="isUserWarning||isWarning" :class="isUserWarning||isWarning?'warning-background slidown':'warning-background'">
+        <div v-if="isUserWarning" class="warning-text">{{userWarningText}}</div>
+        <div v-else-if="isWarning" class="warning-text">
+          {{warningText}}
+        </div>
       </div>
-    </div>
-    <user-info :isShowName="true" :isShowBalance="true"></user-info>
-    <div class="admire">请现场与工作人员操作</div>
-    <div class="param" slot="header">
-      <div  class="weui-flex kind-list__item-hd kind-list__item-hd_show">
+      <user-info :isShowName="true" :isShowBalance="true"></user-info>
+      <div class="admire">请现场与工作人员操作</div>
+      <div class="param" slot="header">
+        <div  class="weui-flex kind-list__item-hd kind-list__item-hd_show">
           <div class="weui-flex__item">换购物品（多选）</div>
           <image class="kind-list__img" src="/static/images/icon_nav_nav.png" @click="isShowRedemption=!isShowRedemption"></image>
-      </div>
-      <div v-if="isShowRedemption" class="weui-cells weui-cells_after-title">
+        </div>
+        <div v-if="isShowRedemption" class="weui-cells weui-cells_after-title">
           <checkbox-group @change="checkboxChange">
               <label class="weui-cell weui-check__label" v-for="(item,index) in redemptionList" :key="item">
                 <checkbox  class="weui-check" :value="item.value" :checked="item.checked"/>
@@ -22,32 +25,35 @@
                 </div>
                 <div class="weui-cell__bd">{{item.label}}</div>
               </label>
-            </checkbox-group>
-      </div>
-      <div class="weui-cell weui-cell_input">
+          </checkbox-group>
+        </div>
+        <div class="weui-cell weui-cell_input">
             <div class="weui-cell__hd">
               <div class="weui-label">金额</div>
             </div>
             <div class="weui-cell__bd">
               <input class="weui-input" :placeholder="'成交金额[0~'+userInfo.money+'元]'" type="number" onkeypress="return (/[\d]/.test(String.fromCharCode(event.keyCode)))" v-model="money"/>
             </div>
+        </div>
       </div>
-    </div>
-    <div style="text-align:center;margin: 13px 8px 8px;">
-      <div :disable="money<=0?true:false" @click="commit">
-        <image src="/static/images/orderCommit.png"  class="orderCommit commitImage"></image>
-        <text class="orderCommit commitText">确定</text>
+      <div style="text-align:center;margin: 13px 8px 8px;">
+        <div v-if="!isUserWarning&&money>0?true:false" @click="commit">
+          <image src="/static/images/orderCommit.png"  class="orderCommit commitImage"></image>
+          <text class="orderCommit commitText">确定</text>
+        </div>
       </div>
-    </div>
+    </block>
   </div>
 </template>
 <script>
-  import userInfo from "@/components/usetInfo"
+  import userInfo from "@/components/usetInfo";
+  import loveLoading from "@/components/loading";
   export default {
     name: "Redemption",
     directives: {},
     components: {
-      userInfo
+      userInfo,
+      loveLoading
     },
     data() {
       return {
@@ -61,6 +67,15 @@
     },
     props: {},
     computed: {
+      showLoading(){
+        return this.$store.state.init.showLoading;
+      },
+      isUserWarning() {
+        return this.$store.state.user.isUserWarning;
+      },
+      userWarningText() {
+        return this.$store.state.user.userWarningText;
+      },
       isLogin() {
         return this.$store.state.user.isLogin;
       },
@@ -98,7 +113,7 @@
         let vm = this;
         if (vm.money > vm.userInfo.money) {
           vm.isWarning = true;
-          vm.warningText = "成交金额不能大于" + vm.userInfo.money;
+          vm.warningText = "成交金额不能大于您的最大余额:" + vm.userInfo.money+"元";
           setTimeout(function() {
             vm.isWarning = false;
             return;
@@ -156,11 +171,7 @@
     destroyed() {},
     mounted() {
       let vm = this;
-      if (!vm.isLogin) {
-        wx.navigateTo({
-          url: '../../userRegister/main'
-        })
-      } else {
+      if (vm.isLogin){
         vm.$store.commit("getRedemptionList", { openId: vm.userInfo.openId });
       }
     },
@@ -168,11 +179,7 @@
      * 生命周期函数--监听页面显示
      */
     onShow() {
-      if (!this.isLogin) {
-        wx.navigateTo({
-          url: '../../userRegister/main'
-        })
-      } else {
+      if (this.isLogin){
         this.$store.commit("setCurrentPage", { currentPage: "Redemption" })
       }
     },
@@ -188,7 +195,7 @@
   .warning-background {
     position: fixed;
     width: 100%;
-    height: 35px;
+    height: 25px;
     background-color: red;
     top: 0px;
   }
@@ -197,7 +204,7 @@
     color: #fff;
     text-align: center;
     width: 100%;
-    font-size: 22px;
+    font-size: 16px;
   }
 
   .userInfoDiv {

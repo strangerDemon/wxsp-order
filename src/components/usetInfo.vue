@@ -35,18 +35,19 @@
   .userInfo {
     text-align: center;
     margin: 13px 8px 8px;
+    color:#aaa;
   }
 
   .userinfo-avatar {
     width: 128rpx;
     height: 128rpx;
-    margin: 20rpx;
+    /*margin: 20rpx;*/
     border-radius: 50%;
   }
 
   .userDiv {
     display: block;
-    margin: 5px 0;
+    /*margin: 5px 0;*/
     position: relative;
   }
 

@@ -1,13 +1,16 @@
 <template>
   <div class="OrderCertificate">
-     <user-info :isShowName="true" :isShowBalance="false"></user-info>
-    <div class="orderList">
-      <span class="title">{{dateStr}}</span>
-      <span class="item" v-for="(lunch,index) in lunchTimes" v-if="lunch>0" :key="index">
-        <span class="lunchName">{{lunchName[index]}}</span>
-        <span class="lunchTimes">{{lunch}}份</span>
-      </span>
-    </div>
+    <love-loading v-if="showLoading"></love-loading>
+    <block v-if="!showLoading">
+      <user-info :isShowName="true" :isShowBalance="false"></user-info>
+      <div class="orderList">
+        <span class="title">{{dateStr}}</span>
+        <span class="item" v-for="(lunch,index) in lunchTimes" v-if="lunch>0" :key="index">
+          <span class="lunchName">{{lunchName[index]}}</span>
+          <span class="lunchTimes">{{lunch}}份</span>
+        </span>
+      </div>
+    </block>
   </div>
 </template>
 <script>
@@ -20,12 +23,14 @@
     "星期五",
     "星期六"
   ];
-  import userInfo from "@/components/usetInfo"
+  import userInfo from "@/components/usetInfo";
+  import loveLoading from "@/components/loading";
   export default {
     name: "OrderCertificate",
     directives: {},
     components: {
-      userInfo
+      userInfo,
+      loveLoading
     },
     data() {
       return {
@@ -36,6 +41,9 @@
     },
     props: {},
     computed: {
+      showLoading() {
+        return this.$store.state.init.showLoading;
+      },
       isLogin() {
         return this.$store.state.user.isLogin;
       },
@@ -68,11 +76,7 @@
     destroyed() {},
     mounted() {
       let vm = this;
-      if (!vm.isLogin) {
-        wx.navigateTo({
-          url: '../../userRegister/main'
-        })
-      } else {
+      if (vm.isLogin) {
         let today = new Date();
         vm.dateStr =
           today.getMonth() +
@@ -102,11 +106,7 @@
      * 生命周期函数--监听页面显示
      */
     onShow() {
-      if (!this.isLogin) {
-        wx.navigateTo({
-          url: '../../userRegister/main'
-        })
-      } else {
+      if (this.isLogin) {
         this.$store.commit("setCurrentPage", { currentPage: "OrderCertificate" })
       }
     },

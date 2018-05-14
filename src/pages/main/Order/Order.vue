@@ -1,58 +1,67 @@
 <template>
   <div class="order">
-    <div v-if="isInitWaining" :class="isInitWaining?'slidown warning-background':'warning-background'">
-      <div class="warning-text">
-        {{initWarningText}}
+    <love-loading v-if="showLoading"></love-loading>
+    <block v-if="!showLoading">
+      <div v-if="isUserWarning||isInitWaining" :class="isUserWarning||isInitWaining?'slidown warning-background':'warning-background'">
+        <div v-if="isUserWarning" class="warning-text">{{userWarningText}}</div>
+        <div v-else-if="isInitWaining" class="warning-text">
+          {{initWarningText}}
+        </div>
       </div>
-    </div>
-    <user-info :isShowName="true" :isShowBalance="true"></user-info>
-    <div class="menuDiv">
-      <div  class="weui-flex kind-list__item-hd kind-list__item-hd_show">
+      <user-info :isShowName="true" :isShowBalance="true"></user-info>
+      <div class="menuDiv">
+        <div  class="weui-flex kind-list__item-hd kind-list__item-hd_show">
           <div class="weui-flex__item">菜品明细：</div>
           <image class="kind-list__img" src="/static/images/icon_nav_nav.png" @click="isShowMenu=!isShowMenu"></image>
-      </div>
-      <div v-if="isShowMenu" class="page__bd">
-        <div class="weui-grids">
-          <div v-for="(dish,index) in menuList" :key="index" class="weui-grid">
-            <image class="weui-grid__icon" :src="dish.image==undefined||dish.image==''?'/static/images/undefined.png':dish.image" />
-            <div class="weui-grid__label">{{dish.name}}</div>
+        </div>
+        <div v-if="isShowMenu" class="page__bd">
+          <div class="weui-grids">
+            <div v-for="(dish,index) in menuList" :key="index" class="weui-grid">
+              <block v-if="dish.name!=''">
+                <image class="weui-grid__icon" :src="dish.image==undefined||dish.image==''?'/static/images/undefined.png':dish.image" />
+                <div class="weui-grid__label">{{dish.name}}</div>
+              </block>
+              <block v-else>
+                <image class="weui-grid__icon"/>
+                <div class="weui-grid__label"> &nbsp;</div>
+              </block>
+            </div>
           </div>
         </div>
+        <div v-if="!isShowMenu" class="page__bd">
+          <div class="dish" v-for="(dish,index) in menuList" :key="index">{{dish.name}}</div>
+        </div>
       </div>
-      <div v-if="!isShowMenu" class="page__bd">
-        <div class="dish" v-for="(dish,index) in menuList" :key="index">{{dish.name}}</div>
-      </div>
-    </div>
-    <blobk>
-      <div class="weui-flex kind-list__item-hd kind-list__item-hd_show" v-if="orderList.length>0">
-        <span class="weui-flex__item title">今日点餐情况:</span>
-      </div>
-      <div v-for="(order,index) in orderList" :key="index" v-if="order.orderType>0">
+      <blobk>
+        <div class="weui-flex kind-list__item-hd kind-list__item-hd_show" v-if="orderList.length>0">
+          <span class="weui-flex__item title">今日点餐情况:</span>
+        </div>
         <div class="weui-cells weui-cells_after-title">
-          <div class="weui-cell">
-            <div class="weui-cell__bd">{{order.orderName}}</div>
-            <div class="weui-cells__title">{{order.createDate}}</div>
-            <div v-if="order.isCancle" style="color: red" class="weui-cell__ft buttonText">已退订</div>
-            <div v-else style="color: blue" @click="cancel(order.id)" class="weui-cell__ft buttonText">退订</div>
-          </div>
+            <div class="weui-cell"  v-for="(order,index) in orderList" :key="index" v-if="order.orderType>0">
+              <div class="weui-cell__bd">{{order.orderName}}</div>
+              <div class="weui-cells__title">{{order.createDate}}</div>
+              <div v-if="order.isCancle" style="color: red" class="weui-cell__ft buttonText">已退订</div>
+              <div v-else style="color: blue" @click="cancel(order.id)" class="weui-cell__ft buttonText">退订</div>
+            </div>
         </div>
-      </div>
-      <span class="space"></span>
-    </blobk>
-    <picker style="text-align:center;margin: 13px 8px 8px;" @change="commitAction" :range="lunchTypeOptions" range-key="label">
-      <block v-if="isOrderOrNot">
-        <image  src="/static/images/orderCommit.png"  class="orderCommit commitImage"></image>
-        <text class="orderCommit commitText">点餐</text>
-      </block>
-    </picker>
+        <span class="space"></span>
+      </blobk>
+      <picker style="text-align:center;margin: 13px 8px 8px;" @change="commitAction" :range="lunchTypeOptions" range-key="label">
+        <block v-if="isOrderOrNot">
+          <image  src="/static/images/orderCommit.png"  class="orderCommit commitImage"></image>
+          <text class="orderCommit commitText">点餐</text>
+        </block>
+      </picker>
+    </block>
   </div>
 </template>
 <script>
-  import userInfo from "@/components/usetInfo"
+  import userInfo from "@/components/usetInfo";
+  import loveLoading from "@/components/loading";
   export default {
     name: "Order",
     directives: {},
-    components: { userInfo },
+    components: { userInfo, loveLoading },
     data() {
       return {
         isInitWaining: false,
@@ -66,6 +75,15 @@
     },
     props: {},
     computed: {
+      showLoading() {
+        return this.$store.state.init.showLoading;
+      },
+      isUserWarning() {
+        return this.$store.state.user.isUserWarning;
+      },
+      userWarningText() {
+        return this.$store.state.user.userWarningText;
+      },
       isLogin() {
         return this.$store.state.user.isLogin;
       },
@@ -86,6 +104,16 @@
       }
     },
     watch: {
+      menuList(list) {
+        let ROW=3;
+        let length=list.length 
+        if (length % ROW != 0) {
+          let addItemNum=ROW-length % ROW;
+          for(let i=0;i<addItemNum;i++){
+            list.push({name:"",image:""});
+          }
+        }
+      },
       orderList(list) {
         let vm = this;
         if (vm.currentPage.toUpperCase() != vm.$options.name.toUpperCase())
@@ -104,13 +132,21 @@
           vm.isOrderOrNot = false;
         } else {
           vm.isInitWaining = false;
-          vm.isOrderOrNot = true;
+          if (!vm.isUserWarning) {
+            vm.isOrderOrNot = true;
+          }
         }
         if (vm.orderList != null) {
           vm.updatelunchTypeTimes();
           vm.setLunchPicker();
         }
       },
+      isUserWarning(warning) {
+        let vm = this;
+        if (vm.isOrderOrNot) {
+          vm.isOrderOrNot = warning;
+        }
+      }
     },
     methods: {
       updatelunchTypeTimes() {
@@ -191,7 +227,7 @@
         }
         if (!canOrder) {
           vm.isInitWaining = true;
-          vm.initWarningText = "无法点餐";
+          vm.initWarningText = "余额不足，无法点餐";
           vm.isOrderOrNot = false;
         } else {
           vm.isInitWaining = false;
@@ -240,29 +276,24 @@
     destroyed() {},
     mounted() {
       let vm = this;
-      if (!vm.isLogin) {
-        wx.navigateTo({
-          url: '../../userRegister/main'
-        })
-      } else {
-        vm.$store.commit("getOrderParam", { openId: vm.userInfo.openId });
-        vm.$store.commit("getMeunList", { openId: vm.userInfo.openId });
+      if (vm.showLoading) return;
+      vm.$store.commit("getOrderParam", { openId: vm.userInfo.openId });
+      vm.$store.commit("getMeunList", { openId: vm.userInfo.openId });
+      if (vm.isLogin) {
         vm.requestToday();
-        vm.isOrderOrNot = true;
+        // vm.isOrderOrNot = true;
       }
     },
     /*
      * 生命周期函数--监听页面显示
      */
     onShow() {
-      if (!this.isLogin) {
-        wx.navigateTo({
-          url: '../../userRegister/main'
-        })
-      } else {
-        this.$store.commit("setCurrentPage", { currentPage: "Order" });
+      this.$store.commit("setCurrentPage", { currentPage: "Order" });
+      if (this.showLoading) return;
+      if (this.isLogin) {
         this.requestToday();
       }
+      this.setLunchPicker();
     },
 
     /*
@@ -277,7 +308,7 @@
     position: fixed;
     top: 0px;
     width: 100%;
-    height: 35px;
+    height: 25px;
     background-color: red;
   }
 
@@ -285,7 +316,7 @@
     color: #fff;
     text-align: center;
     width: 100%;
-    font-size: 22px;
+    font-size: 16px;
   }
 
   .order {

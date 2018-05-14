@@ -4,6 +4,7 @@ import * as requestTask from "../../utils/requestTask";
  * @type {Object}
  */
 const state = {
+  showLoading: true,
   currentPage: "main", //暂时处理，小程序在打开一个页面后，请求一个接口，其他页面（未渲染）有监听这个接口的赋值变量也会运行
   systemParamInit: false, //因为要初始化默认显示一些，防止空格情况，所以systemParam不为null
   //系统参数
@@ -55,6 +56,10 @@ const mutations = {
   },
   setCurrentPage(state, info) {
     state.currentPage = info.currentPage;
+  },
+  //同意控制是否显示loading
+  setShowLoading(state, info) {
+    state.showLoading = info.showLoading;
   }
 };
 

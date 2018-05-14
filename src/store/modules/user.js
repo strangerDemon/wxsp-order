@@ -4,11 +4,11 @@ import * as requestTask from "../../utils/requestTask";
  * @type {Object}
  */
 const state = {
-  isLogin: false, //是否登录
-  isAdmin: false, //时候为管理员
+  isLogin: false, //是否登录,其实为未注册
   //用户信息
   userInfo: null,
-
+  userWarningText: "", //提醒文字
+  isUserWarning: false, //是否警告
 };
 
 /**
@@ -31,21 +31,28 @@ const mutations = {
       if (res.userName != "") {
         state.isLogin = true;
         if (res.isExamine != 1 || res.isForbidden == 1) {
-          let title = "";
           if (res.isExamine == 0) {
-            title = "账号未审核"
+            state.userWarningText = "账号未审核"
           } else if (res.isExamine == 2) {
-            title = "账号审核未通过"
+            state.userWarningText = "账号审核未通过"
           } else if (res.isForbidden == 1) {
-            title = "账号被禁用"
+            state.userWarningText = "账号被禁用"
           }
-          wx.navigateTo({
+          state.userWarningText += ",请联系管理员";
+          state.isUserWarning = true;
+          //不能跳转页面这里 会造成不好的用户交互
+          /*wx.navigateTo({
             url: '/pages/msg/msg_fail/main?title=' + title +
               '&redirect=/pages/index/main'
-          });
+          });*/
+        } else {
+          state.userWarningText = "";
+          state.isUserWarning = false;
         }
       } else {
         state.isLogin = false; //用户登录的时候被删掉
+        state.userWarningText = "用户未注册，请返回首页注册";
+        state.isUserWarning = true;
       }
     }).catch(err => {
       console.log("getUserInfo", err)
@@ -62,8 +69,9 @@ const mutations = {
     new Promise((resolve, reject) => {
       requestTask.wxRequest("userRegister", info, resolve, reject)
     }).then(res => {
+      state.userWarningText = "用户注册成功，正在审核，请稍后";
       wx.navigateTo({
-        url: '/pages/msg/msg_success/main?title=用户注册成功，正在审核，请稍后&redirect=/pages/index/main'
+        url: '/pages/msg/msg_success/main?title='+state.userWarningText+'&redirect=/pages/index/main'
       });
       state.isLogin = true;
     }).catch(err => {
