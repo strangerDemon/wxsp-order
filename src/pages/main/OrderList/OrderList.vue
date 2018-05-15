@@ -77,14 +77,7 @@
       </block>
       <div class="list">
         <ul infinite-scroll-disabled="loading" infinite-scroll-distance="10">
-          <div class="weui-cells weui-cells_after-title">
-              <div class="weui-cell" v-for="(order,index) in list" :key="index">
-                <div class="weui-cell__bd">{{userInfo.isAdmin?order.name+' : '+order.orderName:order.orderName}}</div>
-                <div class="weui-cells__title">{{order.createDate}}</div>
-                <div v-if="order.isCancle" style="color: red" class="weui-cell__ft buttonText">已退订</div>
-                <div v-else-if="!userInfo.isAdmin&&order.canCancle" style="color: blue" @click="cancel(order.id)" class="weui-cell__ft buttonText">退订</div>
-              </div>
-          </div>
+          <record v-for="(order,index) in list" :key="index" v-if="order.orderType>0" :isShowName="userInfo.isAdmin?true:false" :record="order" :fromSource="'search'" @cancle="cancel(order.id)"></record>
           <div v-if="list.length==0" style="position:absoulte;margin:30px;">
             <image src="/static/images/undefined.png" />
           </div>
@@ -96,10 +89,11 @@
 </template>
 <script>
   import loveLoading from "@/components/loading";
+   import record from "@/components/record";
   export default {
     name: "orderList",
     directives: {},
-    components: { loveLoading },
+    components: { loveLoading ,record},
     data() {
       return {
         //nav
@@ -463,6 +457,9 @@
      * 生命周期函数--监听页面显示
      */
     onShow() {
+      wx.setNavigationBarTitle({  
+        title: '记录',  
+      })
       this.reset() ;
       if (this.isLogin) {
         this.$store.commit("setCurrentPage", { currentPage: "OrderList" });
@@ -501,6 +498,7 @@
     height: 100%;
     width: 100%;
     font-size: 18px;
+    background-color:#F2F6FC;
   }
 
   .searchButton {

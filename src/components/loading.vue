@@ -21,7 +21,7 @@
     components: {},
     data() {
       return {
-        // dotNum: 1,
+        //dotNum: 1,
       }
     },
     props: {},

@@ -33,9 +33,9 @@ export default {
     ],
     window: {
       backgroundTextStyle: 'light',
-      navigationBarBackgroundColor: '#fff',
-      navigationBarTitleText: '报餐系统',
-      navigationBarTextStyle: 'black',
+      navigationBarBackgroundColor: '#409EFF',//'#fff',
+      //navigationBarTitleText: '报餐系统',
+      navigationBarTextStyle: '#fff',//'black',
       enablePullDownRefresh: true
     },
     tabBar: {

@@ -1,5 +1,5 @@
 <template>
-<div class="mag_fail">
+  <div class="mag_fail">
     <div class="weui-msg">
         <div class="weui-msg__icon-area">
             <icon type="warn" size="93"></icon>
@@ -16,7 +16,7 @@
         </div>
         <footer-info :isLogin="isLogin"></footer-info>
     </div>
-</div>
+  </div>
 </template>
 <script>
   import footerInfo from "@/components/footerInfo"
@@ -55,4 +55,8 @@
 </script>
 <style lang="css"
        scoped>
+       .mag_fail{
+         height:100vh;
+          background-color:#F2F6FC;
+       }
 </style>

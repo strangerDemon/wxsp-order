@@ -7,10 +7,7 @@
         <picker mode="date" @change="updatePicker">
           <span class="title">{{dateStr}}</span>
         </picker>  
-        <span class="item" v-for="(lunch,index) in lunchTimes" v-if="lunch>0" :key="index">
-          <span class="lunchName">{{lunchName[index]}}</span>
-          <span class="lunchTimes">{{lunch}}份</span>
-        </span>
+        <ticket v-for="(lunch,index) in lunchTimes" v-if="lunch>0" :key="index" :ticketType="lunchName[index]" :number="lunch"></ticket>
       </div>
     </block>
   </div>
@@ -27,12 +24,14 @@
   ];
   import userInfo from "@/components/usetInfo";
   import loveLoading from "@/components/loading";
+  import ticket from "@/components/ticket";
   export default {
     name: "OrderCertificate",
     directives: {},
     components: {
       userInfo,
-      loveLoading
+      loveLoading,
+      ticket
     },
     data() {
       return {
@@ -89,7 +88,7 @@
       updatePicker(e) {
         let vm = this;
         vm.pickerDate = e.target.value
-        let dd=new Date(vm.pickerDate);
+        let dd = new Date(vm.pickerDate);
         vm.formatDate(dd);
         vm.getCertificate(new Date(
           dd.setTime(dd.getTime() - 24 * 60 * 60 * 1000)
@@ -126,6 +125,9 @@
      * 生命周期函数--监听页面显示
      */
     onShow() {
+      wx.setNavigationBarTitle({
+        title: '凭证',
+      })
       if (this.isLogin) {
         this.$store.commit("setCurrentPage", { currentPage: "OrderCertificate" })
       }
@@ -145,6 +147,7 @@
     width: 100%;
     font-size: 18px;
     scroll-behavior: auto;
+    background-color: #F2F6FC;
   }
 
   .userInfoDiv {
@@ -173,19 +176,14 @@
     display: block;
   }
 
-  .lunchTimes {
-    float: right;
-    margin-right: 25px;
-  }
-
-  .lunchName {
-    margin-left: 25px;
-  }
-
   .title {
     font-size: 34px;
     text-align: center;
     display: block;
     margin: 10px;
+    background-color: #fff;
+    border-radius: 4px;
+    margin: 10px 5px;
+    padding:10px;
   }
 </style>

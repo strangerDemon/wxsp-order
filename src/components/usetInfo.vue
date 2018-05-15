@@ -34,8 +34,9 @@
 <style scoped>
   .userInfo {
     text-align: center;
-    margin: 13px 8px 8px;
-    color:#aaa;
+    padding: 13px 8px 8px;
+    color:#fff;
+    background-color:#409EFF;
   }
 
   .userinfo-avatar {

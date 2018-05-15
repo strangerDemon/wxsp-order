@@ -10,41 +10,33 @@
       </div>
       <user-info :isShowName="true" :isShowBalance="true"></user-info>
       <div class="menuDiv">
-        <div  class="weui-flex kind-list__item-hd kind-list__item-hd_show">
+        <div  class="list-title weui-flex kind-list__item-hd kind-list__item-hd_show">
           <div class="weui-flex__item">菜品明细：</div>
           <image class="kind-list__img" src="/static/images/icon_nav_nav.png" @click="isShowMenu=!isShowMenu"></image>
         </div>
-        <div v-if="isShowMenu" class="page__bd">
+        <div v-if="isShowMenu" class="write-bg-color page__bd">
           <div class="weui-grids">
-            <div v-for="(dish,index) in menuList" :key="index" class="weui-grid">
+            <div v-for="(dish,index) in menuList" :key="index" class="weui-grid dish">
               <block v-if="dish.name!=''">
-                <image class="weui-grid__icon" :src="dish.image"  @click="previewImage(index)"/>
-                <div class="weui-grid__label">{{dish.name}}</div>
+                <image class="weui-grid__icon dishImage" :src="dish.image"  @click="previewImage(index)"/>
+                <div class="weui-grid__label dishName">{{dish.name}}</div>
               </block>
               <block v-else>
-                <image class="weui-grid__icon"/>
-                <div class="weui-grid__label"> &nbsp;</div>
+                <image class="weui-grid__icon dishImage"/>
+                <div class="weui-grid__label dishName"> &nbsp;</div>
               </block>
             </div>
           </div>
         </div>
-        <div v-if="!isShowMenu" class="page__bd">
-          <div class="dish" v-for="(dish,index) in menuList" :key="index">{{dish.name}}</div>
+        <div v-if="!isShowMenu" class="write-bg-color page__bd">
+          <div class="dishLabel" v-for="(dish,index) in menuList" :key="index">{{dish.name}}</div>
         </div>
       </div>
       <blobk>
-        <div class="weui-flex kind-list__item-hd kind-list__item-hd_show" v-if="orderList.length>0">
+        <div class="list-title weui-flex kind-list__item-hd kind-list__item-hd_show" v-if="orderList.length>0">
           <span class="weui-flex__item title">今日点餐情况:</span>
         </div>
-        <div class="weui-cells weui-cells_after-title">
-            <div class="weui-cell"  v-for="(order,index) in orderList" :key="index" v-if="order.orderType>0">
-              <div class="weui-cell__bd">{{order.orderName}}</div>
-              <div class="weui-cells__title">{{order.createDate}}</div>
-              <div v-if="order.isCancle" style="color: red" class="weui-cell__ft buttonText">已退订</div>
-              <div v-else style="color: blue" @click="cancel(order.id)" class="weui-cell__ft buttonText">退订</div>
-            </div>
-        </div>
-        <span class="space"></span>
+        <record v-for="(order,index) in orderList" :key="index" v-if="order.orderType>0" :record="order" :fromSource="'order'" @cancle="cancel(order.id)"></record>
       </blobk>
       <picker style="text-align:center;margin: 13px 8px 8px;" @change="commitAction" :range="lunchTypeOptions" range-key="label">
         <block v-if="isOrderOrNot">
@@ -58,10 +50,11 @@
 <script>
   import userInfo from "@/components/usetInfo";
   import loveLoading from "@/components/loading";
+  import record from "@/components/record";
   export default {
     name: "Order",
     directives: {},
-    components: { userInfo, loveLoading },
+    components: { userInfo, loveLoading, record },
     data() {
       return {
         isInitWaining: false,
@@ -71,7 +64,7 @@
         orderTimes: 0,
         lunchTypeTimes: [],
         lunchTypeOptions: [],
-        imageList:[],
+        imageList: [],
       };
     },
     props: {},
@@ -106,10 +99,10 @@
     },
     watch: {
       menuList(list) {
-        let vm=this
+        let vm = this
         let ROW = 3;
         let length = list.length
-        //不全行缺失
+        //补全行缺失
         if (length % ROW != 0) {
           let addItemNum = ROW - length % ROW;
           for (let i = 0; i < addItemNum; i++) {
@@ -117,13 +110,12 @@
           }
         }
         //提取图片
-        vm.imageList=[];
-        list.forEach(function(item){
-          if(item.name!=""){
-            item.image=item.image==undefined?'/static/images/undefined.png':item.image;
+        vm.imageList = [];
+        list.forEach(function(item) {
+          if (item.name != "") {
             vm.imageList.push(item.image)
           }
-        })
+        });
       },
       orderList(list) {
         let vm = this;
@@ -162,7 +154,7 @@
     methods: {
       //预览图片
       previewImage(index) {
-        let vm=this;
+        let vm = this;
         wx.previewImage({
           current: vm.imageList[index], //当前图片地址
           urls: vm.imageList, //所有要预览的图片的地址集合 数组形式
@@ -316,6 +308,9 @@
      * 生命周期函数--监听页面显示
      */
     onShow() {
+      wx.setNavigationBarTitle({
+        title: '点餐',
+      })
       this.$store.commit("setCurrentPage", { currentPage: "Order" });
       if (this.showLoading) return;
       if (this.isLogin) {
@@ -353,14 +348,17 @@
     width: 100%;
     font-size: 18px;
     scroll-behavior: auto;
+    background-color: #F2F6FC;
   }
 
-  .dish {
+  .dishLabel {
     position: relative;
     left: 5vw;
     margin: 2.5px 0;
     width: 29%;
     display: inline-table;
+    color: #aaa;
+    text-align: center;
   }
 
   .orderCommit {
@@ -379,16 +377,6 @@
   .commitText {
     height: 95rpx;
     color: #fff;
-  }
-
-  .space {
-    width: 100%;
-    height: 60px;
-    position: absolute;
-  }
-
-  .buttonText {
-    cursor: pointer;
   }
 
   .weui-flex {
@@ -424,5 +412,37 @@
   .slidown {
     display: block;
     animation: slidown .7s ease-in both;
+  }
+
+  .dish {
+    padding: 2px;
+    height: 33vw;
+  }
+
+  .dishImage {
+    width: 100%;
+    height: 100%;
+  }
+
+  .dishName {
+    position: absolute;
+    bottom: 5px;
+    text-align: center;
+    width: 100%;
+  }
+
+  .list-title {
+    opacity: 1;
+    background-color: #fff;
+    margin: 5px;
+    padding: 10px;
+  }
+
+  .write-bg-color {
+    background-color: #fff;
+  }
+
+  .page__bd {
+    margin: 5px;
   }
 </style>

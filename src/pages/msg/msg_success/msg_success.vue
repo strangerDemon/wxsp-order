@@ -63,4 +63,8 @@
 </script>
 <style lang="css"
        scoped>
+  .msg_success {
+    height: 100vh;
+    background-color: #F2F6FC;
+  }
 </style>

@@ -9,25 +9,21 @@
         </div>
       </div>
       <user-info :isShowName="true" :isShowBalance="true"></user-info>
-      <div class="admire">请现场与工作人员操作</div>
-      <div class="param" slot="header">
-        <div  class="weui-flex kind-list__item-hd kind-list__item-hd_show">
+      <div class="admire write-bg-color page__bd">请现场与工作人员操作</div>
+      <div slot="header">
+        <div class="list-title weui-flex kind-list__item-hd kind-list__item-hd_show">
           <div class="weui-flex__item">换购物品（多选）</div>
           <image class="kind-list__img" src="/static/images/icon_nav_nav.png" @click="isShowRedemption=!isShowRedemption"></image>
         </div>
-        <div v-if="isShowRedemption" class="weui-cells weui-cells_after-title">
+        <div v-if="isShowRedemption" class="write-bg-color page__bd">
           <checkbox-group @change="checkboxChange">
-              <label class="weui-cell weui-check__label" v-for="(item,index) in redemptionList" :key="item">
-                <checkbox  class="weui-check" :value="item.value" :checked="item.checked"/>
-                <div class="weui-cell__hd weui-check__hd_in-checkbox">
-                  <icon class="weui-icon-checkbox_circle" type="circle" size="23" v-if="!item.checked"></icon>
-                  <icon class="weui-icon-checkbox_success" type="success" size="23" v-if="item.checked"></icon>
-                </div>
-                <div class="weui-cell__bd">{{item.label}}</div>
-              </label>
+              <div class="el-card" :style="item.checked?'border-color: #409eff;':''" v-for="(item,index) in redemptionList" :key="item">
+                <checkbox :value="item.value" :checked="item.checked"/>
+                <span>{{item.label}}</span>
+              </div>
           </checkbox-group>
         </div>
-        <div class="weui-cell weui-cell_input">
+        <div class="write-bg-color page__bd weui-cell weui-cell_input">
             <div class="weui-cell__hd">
               <div class="weui-label">金额</div>
             </div>
@@ -36,8 +32,8 @@
             </div>
         </div>
       </div>
-      <div style="text-align:center;margin: 13px 8px 8px;">
-        <div v-if="!isUserWarning&&money>0?true:false" @click="commit">
+      <div v-if="!isUserWarning&&money>0?true:false" style="text-align:center;margin: 13px 8px 8px;">
+        <div @click="commit">
           <image src="/static/images/orderCommit.png"  class="orderCommit commitImage"></image>
           <text class="orderCommit commitText">确定</text>
         </div>
@@ -67,7 +63,7 @@
     },
     props: {},
     computed: {
-      showLoading(){
+      showLoading() {
         return this.$store.state.init.showLoading;
       },
       isUserWarning() {
@@ -113,7 +109,7 @@
         let vm = this;
         if (vm.money > vm.userInfo.money) {
           vm.isWarning = true;
-          vm.warningText = "成交金额不能大于您的最大余额:" + vm.userInfo.money+"元";
+          vm.warningText = "成交金额不能大于您的最大余额:" + vm.userInfo.money + "元";
           setTimeout(function() {
             vm.isWarning = false;
             return;
@@ -171,7 +167,7 @@
     destroyed() {},
     mounted() {
       let vm = this;
-      if (vm.isLogin){
+      if (vm.isLogin) {
         vm.$store.commit("getRedemptionList", { openId: vm.userInfo.openId });
       }
     },
@@ -179,7 +175,10 @@
      * 生命周期函数--监听页面显示
      */
     onShow() {
-      if (this.isLogin){
+      wx.setNavigationBarTitle({
+        title: '换购',
+      })
+      if (this.isLogin) {
         this.$store.commit("setCurrentPage", { currentPage: "Redemption" })
       }
     },
@@ -192,6 +191,11 @@
 </script>
 <style lang="css"
        scoped>
+  .Redemption {
+    background-color: #F2F6FC;
+    height: 100vh;
+  }
+
   .warning-background {
     position: fixed;
     width: 100%;
@@ -228,10 +232,6 @@
     font-size: 16px;
     color: red;
     margin: 5px;
-  }
-
-  .param {
-    padding-bottom: 75px;
   }
 
   .orderCommit {
@@ -334,5 +334,32 @@
   .slidown {
     display: block;
     animation: slidown .7s ease-in both;
+  }
+
+  .list-title {
+    opacity: 1;
+    background-color: #fff;
+    margin: 5px;
+    padding: 10px;
+  }
+
+  .write-bg-color {
+    background-color: #fff;
+  }
+
+  .page__bd {
+    margin: 5px;
+  }
+
+  .el-card {
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, .1);
+    border-radius: 4px;
+    border: 1px solid #ebeef5;
+    background-color: #fff;
+    overflow: hidden;
+    color: #303133;
+    transition: .3s;
+    padding: 8px;
+    margin:4.5px 0px;
   }
 </style>

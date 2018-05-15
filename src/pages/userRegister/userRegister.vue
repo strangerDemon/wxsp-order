@@ -73,8 +73,8 @@
           openId: "",
           userAccount: "",
           userName: "",
-          nickName:"",
-          avatarUrl:"",
+          nickName: "",
+          avatarUrl: "",
           companyCoce: 0,
           phone: "",
           comment: "",
@@ -142,7 +142,8 @@
           return false;
         }
         if (!vm.checkPhone()) return false;
-        if (!vm.checkNull(vm.user.userAccount)||!vm.checkNull(vm.user.userName)||!vm.checkNull(vm.user.companyCode)) {
+        if (!vm.checkNull(vm.user.userAccount) || !vm.checkNull(vm.user.userName) ||
+          !vm.checkNull(vm.user.companyCode)) {
           vm.showModal("星标项为必输项");
           return false;
         }
@@ -152,8 +153,8 @@
         let vm = this
         if (!vm.checkCommit()) return false;
         vm.user.openId = vm.userInfo.openId;
-        vm.user.nickName=vm.userInfo.nickName;
-        vm.user.avatarUrl=vm.userInfo.avatarUrl;
+        vm.user.nickName = vm.userInfo.nickName;
+        vm.user.avatarUrl = vm.userInfo.avatarUrl;
         this.$store.commit("register", vm.user);
       }
     },
@@ -167,6 +168,11 @@
 </script>
 <style lang="css"
        scoped>
+  .user-register {
+    height:100vh;
+    background-color: #F2F6FC;
+  }
+
   .must-write {
     color: red;
     display: inline-block;

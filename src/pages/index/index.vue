@@ -44,7 +44,11 @@
     /**
      * 生命周期函数--监听页面显示
      */
-    onShow: function() {},
+    onShow: function() {
+      wx.setNavigationBarTitle({
+        title: '微信点餐',
+      })
+    },
 
     /**
      * 生命周期函数--监听页面隐藏
@@ -102,7 +106,7 @@
       systemParamInit() {
         return this.$store.state.init.systemParamInit;
       },
-      showLoading(){
+      showLoading() {
         return this.$store.state.init.showLoading;
       }
     },
@@ -116,11 +120,11 @@
           this.hasUserInfo = true;
         }
         if (user && this.systemParamInit) {
-          this.$store.commit("setShowLoading",{showLoading:false});
+          this.$store.commit("setShowLoading", { showLoading: false });
         }
       },
       systemParamInit(init) {
-        if (this.userInfo != null)  this.$store.commit("setShowLoading",{showLoading:false});
+        if (this.userInfo != null) this.$store.commit("setShowLoading", { showLoading: false });
       }
     },
     methods: {
@@ -261,6 +265,11 @@
 </script>
 
 <style>
+  .container {
+    height:100vh;
+    background-color:#F2F6FC;
+  }
+
   .userinfo {
     display: flex;
     flex-direction: column;
