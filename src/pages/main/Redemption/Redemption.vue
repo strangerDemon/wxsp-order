@@ -23,6 +23,13 @@
               </div>
           </checkbox-group>
         </div>
+          <!--
+              <div class="el-card" :style="item.checked?'border-color: #409eff;':''" v-for="(item,index) in redemptionList" :key="item" @click="updateChecked(index)">
+                <icon class="weui-icon-checkbox_circle" type="circle" size="23" v-if="!item.checked"></icon>
+                <icon class="weui-icon-checkbox_success" type="success" size="23" v-if="item.checked"></icon>
+                <span>{{item.label}}</span>
+              </div>
+              -->
         <div class="write-bg-color page__bd weui-cell weui-cell_input">
             <div class="weui-cell__hd">
               <div class="weui-label">金额</div>
@@ -360,6 +367,6 @@
     color: #303133;
     transition: .3s;
     padding: 8px;
-    margin:4.5px 0px;
+    margin: 4.5px 0px;
   }
 </style>

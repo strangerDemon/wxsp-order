@@ -8,7 +8,7 @@
           <div class="action">
             <span v-if="record.isCancle" style="color: red">已退订</span>
             <span v-else-if="fromSource=='order'"style="color: blue" @click="cancel()">退订</span>
-            <span v-else-if="fromSource=='search'&&!userInfo.isAdmin&&order.canCancle" style="color: blue" @click="cancel()">退订</span>
+            <span v-else-if="fromSource=='search'&&!userInfo.isAdmin&&record.canCancle" style="color: blue" @click="cancel()">退订</span>
           </div>
         </div>
       </div>

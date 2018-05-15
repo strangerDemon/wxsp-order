@@ -78,7 +78,7 @@
       <div class="list">
         <ul infinite-scroll-disabled="loading" infinite-scroll-distance="10">
           <record v-for="(order,index) in list" :key="index" v-if="order.orderType>0" :isShowName="userInfo.isAdmin?true:false" :record="order" :fromSource="'search'" @cancle="cancel(order.id)"></record>
-          <div v-if="list.length==0" style="position:absoulte;margin:30px;">
+          <div v-if="list.length==0" style="position:absoulte;text-align:center;width:100%;">
             <image src="/static/images/undefined.png" />
           </div>
        <!-- <div v-if="page>1" class="backToTop" @click="backToTop()">点击返回顶部</div>-->
