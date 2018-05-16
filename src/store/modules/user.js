@@ -7,6 +7,7 @@ const state = {
   isLogin: false, //是否登录,其实为未注册
   //用户信息
   userInfo: null,
+  loadUserError:false,
   userWarningText: "", //提醒文字
   isUserWarning: false, //是否警告
 };
@@ -28,6 +29,7 @@ const mutations = {
       requestTask.wxRequest("getUserInfo", info, resolve, reject)
     }).then(res => {
       state.userInfo = res;
+      state.loadUserError=false;
       if (res.userName != "") {
         state.isLogin = true;
         if (res.isExamine != 1 || res.isForbidden == 1) {
@@ -55,7 +57,11 @@ const mutations = {
         state.isUserWarning = true;
       }
     }).catch(err => {
-      console.log("getUserInfo", err)
+      state.loadUserError=true;
+      wx.navigateTo({
+        url: '/pages/msg/msg_fail/main?title=' + err.errMsg +
+          '&redirect=/pages/index/main'
+      });
     })
   },
 

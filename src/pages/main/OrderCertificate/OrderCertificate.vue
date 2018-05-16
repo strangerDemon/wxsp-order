@@ -7,7 +7,7 @@
         <picker mode="date" @change="updatePicker">
           <span class="title">{{dateStr}}</span>
         </picker>  
-        <ticket v-for="(lunch,index) in lunchTimes" v-if="lunch>0" :key="index" :ticketType="lunchName[index]" :number="lunch"></ticket>
+        <ticket v-for="(lunch,index) in lunchTimes" v-if="lunch>0" :key="index" :selectStyle="index+1" :ticketType="lunchName[index]" :number="lunch"></ticket>
       </div>
     </block>
   </div>
@@ -49,21 +49,16 @@
       isLogin() {
         return this.$store.state.user.isLogin;
       },
-      currentPage() {
-        return this.$store.state.init.currentPage;
-      },
       userInfo() {
         return this.$store.state.user.userInfo;
       },
       orderList() {
-        return this.$store.state.order.orderList;
+        return this.$store.state.order.certificateList;
       }
     },
     watch: {
       orderList(orderList) {
         let vm = this;
-        if (vm.currentPage.toUpperCase() != vm.$options.name.toUpperCase())
-          return;
         vm.lunchTimes = new Array(3).fill(0);
         vm.lunchName = new Array(3);
         orderList.forEach(element => {
@@ -97,6 +92,7 @@
       getCertificate(day) {
         let vm = this;
         vm.$store.commit("getOrderList", {
+          from: "orderCertificate",
           name: "null",
           openId: vm.userInfo.openId,
           startDate: day,
@@ -128,9 +124,6 @@
       wx.setNavigationBarTitle({
         title: '凭证',
       })
-      if (this.isLogin) {
-        this.$store.commit("setCurrentPage", { currentPage: "OrderCertificate" })
-      }
     },
 
     /*
@@ -177,13 +170,13 @@
   }
 
   .title {
-    font-size: 34px;
+    font-size: 30px;
     text-align: center;
     display: block;
     margin: 10px;
     background-color: #fff;
     border-radius: 4px;
     margin: 10px 5px;
-    padding:10px;
+    padding: 5px;
   }
 </style>

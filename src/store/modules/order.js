@@ -16,9 +16,13 @@ const state = {
   menuList: [],
   //换购列表
   redemptionList: [],
+  //3个页面分开，和小程序的加载有关,小程序在打开一个页面后，请求一个接口，其他页面（未渲染）有监听这个接口的赋值变量也会运行
   //订餐列表
   orderList: [],
-
+  //查询页面的列表
+  searchList: [],
+  //凭证列表
+  certificateList: [],
   //result 根据结果返回 判断是否弹页面
   redemptionResult: "",
 };
@@ -42,7 +46,8 @@ const mutations = {
       state.orderParam = res;
     }).catch(err => {
       wx.navigateTo({
-        url: '/pages/msg/msg_fail/main?title=获取点餐参数失败&details='+err.errMsg
+        url: '/pages/msg/msg_fail/main?title=获取点餐参数失败&details=' + err
+          .errMsg
       });
     })
   },
@@ -54,7 +59,8 @@ const mutations = {
       state.menuList = res;
     }).catch(err => {
       wx.navigateTo({
-        url: '/pages/msg/msg_fail/main?title=获取菜单列表失败&details='+err.errMsg
+        url: '/pages/msg/msg_fail/main?title=获取菜单列表失败&details=' + err
+          .errMsg
       });
     })
   },
@@ -66,7 +72,8 @@ const mutations = {
       state.redemptionList = res;
     }).catch(err => {
       wx.navigateTo({
-        url: '/pages/msg/msg_fail/main?title=获取换购记录失败&details='+err.errMsg
+        url: '/pages/msg/msg_fail/main?title=获取换购记录失败&details=' + err
+          .errMsg
       });
     })
   },
@@ -75,10 +82,24 @@ const mutations = {
     new Promise((resolve, reject) => {
       requestTask.wxRequest("doSearch", info, resolve, reject)
     }).then(res => {
-      state.orderList = res;
+      switch (info.from) {
+        case "order":
+          state.orderList = res;
+          break;
+        case "orderList":
+          state.searchList = res;
+          break;
+        case "orderCertificate":
+          state.certificateList = res;
+          break;
+        default:
+          state.orderList = res;
+          break;
+      }
     }).catch(err => {
       wx.navigateTo({
-        url: '/pages/msg/msg_fail/main?title=获取订餐记录失败&details='+err.errMsg
+        url: '/pages/msg/msg_fail/main?title=获取订餐记录失败&details=' + err
+          .errMsg
       });
     })
   },
@@ -94,7 +115,7 @@ const mutations = {
       }
     }).catch(err => {
       wx.navigateTo({
-        url: '/pages/msg/msg_fail/main?title=点餐失败&details='+err.errMsg
+        url: '/pages/msg/msg_fail/main?title=点餐失败&details=' + err.errMsg
       });
     })
   },
@@ -110,7 +131,7 @@ const mutations = {
       }
     }).catch(err => {
       wx.navigateTo({
-        url: '/pages/msg/msg_fail/main?title=取消点餐失败&details='+err.errMsg
+        url: '/pages/msg/msg_fail/main?title=取消点餐失败&details=' + err.errMsg
       });
     })
   },
@@ -118,10 +139,10 @@ const mutations = {
     new Promise((resolve, reject) => {
       requestTask.wxRequest("doChangeBuy", info, resolve, reject)
     }).then(res => {
-      state.redemptionResult =  res + ":" + new Date();
+      state.redemptionResult = res + ":" + new Date();
     }).catch(err => {
       wx.navigateTo({
-        url: '/pages/msg/msg_fail/main?title=换购失败&details='+err.errMsg
+        url: '/pages/msg/msg_fail/main?title=换购失败&details=' + err.errMsg
       });
     })
   }

@@ -11,7 +11,11 @@
       <div class="heart-7"></div>
       <div class="heart-8"></div>
     </div>
-    <div class="text">加载中...<!--<span v-for="n in dotNum" :key="n">.</span>--></div>
+    <div class="text" v-if="!loadSysParamError&&!loadUserError">加载中...<!--<span v-for="n in dotNum" :key="n">.</span>--></div>
+    <div class="reload" v-else>
+      <image src="/static/images/reload.png" class="reload-image" @click="reload()"></image>
+      <div class="reload-text">重新加载</div>
+    </div>
   </div>
 </template>
 <script>
@@ -25,9 +29,28 @@
       }
     },
     props: {},
-    computed: {},
+    computed: {
+      loadSysParamError() {
+        return this.$store.state.init.loadSysParamError;
+      },
+      loadUserError() {
+        return this.$store.state.user.loadUserError;
+      }
+    },
     watch: {},
-    methods: {},
+    methods: {
+      reload() {
+        let vm=this
+        wx.reLaunch({
+          url: "/pages/index/main",
+          success: function() {
+            vm.$store.commit("toReload", {});
+          }
+        });
+        // this.$emit("reload");
+        //this.$store.commit("getSystemParam", {});
+      }
+    },
     beforeCreate() {},
     created() {},
     destroyed() {},
@@ -225,6 +248,23 @@
     color: #aaa;
     position: fixed;
     bottom: 50px;
-    font-size:20px;
+    font-size: 20px;
+  }
+
+  .reload {
+    position: fixed;
+    bottom: 10px;
+    width: 100%;
+    text-align: center;
+  }
+
+  .reload-image {
+    width: 30px;
+    height: 30px;
+  }
+
+  .reload-text {
+    color: #aaa;
+    font-size: 18px;
   }
 </style>

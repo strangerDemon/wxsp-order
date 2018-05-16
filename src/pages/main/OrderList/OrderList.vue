@@ -89,11 +89,11 @@
 </template>
 <script>
   import loveLoading from "@/components/loading";
-   import record from "@/components/record";
+  import record from "@/components/record";
   export default {
     name: "orderList",
     directives: {},
-    components: { loveLoading ,record},
+    components: { loveLoading, record },
     data() {
       return {
         //nav
@@ -155,18 +155,13 @@
       orderParam() {
         return this.$store.state.order.orderParam;
       },
-      currentPage() {
-        return this.$store.state.init.currentPage;
-      },
       orderList() {
-        return this.$store.state.order.orderList;
+        return this.$store.state.order.searchList;
       }
     },
     watch: {
       orderParam(orderParam) {
         let vm = this;
-        if (vm.currentPage.toUpperCase() != vm.$options.name.toUpperCase())
-          return;
         vm.orderTypeOptions = [];
         vm.orderTypeOptions.push({
           value: "0",
@@ -188,8 +183,6 @@
       },
       orderList(list) {
         let vm = this;
-        if (vm.currentPage.toUpperCase() != vm.$options.name.toUpperCase())
-          return;
         if (vm.page == 1) {
           vm.list = [];
         }
@@ -426,6 +419,7 @@
         let name = vm.userInfo.isAdmin ? vm.username : "null";
         let openId = vm.userInfo.isAdmin ? "" : vm.userInfo.openId;
         vm.$store.commit("getOrderList", {
+          from: "orderList",
           openId: openId,
           name: name,
           startDate: vm.startDate,
@@ -446,7 +440,8 @@
     mounted() {
       let vm = this;
       let today = new Date();
-      vm.maxDate = (today.getYear()+1900) + "-" + (today.getMonth() + 1) + "-" + today
+      vm.maxDate = (today.getYear() + 1900) + "-" + (today.getMonth() + 1) +
+        "-" + today
         .getDate();
       if (vm.isLogin) {
         vm.init();
@@ -457,12 +452,11 @@
      * 生命周期函数--监听页面显示
      */
     onShow() {
-      wx.setNavigationBarTitle({  
-        title: '记录',  
+      wx.setNavigationBarTitle({
+        title: '记录',
       })
-      this.reset() ;
+      this.reset();
       if (this.isLogin) {
-        this.$store.commit("setCurrentPage", { currentPage: "OrderList" });
         this.search(1);
       }
     },
@@ -498,7 +492,7 @@
     height: 100%;
     width: 100%;
     font-size: 18px;
-    background-color:#F2F6FC;
+    background-color: #F2F6FC;
   }
 
   .searchButton {

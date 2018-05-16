@@ -185,9 +185,6 @@
       wx.setNavigationBarTitle({
         title: '换购',
       })
-      if (this.isLogin) {
-        this.$store.commit("setCurrentPage", { currentPage: "Redemption" })
-      }
     },
 
     /*

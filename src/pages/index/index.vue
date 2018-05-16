@@ -97,6 +97,9 @@
       loveLoading
     },
     computed: {
+      toReload(){
+return this.$store.state.init.toReload;
+      },
       isLogin() {
         return this.$store.state.user.isLogin;
       },
@@ -125,6 +128,9 @@
       },
       systemParamInit(init) {
         if (this.userInfo != null) this.$store.commit("setShowLoading", { showLoading: false });
+      },
+      toReload(toreload){
+        this.load();
       }
     },
     methods: {
@@ -254,20 +260,23 @@
         if (this.times++ % 11 == 10) {
           this.binddivTap("map");
         }
+      },
+      load() {
+        this.getUserInfo();
+        this.$store.commit("getSystemParam", {});
       }
     },
     created() {
       // 调用应用实例的方法获取全局数据
-      this.getUserInfo();
-      this.$store.commit("getSystemParam", {});
+      this.load();
     }
   }
 </script>
 
 <style>
   .container {
-    height:100vh;
-    background-color:#F2F6FC;
+    height: 100vh;
+    background-color: #F2F6FC;
   }
 
   .userinfo {

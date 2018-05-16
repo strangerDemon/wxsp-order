@@ -81,9 +81,6 @@
       isLogin() {
         return this.$store.state.user.isLogin;
       },
-      currentPage() {
-        return this.$store.state.init.currentPage;
-      },
       orderParam() {
         return this.$store.state.order.orderParam;
       },
@@ -119,16 +116,12 @@
       },
       orderList(list) {
         let vm = this;
-        if (vm.currentPage.toUpperCase() != vm.$options.name.toUpperCase())
-          return;
         if (vm.orderParam != null) {
           vm.updatelunchTypeTimes();
         }
       },
       orderParam(orderParam) {
         let vm = this;
-        if (vm.currentPage.toUpperCase() != vm.$options.name.toUpperCase())
-          return;
         if (!orderParam.isOrderOrNot) {
           vm.isInitWaining = true;
           vm.initWarningText = "点餐程序已关闭";
@@ -279,6 +272,7 @@
         let vm = this
         let today = new Date().toLocaleDateString();
         vm.$store.commit("getOrderList", {
+          from:"order",
           name: "null",
           openId: vm.userInfo.openId,
           startDate: today,
@@ -311,7 +305,6 @@
       wx.setNavigationBarTitle({
         title: '点餐',
       })
-      this.$store.commit("setCurrentPage", { currentPage: "Order" });
       if (this.showLoading) return;
       if (this.isLogin) {
         this.requestToday();
