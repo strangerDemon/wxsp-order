@@ -3,7 +3,8 @@
     <love-loading v-if="showLoading"></love-loading>
     <block v-if="!showLoading">
       <div v-if="isUserWarning||isInitWaining" :class="isUserWarning||isInitWaining?'slidown warning-background':'warning-background'">
-        <div v-if="isUserWarning" class="warning-text">{{userWarningText}}</div>
+        <div v-if="isUserWarning&&!isLogin" class="warning-text" @click="userRegister">{{userWarningText}}</div>
+        <div v-else-if="isUserWarning&&isLogin" class="warning-text">{{userWarningText}}</div>
         <div v-else-if="isInitWaining" class="warning-text">
           {{initWarningText}}
         </div>
@@ -28,7 +29,7 @@
             </div>
           </div>
         </div>
-        <div v-if="!isShowMenu" class="write-bg-color page__bd">
+        <div v-if="!isShowMenu" class="page__bd" style="background-color:#EEEEE0">
           <div class="dishLabel" v-for="(dish,index) in menuList" :key="index">{{dish.name}}</div>
         </div>
       </div>
@@ -36,7 +37,7 @@
         <div class="list-title weui-flex kind-list__item-hd kind-list__item-hd_show" v-if="orderList.length>0">
           <span class="weui-flex__item title">今日点餐情况:</span>
         </div>
-        <record v-for="(order,index) in orderList" :key="index" v-if="order.orderType>0" :record="order" :fromSource="'order'" @cancle="cancel(order.id)"></record>
+        <record v-for="(order,index) in orderList" :key="index" v-if="order.orderType>0" :record="order" :fromSource="'order'" @cancel="cancel(order.id)"></record>
       </blobk>
       <picker style="text-align:center;margin: 13px 8px 8px;" @change="commitAction" :range="lunchTypeOptions" range-key="label">
         <block v-if="isOrderOrNot">
@@ -92,9 +93,23 @@
       },
       orderList() {
         return this.$store.state.order.orderList;
-      }
+      },
+      systemParamInit() {
+        return this.$store.state.init.systemParamInit;
+      },
     },
     watch: {
+      userInfo(userInfo) {
+        let vm = this;
+        if (!this.systemParamInit) {
+          this.$store.commit("getSystemParam", {});
+          vm.$store.commit("getOrderParam", { openId: "" });
+          vm.$store.commit("getMeunList", { openId: "" });
+          if (vm.isLogin) {
+            vm.requestToday();
+          }
+        }
+      },
       menuList(list) {
         let vm = this
         let ROW = 3;
@@ -272,7 +287,7 @@
         let vm = this
         let today = new Date().toLocaleDateString();
         vm.$store.commit("getOrderList", {
-          from:"order",
+          from: "order",
           name: "null",
           openId: vm.userInfo.openId,
           startDate: today,
@@ -283,20 +298,66 @@
           isCancle: 1
         });
         vm.$store.commit("getUserInfo", { code: "", openId: vm.userInfo.openId });
-      }
+      },
+      //初始化页面用户登录
+      getUserInfo() {
+        let vm = this
+        wx.login({
+          success: function(res) { //获得唯一code
+            if (res.code) {
+              //console.log(res.code);
+              //登录后台
+              vm.$store.commit("getUserInfo", { code: res.code, openId: "" });
+            } else {
+              vm.getUnloginUserInfo();
+            }
+          }
+        });
+      },
+      getUnloginUserInfo(callback) {
+        let vm = this
+        //console.log(vm.userInfo);
+        // 未登录后台
+        wx.login({
+          success: () => {
+            wx.getUserInfo({
+              success: (res) => {
+                //console.log(res);
+                if (vm.userInfo == null) {
+                  vm.userInfo = res.userInfo
+                } else {
+                  vm.userInfo.nickName = res.userInfo.nickName
+                  vm.userInfo.avatarUrl = res.userInfo.avatarUrl
+                }
+                vm.hasUserInfo = true;
+                vm.$store.commit("setUserInfo", {
+                  userInfo: vm.userInfo,
+                  isLogin: vm.isLogin
+                })
+                if (callback != undefined) {
+                  callback();
+                }
+              }
+            })
+          }
+        });
+      },
+      userRegister() {
+        wx.navigateTo({
+          url: '../../userRegister/main'
+        })
+      },
     },
     beforeCreate() {},
     created() {},
     destroyed() {},
     mounted() {
-      let vm = this;
-      if (vm.showLoading) return;
-      vm.$store.commit("getOrderParam", { openId: vm.userInfo.openId });
-      vm.$store.commit("getMeunList", { openId: vm.userInfo.openId });
-      if (vm.isLogin) {
-        vm.requestToday();
-        // vm.isOrderOrNot = true;
-      }
+      this.getUserInfo();
+    },
+    onPullDownRefresh() {
+      this.getUserInfo();
+      this.$store.commit("getSystemParam", {});
+      this.setLunchPicker();
     },
     /*
      * 生命周期函数--监听页面显示
@@ -351,7 +412,8 @@
     width: 29%;
     display: inline-table;
     color: #aaa;
-    text-align: center;
+    /*    text-align: center;*/
+    padding-left: 10px;
   }
 
   .orderCommit {
@@ -419,9 +481,11 @@
 
   .dishName {
     position: absolute;
-    bottom: 5px;
+    bottom: 0rpx;
     text-align: center;
-    width: 100%;
+    width: 60%;
+    left: 20%;
+    background-color: #fff;
   }
 
   .list-title {

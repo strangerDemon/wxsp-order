@@ -2,11 +2,16 @@
   <div class="OrderCertificate">
     <love-loading v-if="showLoading"></love-loading>
     <block v-if="!showLoading">
+      <div v-if="isUserWarning||isInitWaining" :class="isUserWarning||isInitWaining?'slidown warning-background':'warning-background'">
+        <div v-if="isUserWarning&&!isLogin" class="warning-text" @click="userRegister">{{userWarningText}}</div>
+        <div v-else-if="isUserWarning&&isLogin" class="warning-text">{{userWarningText}}</div>
+      </div>
       <user-info :isShowName="true" :isShowBalance="false"></user-info>
-      <div class="orderList">
-        <picker mode="date" @change="updatePicker">
+      <div v-if="isLogin" class="orderList">
+        <!--暂时无点击事件，防止用户今天点完，查询第二天然后截图，再退餐-->
+        <!--<picker mode="date" @change="updatePicker">-->
           <span class="title">{{dateStr}}</span>
-        </picker>  
+        <!--</picker>  -->
         <ticket v-for="(lunch,index) in lunchTimes" v-if="lunch>0" :key="index" :selectStyle="index+1" :ticketType="lunchName[index]" :number="lunch"></ticket>
       </div>
     </block>
@@ -43,6 +48,12 @@
     },
     props: {},
     computed: {
+      isUserWarning() {
+        return this.$store.state.user.isUserWarning;
+      },
+      userWarningText() {
+        return this.$store.state.user.userWarningText;
+      },
       showLoading() {
         return this.$store.state.init.showLoading;
       },
@@ -103,6 +114,11 @@
           isCancle: 1,
         });
       },
+      userRegister() {
+        wx.navigateTo({
+          url: '../../userRegister/main'
+        })
+      },
     },
     beforeCreate() {},
     created() {},
@@ -134,6 +150,35 @@
 </script>
 <style lang="css"
        scoped>
+  .warning-background {
+    position: fixed;
+    top: 0px;
+    width: 100%;
+    height: 25px;
+    background-color: red;
+  }
+
+  .warning-text {
+    color: #fff;
+    text-align: center;
+    width: 100%;
+    font-size: 16px;
+  }
+
+  @keyframes slidown {
+    from {
+      transform: translateY(-100%);
+    }
+    to {
+      transform: translateY(0%);
+    }
+  }
+
+  .slidown {
+    display: block;
+    animation: slidown .7s ease-in both;
+  }
+
   .OrderCertificate {
     position: absolute;
     height: 100%;

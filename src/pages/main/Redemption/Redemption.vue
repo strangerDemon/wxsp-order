@@ -3,14 +3,15 @@
     <love-loading v-if="showLoading"></love-loading>
     <block v-if="!showLoading">
       <div v-if="isUserWarning||isWarning" :class="isUserWarning||isWarning?'warning-background slidown':'warning-background'">
-        <div v-if="isUserWarning" class="warning-text">{{userWarningText}}</div>
+        <div v-if="isUserWarning&&!isLogin" class="warning-text" @click="userRegister">{{userWarningText}}</div>
+        <div v-else-if="isUserWarning&&isLogin" class="warning-text">{{userWarningText}}</div>
         <div v-else-if="isWarning" class="warning-text">
           {{warningText}}
         </div>
       </div>
       <user-info :isShowName="true" :isShowBalance="true"></user-info>
-      <div class="admire write-bg-color page__bd">请现场与工作人员操作</div>
-      <div slot="header">
+      <div v-if="isLogin&&redemptionList.length>0" class="admire write-bg-color page__bd">请现场与工作人员操作</div>
+      <div v-if="isLogin&&redemptionList.length>0" slot="header">
         <div class="list-title weui-flex kind-list__item-hd kind-list__item-hd_show">
           <div class="weui-flex__item">换购物品（多选）</div>
           <image class="kind-list__img" src="/static/images/icon_nav_nav.png" @click="isShowRedemption=!isShowRedemption"></image>
@@ -23,13 +24,6 @@
               </div>
           </checkbox-group>
         </div>
-          <!--
-              <div class="el-card" :style="item.checked?'border-color: #409eff;':''" v-for="(item,index) in redemptionList" :key="item" @click="updateChecked(index)">
-                <icon class="weui-icon-checkbox_circle" type="circle" size="23" v-if="!item.checked"></icon>
-                <icon class="weui-icon-checkbox_success" type="success" size="23" v-if="item.checked"></icon>
-                <span>{{item.label}}</span>
-              </div>
-              -->
         <div class="write-bg-color page__bd weui-cell weui-cell_input">
             <div class="weui-cell__hd">
               <div class="weui-label">金额</div>
@@ -106,6 +100,11 @@
       }
     },
     methods: {
+       userRegister() {
+        wx.navigateTo({
+          url: '../../userRegister/main'
+        })
+      },
       resetEedemptionList(list) {
         list.forEach(function(item) {
           item["checked"] = false;

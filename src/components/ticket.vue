@@ -7,7 +7,7 @@
       <div class="container-0" :class="'container-'+selectStyle">
         <image src="/static/images/ticket/fabric.png" style="width:100%;height:100%"></image>
 				<h4>
-          <span>{{number}}份</span>
+          <span>{{number}}<!--份--></span>
         </h4>
 				<h5>
           <span>{{ticketType}}</span>
@@ -182,7 +182,7 @@
     color: rgba(255, 255, 255, 0.9);
     text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
     font-weight: 700;
-    font-size: 40px;
+    font-size: 50px;/*40px;*/
     text-transform: uppercase;
     border-top: 1px dashed rgba(0, 0, 0, 0.1);
     border-bottom: 1px dashed rgba(0, 0, 0, 0.1);
@@ -195,8 +195,8 @@
     -ms-user-select: none;
     user-select: none;
     float: right;
-    height: 80px;
-    width: 20%;
+    height: 82px;
+    width: 25%;
     position: absolute;
     bottom: 0px;
     right:0px;
@@ -217,7 +217,7 @@
     color: #fff;
     text-shadow: -1px -1px 1px rgba(255, 255, 255, 0.1);
     text-transform: uppercase;
-    width: 78%;
+    width: 73%;
     height: 95%;
     position: absolute;
     bottom: 0px;

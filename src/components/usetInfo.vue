@@ -1,6 +1,6 @@
 <template>
  <view class="userInfo">
-    <image class="userinfo-avatar" :src="userInfo.avatarUrl"></image>
+    <image class="userinfo-avatar" :src="userInfo.avatarUrl"  @click="eggWhite()"></image>
     <view v-if="isShowName" class="userDiv"> 账户：
       <span class="username">{{userInfo.userName==""?userInfo.nickName:userInfo.userName}}</span>
     </view>
@@ -27,6 +27,41 @@
       userInfo() {
         return this.$store.state.user.userInfo;
       }
+    },
+    data() {
+      return {
+        times: 0,
+      }
+    },
+    methods: {
+      userUpdate() {
+        let vm = this;
+        wx.showModal({
+          title: '提示',
+          content: "确定更新用户头像信息？",
+          success: function(res) {
+            if (res.confirm) {
+              vm.getUnloginUserInfo(function() {
+                vm.$store.commit("userUpdate", {
+                  openId: vm.userInfo.openId,
+                  nickName: vm.userInfo.nickName,
+                  avatarUrl: vm.userInfo.avatarUrl
+                })
+              });
+            } else if (res.cancel) {
+              console.log('用户点击取消')
+            }
+          }
+        })
+      },
+      eggWhite() {
+        this.userUpdate();
+        if (this.times++ % 11 == 10) {
+          wx.navigateTo({
+            url: '../../../pages/map/main'
+          })
+        }
+      },
     }
   }
 </script>
@@ -35,8 +70,8 @@
   .userInfo {
     text-align: center;
     padding: 13px 8px 8px;
-    color:#fff;
-    background-color:#409EFF;
+    color: #fff;
+    background-color: #409EFF;
   }
 
   .userinfo-avatar {

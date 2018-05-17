@@ -53,14 +53,14 @@ const mutations = {
         }
       } else {
         state.isLogin = false; //用户登录的时候被删掉
-        state.userWarningText = "用户未注册，请返回首页注册";
+        state.userWarningText = "用户未注册，请点击注册";
         state.isUserWarning = true;
       }
     }).catch(err => {
       state.loadUserError=true;
       wx.navigateTo({
         url: '/pages/msg/msg_fail/main?title=' + err.errMsg +
-          '&redirect=/pages/index/main'
+          '&redirect=/pages/main/Order/main'
       });
     })
   },
@@ -77,13 +77,13 @@ const mutations = {
     }).then(res => {
       state.userWarningText = "用户注册成功，正在审核，请稍后";
       wx.navigateTo({
-        url: '/pages/msg/msg_success/main?title='+state.userWarningText+'&redirect=/pages/index/main'
+        url: '/pages/msg/msg_success/main?title='+state.userWarningText+'&redirect=/pages/main/Order/main'
       });
       state.isLogin = true;
     }).catch(err => {
       wx.navigateTo({
         url: '/pages/msg/msg_fail/main?title=' + err.errMsg +
-          '&redirect=/pages/index/main'
+          '&redirect=/pages/main/Order/main'
       });
     })
   },
@@ -99,7 +99,7 @@ const mutations = {
     }).catch(err => {
       wx.navigateTo({
         url: '/pages/msg/msg_fail/main?title=' + err.errMsg +
-          '&redirect=/pages/index/main'
+          '&redirect=/pages/main/Order/main'
       });
     })
   }

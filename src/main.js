@@ -19,12 +19,12 @@ export default {
   config: {
     // 页面前带有 ^ 符号的，会被编译成首页，其他页面可以选填，我们会自动把 webpack entry 里面的入口页面加进去
     pages: [
-      '^pages/index/main',
+      'pages/index/main',
       "pages/userRegister/main",
       "pages/map/main",
 
       "pages/main/OrderCertificate/main",
-      "pages/main/Order/main",
+      "^pages/main/Order/main",
       "pages/main/OrderList/main",
       "pages/main/Redemption/main",
 
@@ -41,7 +41,7 @@ export default {
     tabBar: {
       "color": "#000000",
       "borderStyle": "#000",
-      "selectedColor": "#9999FF",
+      "selectedColor": "#409EFF",
       "list": [{
           "pagePath": "pages/main/Order/main",
           "text": "点餐",
@@ -65,12 +65,12 @@ export default {
           "text": "换购",
           "iconPath": "/static/images/tabbar/tabbar_redemption_unselected.png",
           "selectedIconPath": "/static/images/tabbar/tabbar_redemption_selected.png"
-        }, {
+        }/*, {
           "pagePath": "pages/index/main",
           "text": "主页",
           "iconPath": "/static/images/tabbar/tabbar_my_unselected.png",
           "selectedIconPath": "/static/images/tabbar/tabbar_my_selected.png"
-        },
+        },*/
       ]
     }
   }

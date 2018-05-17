@@ -2,14 +2,19 @@
    <div class="record">
       <div class="el-card" style="padding: 14px;">
         <span v-if="isShowName">{{record.name}}&nbsp;</span>
-        <span>{{record.orderName}}</span>
+        <span>{{record.orderName}}
+        </span>
         <div class="bottom clearfix">
-          <time class="time">{{record.createDate}}</time>
+          <time class="time">{{record.createDate}}</time>    
           <div class="action">
             <span v-if="record.isCancle" style="color: red">已退订</span>
-            <span v-else-if="fromSource=='order'"style="color: blue" @click="cancel()">退订</span>
-            <span v-else-if="fromSource=='search'&&!userInfo.isAdmin&&record.canCancle" style="color: blue" @click="cancel()">退订</span>
-          </div>
+            <span v-else-if="fromSource=='order'||(fromSource=='search'&&!userInfo.isAdmin&&record.canCancle)" >
+              <button class="weui-btn button" type="warn" plain="true" @click="cancel()">退订</button>
+            </span>
+            <!--<span v-else-if="fromSource=='search'&&!userInfo.isAdmin&&record.canCancle"  @click="cancel()">
+              <button class="weui-btn button" type="warn" plain="true" >退订2</button>
+            </span>-->
+          </div> 
         </div>
       </div>
    </div>
@@ -35,9 +40,10 @@
         return this.$store.state.user.userInfo;
       },
     },
+    watch: {},
     methods: {
       cancel() {
-        this.$emit("cancle");
+        this.$emit("cancel");
       }
     }
   }
@@ -52,9 +58,9 @@
     box-shadow: 0 2px 12px 0 rgba(0, 0, 0, .1);
     border-radius: 4px;
     border: 1px solid #ebeef5;
-    background-color: #fff;
+    background-color: #EEEEE0;
     overflow: hidden;
-    color: #303133;
+    color: #000;
     transition: .3s;
   }
 
@@ -82,5 +88,10 @@
   .action {
     float: right;
     display: inline;
+  }
+
+  .button {
+    padding: 0px 7px;
+    line-height: 2;
   }
 </style>

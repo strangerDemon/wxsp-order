@@ -97,8 +97,8 @@
       loveLoading
     },
     computed: {
-      toReload(){
-return this.$store.state.init.toReload;
+      toReload() {
+        return this.$store.state.init.toReload;
       },
       isLogin() {
         return this.$store.state.user.isLogin;
@@ -129,7 +129,7 @@ return this.$store.state.init.toReload;
       systemParamInit(init) {
         if (this.userInfo != null) this.$store.commit("setShowLoading", { showLoading: false });
       },
-      toReload(toreload){
+      toReload(toreload) {
         this.load();
       }
     },
@@ -268,7 +268,7 @@ return this.$store.state.init.toReload;
     },
     created() {
       // 调用应用实例的方法获取全局数据
-      this.load();
+      //this.load();
     }
   }
 </script>

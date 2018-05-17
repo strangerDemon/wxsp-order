@@ -42,7 +42,7 @@
       reload() {
         let vm=this
         wx.reLaunch({
-          url: "/pages/index/main",
+          url: "/pages/main/Order/main",
           success: function() {
             vm.$store.commit("toReload", {});
           }

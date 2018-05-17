@@ -40,7 +40,7 @@
           </radio-group>
         </div>
         <div class="temp temp1" :class="moreOpen||moreShow?moreOpen?moreShow? 'slidown disappear':'slidown':'slidup disappear':'slidup'">
-          <div v-if="userInfo.isAdmin" class="weui-cell weui-cell_input">
+          <div v-if="userInfo.isAdmin" class="weui-cell weui-cell_input" >
             <div class="weui-cell__hd">
               <div class="weui-label">用户名</div>
             </div>
@@ -49,7 +49,7 @@
             </div>
             <icon v-if="username!=''" class="clearInput" type="cancel" size="23" @click="clearInput('username')"></icon>
           </div>
-          <div class="weui-cell weui-cell_input">
+          <div class="weui-cell weui-cell_input" >
             <div class="weui-cell__hd">
               <div class="weui-label">起始时间</div>
             </div>
@@ -73,15 +73,16 @@
           </div>
           <button class="mini-btn searchButton" type="primary" size="mini" @click="search(1)">确定</button>
         </div>
-        <div class="fullbg" :class="isfull? 'fullopacity':''" @click="naviAction(0)"></div>
+        <div class="fullbg" :class="isfull? 'fullopacity':'hide'" @click="naviAction(0)"></div>
       </block>
       <div class="list">
         <ul infinite-scroll-disabled="loading" infinite-scroll-distance="10">
-          <record v-for="(order,index) in list" :key="index" v-if="order.orderType>0" :isShowName="userInfo.isAdmin?true:false" :record="order" :fromSource="'search'" @cancle="cancel(order.id)"></record>
+          <record v-for="(order,index) in list" :key="index" :isShowName="userInfo.isAdmin?true:false" :record="order" :fromSource="'search'" @cancel="cancel(order.id)"></record>
           <div v-if="list.length==0" style="position:absoulte;text-align:center;width:100%;">
             <image src="/static/images/undefined.png" />
           </div>
-       <!-- <div v-if="page>1" class="backToTop" @click="backToTop()">点击返回顶部</div>-->
+          <mini-loading v-if="requesting"></mini-loading>
+          <div v-if="page>1&&!requesting" class="backToTop" @click="backToTop()">点击返回顶部</div>
         </ul>
       </div>
     </block>
@@ -89,11 +90,12 @@
 </template>
 <script>
   import loveLoading from "@/components/loading";
+  import miniLoading from "@/components/miniLoading";
   import record from "@/components/record";
   export default {
     name: "orderList",
     directives: {},
-    components: { loveLoading, record },
+    components: { loveLoading, record, miniLoading },
     data() {
       return {
         //nav
@@ -106,6 +108,7 @@
         moreShow: false,
         isfull: false,
         page: 1,
+        requesting: false,
         //search option
         username: "",
         startDate: "",
@@ -183,6 +186,7 @@
       },
       orderList(list) {
         let vm = this;
+        vm.requesting = false;
         if (vm.page == 1) {
           vm.list = [];
         }
@@ -207,6 +211,7 @@
         let vm = this;
         vm.list = [];
         vm.search(1);
+        vm.$store.commit("getOrderParam", { openId: vm.userInfo.openId });
       },
       reset() { //查询参数重置
         let vm = this;
@@ -416,6 +421,7 @@
       search(page) {
         let vm = this;
         vm.page = page;
+        vm.requesting = true;
         let name = vm.userInfo.isAdmin ? vm.username : "null";
         let openId = vm.userInfo.isAdmin ? "" : vm.userInfo.openId;
         vm.$store.commit("getOrderList", {
@@ -445,7 +451,7 @@
         .getDate();
       if (vm.isLogin) {
         vm.init();
-        vm.$store.commit("getOrderParam", { openId: vm.userInfo.openId });
+
       }
     },
     /*
@@ -533,7 +539,7 @@
     height: 40px;
     align-items: center;
     justify-content: center;
-    font-size: 14px;
+    /*font-size: 14px;*/
   }
 
   .borders {
@@ -567,9 +573,12 @@
     padding: 0 20rpx 0 20rpx;
     line-height: 90rpx;
     background: #fff;
+    font-size: 14px;
   }
 
-  .temp2 {}
+  .temp2 {
+    width: calc(100vw - 20px) !important;
+  }
 
   .slidedown {
     transform: translateY(0%);
@@ -602,6 +611,10 @@
 
   .fullopacity {
     opacity: .5;
+  }
+
+  .hide {
+    display: none;
   }
 
   .nav-son.active .content {
@@ -665,5 +678,13 @@
     font-size: 12px;
     color: blue;
     cursor: pointer;
+  }
+
+  .weui-cell {
+    right: 15px;
+  }
+
+  .weui-label {
+    color: #666;
   }
 </style>
