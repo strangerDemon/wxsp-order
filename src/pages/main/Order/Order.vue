@@ -29,7 +29,7 @@
             </div>
           </div>
         </div>
-        <div v-if="!isShowMenu" class="page__bd" style="background-color:#EEEEE0">
+        <div v-else class="page__bd" style="background-color:#EEEEE0">
           <div class="dishLabel" v-for="(dish,index) in menuList" :key="index">{{dish.name}}</div>
         </div>
       </div>
@@ -101,8 +101,8 @@
     watch: {
       userInfo(userInfo) {
         let vm = this;
-        if (!this.systemParamInit) {
-          this.$store.commit("getSystemParam", {});
+        if (!vm.systemParamInit) {
+          vm.$store.commit("getSystemParam", {});
           vm.$store.commit("getOrderParam", { openId: "" });
           vm.$store.commit("getMeunList", { openId: "" });
           if (vm.isLogin) {
@@ -295,7 +295,7 @@
           orderType: 0,
           changeType: 2,
           page: 0,
-          isCancle: 1
+          isCancle:0// 1 已退订的也显示
         });
         vm.$store.commit("getUserInfo", { code: "", openId: vm.userInfo.openId });
       },
@@ -355,9 +355,17 @@
       this.getUserInfo();
     },
     onPullDownRefresh() {
+      let vm = this
       this.getUserInfo();
       this.$store.commit("getSystemParam", {});
+      if (vm.menuList.length == 0) {
+        vm.$store.commit("getMeunList", { openId: "" });
+      }
+      if (vm.orderParam.lunch.length == 0) {
+        vm.$store.commit("getOrderParam", { openId: "" });
+      }
       this.setLunchPicker();
+      wx.stopPullDownRefresh(); 
     },
     /*
      * 生命周期函数--监听页面显示
@@ -370,7 +378,7 @@
       if (this.isLogin) {
         this.requestToday();
       }
-      this.setLunchPicker();
+      //this.setLunchPicker();
     },
 
     /*

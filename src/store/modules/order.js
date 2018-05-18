@@ -84,9 +84,16 @@ const mutations = {
     }).then(res => {
       switch (info.from) {
         case "order":
-          state.orderList = res;
+          state.orderList = res.sort(function(item1,item2){
+              if(item1.isCancle&&!item1.isCancle){
+                return 1;
+              }else{
+                return -1;
+              }
+          });
+          //今天的订餐要做处理，把未退订的至于前
           break;
-        case "orderList":
+        case "searchList":
           state.searchList = res;
           break;
         case "orderCertificate":

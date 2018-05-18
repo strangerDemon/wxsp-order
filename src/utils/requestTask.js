@@ -1,9 +1,9 @@
-import tokenUtil from './tokenUtil'
+//import tokenUtil from './tokenUtil'
 // wx.request 封装
 
 export const wxRequest = function wxRequest(method, data, resolve, reject) {
   let config = {};
-  data["Token"] = tokenUtil.token
+ // data["Token"] = tokenUtil.token
   config = {
     para: JSON.stringify(data)
   }

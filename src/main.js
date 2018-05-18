@@ -49,12 +49,6 @@ export default {
           "selectedIconPath": "/static/images/tabbar/tabbar_order_selected.png"
         },
         {
-          "pagePath": "pages/main/OrderList/main",
-          "text": "查询",
-          "iconPath": "/static/images/tabbar/tabbar_search_unselected.png",
-          "selectedIconPath": "/static/images/tabbar/tabbar_search_selected.png"
-        },
-        {
           "pagePath": "pages/main/OrderCertificate/main",
           "text": "凭证",
           "iconPath": "/static/images/tabbar/tabbar_certificate_unselected.png",
@@ -65,7 +59,13 @@ export default {
           "text": "换购",
           "iconPath": "/static/images/tabbar/tabbar_redemption_unselected.png",
           "selectedIconPath": "/static/images/tabbar/tabbar_redemption_selected.png"
-        }/*, {
+        },
+        {
+          "pagePath": "pages/main/OrderList/main",
+          "text": "查询",
+          "iconPath": "/static/images/tabbar/tabbar_search_unselected.png",
+          "selectedIconPath": "/static/images/tabbar/tabbar_search_selected.png"
+        },/*, {
           "pagePath": "pages/index/main",
           "text": "主页",
           "iconPath": "/static/images/tabbar/tabbar_my_unselected.png",

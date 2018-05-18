@@ -425,7 +425,7 @@
         let name = vm.userInfo.isAdmin ? vm.username : "null";
         let openId = vm.userInfo.isAdmin ? "" : vm.userInfo.openId;
         vm.$store.commit("getOrderList", {
-          from: "orderList",
+          from: "searchList",
           openId: openId,
           name: name,
           startDate: vm.startDate,
@@ -479,6 +479,7 @@
       vm.list = [];
       vm.page = 1;
       vm.search(vm.page);
+      wx.stopPullDownRefresh(); 
     },
 
     /**

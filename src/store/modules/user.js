@@ -32,6 +32,7 @@ const mutations = {
       state.loadUserError=false;
       if (res.userName != "") {
         state.isLogin = true;
+        state.userWarningText="";
         if (res.isExamine != 1 || res.isForbidden == 1) {
           if (res.isExamine == 0) {
             state.userWarningText = "账号未审核"

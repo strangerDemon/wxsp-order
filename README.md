@@ -26,3 +26,6 @@ wechat small project about order lunch
 
 mpvue 版本的微信小程序 点餐系统前端demo
 
+演示
+![image](https://github.com/strangerDemon/mpvue-demo/blob/master/demo/operation.mp4)
+

@@ -17,27 +17,34 @@
           <image class="kind-list__img" src="/static/images/icon_nav_nav.png" @click="isShowRedemption=!isShowRedemption"></image>
         </div>
         <div v-if="isShowRedemption" class="write-bg-color page__bd">
-          <checkbox-group @change="checkboxChange">
+          <!--<checkbox-group>
+              <div class="el-card" :style="item.checked?'border-color: #409eff;':''" v-for="(item,index) in redemptionList" :key="item" @click="checkItem(item.value)">
+                <checkbox :value="item.value" :checked="item.checked"/>
+                <span>{{item.label}}</span>
+              </div>
+          </checkbox-group>-->
+           <checkbox-group @change="checkboxChange">
               <div class="el-card" :style="item.checked?'border-color: #409eff;':''" v-for="(item,index) in redemptionList" :key="item">
                 <checkbox :value="item.value" :checked="item.checked"/>
                 <span>{{item.label}}</span>
               </div>
           </checkbox-group>
         </div>
+        <div v-else class="el-card" style="background-color:#EEEEE0">
+          <div class="dishLabel" v-for="(item,index) in redemptionList" :key="index" v-if="item.checked">{{item.label}}</div>
+        </div>
         <div class="write-bg-color page__bd weui-cell weui-cell_input">
             <div class="weui-cell__hd">
               <div class="weui-label">金额</div>
             </div>
             <div class="weui-cell__bd">
-              <input class="weui-input" :placeholder="'成交金额[0~'+userInfo.money+'元]'" type="number" onkeypress="return (/[\d]/.test(String.fromCharCode(event.keyCode)))" v-model="money"/>
+              <input class="weui-input" :placeholder="'成交金额[0~'+userInfo.money+'元]'" type="number" onkeypress="return (/[\d]/.test(String.fromCharCode(event.keyCode)))" @focus="hideList()" @blur="showList()" v-model="money"/>
             </div>
         </div>
       </div>
-      <div v-if="!isUserWarning&&money>0?true:false" style="text-align:center;margin: 13px 8px 8px;">
-        <div @click="commit">
+      <div v-if="!isUserWarning&&money>0?true:false" @click="commit" style="text-align: center;margin: 13px 8px 8px;">
           <image src="/static/images/orderCommit.png"  class="orderCommit commitImage"></image>
           <text class="orderCommit commitText">确定</text>
-        </div>
       </div>
     </block>
   </div>
@@ -100,7 +107,7 @@
       }
     },
     methods: {
-       userRegister() {
+      userRegister() {
         wx.navigateTo({
           url: '../../userRegister/main'
         })
@@ -166,6 +173,28 @@
             item["checked"] = false;
           }
         })
+      },
+      /*checkItem(value) {
+        let vm = this
+        vm.redemption = [];
+        vm.redemptionList.forEach(function(item) {
+          if (value == item.value) {
+            if (!item["checked"] || item["checked"] == "") {
+              item["checked"] = true;
+            } else {
+              item["checked"] = false;
+            }
+          }
+          if (item["checked"]) {
+            vm.redemption.push(item.value);
+          }
+        })
+      },*/
+      hideList() {
+        this.isShowRedemption = false;
+      },
+      showList() {
+        this.isShowRedemption = true;
       }
     },
     beforeCreate() {},
@@ -176,6 +205,13 @@
       if (vm.isLogin) {
         vm.$store.commit("getRedemptionList", { openId: vm.userInfo.openId });
       }
+    },
+    onPullDownRefresh() {
+      let vm = this;
+      if (vm.isLogin) {
+        vm.$store.commit("getRedemptionList", { openId: vm.userInfo.openId });
+      }
+      wx.stopPullDownRefresh();
     },
     /*
      * 生命周期函数--监听页面显示
@@ -244,9 +280,9 @@
     align-items: center;
     width: 130rpx;
     height: 130rpx;
-    margin-left: -65rpx;
     border-radius: 50%;
     z-index: 999;
+    margin-left: -65rpx;
   }
 
   .commitImage {}
@@ -364,5 +400,15 @@
     transition: .3s;
     padding: 8px;
     margin: 4.5px 0px;
+  }
+
+  .dishLabel {
+    position: relative;
+    left: 5vw;
+    margin: 2.5px 0;
+    display: inline-table;
+    color: #666;
+    /*    text-align: center;*/
+    padding-left: 10px;
   }
 </style>

@@ -9,9 +9,9 @@
       <user-info :isShowName="true" :isShowBalance="false"></user-info>
       <div v-if="isLogin" class="orderList">
         <!--暂时无点击事件，防止用户今天点完，查询第二天然后截图，再退餐-->
-        <!--<picker mode="date" @change="updatePicker">-->
-          <span class="title">{{dateStr}}</span>
-        <!--</picker>  -->
+        <picker mode="date" @change="updatePicker">
+          <span class="title">{{dateStr}}<span v-if="!isToday">(预览)</span></span>   
+        </picker>
         <ticket v-for="(lunch,index) in lunchTimes" v-if="lunch>0" :key="index" :selectStyle="index+1" :ticketType="lunchName[index]" :number="lunch"></ticket>
       </div>
     </block>
@@ -40,6 +40,8 @@
     },
     data() {
       return {
+        today: "",
+        isToday: false,
         pickerDate: "",
         dateStr: "",
         lunchName: [],
@@ -96,6 +98,11 @@
         vm.pickerDate = e.target.value
         let dd = new Date(vm.pickerDate);
         vm.formatDate(dd);
+        if (vm.today == vm.pickerDate) {
+          vm.isToday = true;
+        } else {
+          vm.isToday = false;
+        }
         vm.getCertificate(new Date(
           dd.setTime(dd.getTime() - 24 * 60 * 60 * 1000)
         ).toLocaleDateString());
@@ -119,19 +126,28 @@
           url: '../../userRegister/main'
         })
       },
+      initRequest() {
+        let vm = this;
+        if (vm.isLogin) {
+          let today = new Date();
+          vm.formatDate(today);
+          vm.today = vm.pickerDate;
+          vm.isToday = true;
+          vm.getCertificate(new Date(
+            today.setTime(today.getTime() - 24 * 60 * 60 * 1000)
+          ).toLocaleDateString());
+        }
+      }
     },
     beforeCreate() {},
     created() {},
     destroyed() {},
     mounted() {
-      let vm = this;
-      if (vm.isLogin) {
-        let today = new Date();
-        vm.formatDate(today);
-        vm.getCertificate(new Date(
-          today.setTime(today.getTime() - 24 * 60 * 60 * 1000)
-        ).toLocaleDateString());
-      }
+      this.initRequest();
+    },
+    onPullDownRefresh() {
+      this.initRequest();
+      wx.stopPullDownRefresh();
     },
     /*
      * 生命周期函数--监听页面显示
