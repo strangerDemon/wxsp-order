@@ -48,7 +48,6 @@ const mutations = {
     new Promise((resolve, reject) => {
       requestTask.wxRequest("getCompanyList", info, resolve, reject)
     }).then(res => {
-      //console.log("getCompanyList",res);
       state.companyList = res.companyList;
     }).catch(err => {
       wx.navigateTo({
