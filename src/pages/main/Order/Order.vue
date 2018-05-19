@@ -2,6 +2,7 @@
   <div class="order">
     <love-loading v-if="showLoading"></love-loading>
     <block v-if="!showLoading">
+      <mini-loading v-if="orderLoading" :type="1" :isFullScreen="true"></mini-loading>
       <div v-if="isUserWarning||isInitWaining" :class="isUserWarning||isInitWaining?'slidown warning-background':'warning-background'">
         <div v-if="isUserWarning&&!isLogin" class="warning-text" @click="userRegister">{{userWarningText}}</div>
         <div v-else-if="isUserWarning&&isLogin" class="warning-text">{{userWarningText}}</div>
@@ -52,10 +53,12 @@
   import userInfo from "@/components/usetInfo";
   import loveLoading from "@/components/loading";
   import record from "@/components/record";
+  import miniLoading from "@/components/miniLoading";
+
   export default {
     name: "Order",
     directives: {},
-    components: { userInfo, loveLoading, record },
+    components: { userInfo, loveLoading, record, miniLoading },
     data() {
       return {
         isInitWaining: false,
@@ -97,6 +100,9 @@
       systemParamInit() {
         return this.$store.state.init.systemParamInit;
       },
+      orderLoading() {
+        return this.$store.state.order.orderLoading;
+      }
     },
     watch: {
       userInfo(userInfo) {
@@ -295,7 +301,7 @@
           orderType: 0,
           changeType: 2,
           page: 0,
-          isCancle:0// 1 已退订的也显示
+          isCancle: 0 // 1 已退订的也显示
         });
         vm.$store.commit("getUserInfo", { code: "", openId: vm.userInfo.openId });
       },
@@ -365,7 +371,7 @@
         vm.$store.commit("getOrderParam", { openId: "" });
       }
       this.setLunchPicker();
-      wx.stopPullDownRefresh(); 
+      wx.stopPullDownRefresh();
     },
     /*
      * 生命周期函数--监听页面显示

@@ -93,6 +93,6 @@
   .button {
     padding: 0px 7px;
     line-height: 2;
-    margin-top:-30px;
+    margin-top: -30px;
   }
 </style>

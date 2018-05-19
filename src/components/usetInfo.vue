@@ -1,10 +1,10 @@
 <template>
  <view class="userInfo">
     <image class="userinfo-avatar" :src="userInfo.avatarUrl"  @click="eggWhite()"></image>
-    <view v-if="isShowName" class="userDiv"> 账户：
+    <view v-if="isShowName" class="userDiv">
       <span class="username">{{userInfo.userName==""?userInfo.nickName:userInfo.userName}}</span>
     </view>
-    <view v-if="isShowBalance" class="userDiv">余额：
+    <view v-if="isShowBalance&&isLogin" class="userDiv">
       <span class="balance">{{userInfo.money}}元</span>
     </view>
   </view>
@@ -24,6 +24,9 @@
       }
     },
     computed: {
+      isLogin() {
+        return this.$store.state.user.isLogin;
+      },
       userInfo() {
         return this.$store.state.user.userInfo;
       }

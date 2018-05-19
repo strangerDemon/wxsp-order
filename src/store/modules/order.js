@@ -25,6 +25,9 @@ const state = {
   certificateList: [],
   //result 根据结果返回 判断是否弹页面
   redemptionResult: "",
+  //订餐，退餐的loading，有的时候，网络慢，接口卡，增加loading
+  orderLoading: false,
+  redemptionLoading: false,
 };
 
 /**
@@ -84,12 +87,12 @@ const mutations = {
     }).then(res => {
       switch (info.from) {
         case "order":
-          state.orderList = res.sort(function(item1,item2){
-              if(item1.isCancle&&!item1.isCancle){
-                return 1;
-              }else{
-                return -1;
-              }
+          state.orderList = res.sort(function(item1, item2) {
+            if (item1.isCancle && !item1.isCancle) {
+              return 1;
+            } else {
+              return -1;
+            }
           });
           //今天的订餐要做处理，把未退订的至于前
           break;
@@ -111,9 +114,11 @@ const mutations = {
     })
   },
   order(state, info) {
+    state.orderLoading = true;
     new Promise((resolve, reject) => {
       requestTask.wxRequest("doOrder", info, resolve, reject)
     }).then(res => {
+      state.orderLoading = false;
       wx.navigateTo({
         url: '/pages/msg/msg_success/main?title=点餐成功'
       });
@@ -121,15 +126,18 @@ const mutations = {
         info.func();
       }
     }).catch(err => {
+      state.orderLoading = false;
       wx.navigateTo({
         url: '/pages/msg/msg_fail/main?title=点餐失败&details=' + err.errMsg
       });
     })
   },
   cancle(state, info) {
+    state.orderLoading = true;
     new Promise((resolve, reject) => {
       requestTask.wxRequest("doCancle", info, resolve, reject)
     }).then(res => {
+      state.orderLoading = false;
       wx.navigateTo({
         url: '/pages/msg/msg_success/main?title=取消点餐成功'
       });
@@ -137,22 +145,26 @@ const mutations = {
         info.func();
       }
     }).catch(err => {
+      state.orderLoading = false;
       wx.navigateTo({
         url: '/pages/msg/msg_fail/main?title=取消点餐失败&details=' + err.errMsg
       });
     })
   },
   doChangeBuy(state, info) {
+    state.redemptionLoading = true;
     new Promise((resolve, reject) => {
       requestTask.wxRequest("doChangeBuy", info, resolve, reject)
     }).then(res => {
+      state.redemptionLoading = false;
       state.redemptionResult = res + ":" + new Date();
     }).catch(err => {
+      state.redemptionLoading = false;
       wx.navigateTo({
         url: '/pages/msg/msg_fail/main?title=换购失败&details=' + err.errMsg
       });
     })
-  }
+  },
 };
 
 /**

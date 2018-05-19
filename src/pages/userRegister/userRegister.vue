@@ -4,17 +4,23 @@
     <div class="cont">
 	    <div class="demo">
 	      <div class="login">
-          <image src="/static/images/logo.png" class="logo-image"></image>
+          <div style="text-align:center">
+            <image src="/static/images/logo.png" class="logo-image"></image>
+          </div>
 	        <div class="login__form">
 	          <div class="login__row">
-              <div class="title">姓名</div>
-	            <input type="text" class="login__input name" placeholder="请输入姓名" v-model="user.userName"/>
+              <div class="title">姓 名</div>
+              <div class="login-div">
+                <input type="text" class="login__input" placeholder="请输入姓名" v-model="user.userName"/>
+              </div>
 	          </div>
 	          <div class="login__row">
 	            <div class="title">手机号</div>
-              <input type="text" class="login__input pass"  @blur="checkPhone" placeholder="请输入手机号" v-model="user.phone"/>
+              <div class="login-div">
+                <input type="text" class="login__input"  @blur="checkPhone" placeholder="请输入手机号" v-model="user.phone"/>
+              </div>
 	          </div>
-            <checkbox-group @change="agreeChange">
+            <checkbox-group style="padding-top:20px" @change="agreeChange">
               <label class="weui-agree" for="weuiAgree">
                 <div class="weui-agree__text">
                   <checkbox class="weui-agree__checkbox" id="weuiAgree" value="agree" :checked="isAgree" />
@@ -25,30 +31,29 @@
                 </div>
               </label>
             </checkbox-group>
-	          <button type="button" class="login__submit" @click="register" :disabled="!isAgree">登 录</button>	       
+	          <button type="warn" class="weui-btn login__submit" @click="register" :disabled="!isAgree">注 册</button> 
 	        </div>
 	      </div>
 	    </div>
 	  </div>
+    <footer-info :isLogin="false"></footer-info>
   </div>
 </template>
 <script>
+  import footerInfo from "@/components/footerInfo"
   export default {
     name: "user-register",
     directives: {},
-    components: {},
+    components: { footerInfo },
     data() {
       return {
         isAgree: false,
         user: {
           openId: "",
-          userAccount: "",
           userName: "",
           nickName: "",
           avatarUrl: "",
-          companyCoce: 0,
           phone: "",
-          comment: "",
         },
         selectCompanyName: ""
       }
@@ -135,22 +140,6 @@
     display: inline-block;
   }
 
-  .svg-icon {
-    cursor: pointer;
-  }
-
-  .svg-icon path {
-    stroke: rgba(255, 255, 255, 0.9);
-    fill: none;
-    stroke-width: 1;
-  }
-
-  input,
-  button {
-    outline: none;
-    border: none;
-  }
-
   .background-image {
     position: fixed;
     height: 100%;
@@ -192,7 +181,6 @@
     -webkit-transform: scale(1);
     -ms-transform: scale(1);
     transform: scale(1);
-    text-align: center;
   }
 
   .login.inactive {
@@ -208,28 +196,29 @@
     left: 0;
     width: 100%;
     height: 50%;
-    text-align: center;
   }
 
   .login__row {
-    height: 50px;
+    height: 40px;
     padding-top: 10px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
   }
 
-  .login__input {
+  .login-div {
+    position: absolute;
     display: inline-block;
     width: 75%;
-    height: 100%;
+  }
+
+  .login__input {
     font-size: 15px;
     background: transparent;
     color: #FDFCFD;
   }
 
   .title {
-    height: 50px;
     width: 20%;
-    padding-bottom: 10px;
+    padding-left: 10px;
     color: #fff;
     font-weight: 700;
     display: inline-block;
@@ -237,83 +226,11 @@
 
   .login__submit {
     position: relative;
-    left:10%;
+    left: 10%;
     width: 80%;
     height: 40px;
-    margin: 50px 0 22px;
-    color: rgba(255, 255, 255, 0.8);
-    background: #FF3366;
+    margin: 22px 0;
     font-size: 15px;
     border-radius: 20px;
-    cursor: pointer;
-    overflow: hidden;
-    -webkit-transition: width 0.3s 0.15s, font-size 0.1s 0.15s;
-    transition: width 0.3s 0.15s, font-size 0.1s 0.15s;
-  }
-
-  .login__submit.processing:after {
-    opacity: 1;
-  }
-
-  .login__submit.success {
-    -webkit-transition: -webkit-transform 0.3s 0.1s ease-out, opacity 0.1s 0.3s, background-color 0.1s 0.3s;
-    transition: transform 0.3s 0.1s ease-out, opacity 0.1s 0.3s, background-color 0.1s 0.3s;
-    -webkit-transform: scale(30);
-    -ms-transform: scale(30);
-    transform: scale(30);
-    opacity: 0.9;
-  }
-
-  .login__submit.success:after {
-    -webkit-transition: opacity 0.1s 0s;
-    transition: opacity 0.1s 0s;
-    opacity: 0;
-  }
-
-  .login__signup a {
-    color: #fff;
-    cursor: pointer;
-  }
-
-  @-webkit-keyframes animRipple {
-    to {
-      -webkit-transform: scale(3.5);
-      transform: scale(3.5);
-      opacity: 0;
-    }
-  }
-
-  @keyframes animRipple {
-    to {
-      -webkit-transform: scale(3.5);
-      transform: scale(3.5);
-      opacity: 0;
-    }
-  }
-
-  @-webkit-keyframes rotate {
-    to {
-      -webkit-transform: rotate(360deg);
-      transform: rotate(360deg);
-    }
-  }
-
-  @keyframes rotate {
-    to {
-      -webkit-transform: rotate(360deg);
-      transform: rotate(360deg);
-    }
-  }
-
-  @-webkit-keyframes animatePath {
-    to {
-      stroke-dashoffset: 0;
-    }
-  }
-
-  @keyframes animatePath {
-    to {
-      stroke-dashoffset: 0;
-    }
   }
 </style>

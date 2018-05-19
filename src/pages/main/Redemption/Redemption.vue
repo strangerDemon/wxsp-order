@@ -2,6 +2,7 @@
   <div class="Redemption">
     <love-loading v-if="showLoading"></love-loading>
     <block v-if="!showLoading">
+      <mini-loading v-if="redemptionLoading" :type="1" :isFullScreen="true"></mini-loading>
       <div v-if="isUserWarning||isWarning" :class="isUserWarning||isWarning?'warning-background slidown':'warning-background'">
         <div v-if="isUserWarning&&!isLogin" class="warning-text" @click="userRegister">{{userWarningText}}</div>
         <div v-else-if="isUserWarning&&isLogin" class="warning-text">{{userWarningText}}</div>
@@ -52,12 +53,14 @@
 <script>
   import userInfo from "@/components/usetInfo";
   import loveLoading from "@/components/loading";
+  import miniLoading from "@/components/miniLoading";
   export default {
     name: "Redemption",
     directives: {},
     components: {
       userInfo,
-      loveLoading
+      loveLoading,
+      miniLoading
     },
     data() {
       return {
@@ -92,6 +95,9 @@
       },
       redemptionResult() {
         return this.$store.state.order.redemptionResult;
+      },
+      redemptionLoading() {
+        return this.$store.state.order.redemptionLoading;
       }
     },
     watch: {
