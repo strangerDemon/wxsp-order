@@ -4,13 +4,12 @@
     <block v-if="!showLoading">
       <mini-loading v-if="orderLoading" :type="1" :isFullScreen="true"></mini-loading>
       <div v-if="isUserWarning||isInitWaining" :class="isUserWarning||isInitWaining?'slidown warning-background':'warning-background'">
-        <div v-if="isUserWarning&&!isLogin" class="warning-text" @click="userRegister">{{userWarningText}}</div>
-        <div v-else-if="isUserWarning&&isLogin" class="warning-text">{{userWarningText}}</div>
-        <div v-else-if="isInitWaining" class="warning-text">
-          {{initWarningText}}
-        </div>
+        <div v-if="isUserWarning&&!isLogin" class="warning-text" @click="userRegister" v-html="userWarningText"></div>
+        <div v-else-if="isUserWarning&&isLogin" class="warning-text"  v-html="userWarningText"></div>
+        <div v-else-if="isInitWaining" class="warning-text" v-html="initWarningText"></div>
       </div>
-      <user-info :isShowName="true" :isShowBalance="true"></user-info>
+      <user-info :isShowName="true" :isShowBalance="true">
+      </user-info>
       <div class="menuDiv">
         <div  class="list-title weui-flex kind-list__item-hd kind-list__item-hd_show">
           <div class="weui-flex__item">菜品明细：</div>
@@ -24,8 +23,8 @@
                 <div class="weui-grid__label dishName">{{dish.name}}</div>
               </block>
               <block v-else>
-                <image class="weui-grid__icon dishImage"/>
-                <div class="weui-grid__label dishName"> &nbsp;</div>
+                <image class="weui-grid__icon dishImage" :src="dish.image"  @click="previewImage(index)"/>
+                <div class="weui-grid__label dishName"> 暂无</div>
               </block>
             </div>
           </div>
@@ -124,7 +123,7 @@
         if (length % ROW != 0) {
           let addItemNum = ROW - length % ROW;
           for (let i = 0; i < addItemNum; i++) {
-            list.push({ name: "", image: "" });
+            list.push({ name: "", image: "/static/images/undefined.png" });
           }
         }
         //提取图片
@@ -399,7 +398,7 @@
     position: fixed;
     top: 0px;
     width: 100%;
-    height: 25px;
+    height: 28px;
     background-color: red;
   }
 
@@ -407,7 +406,7 @@
     color: #fff;
     text-align: center;
     width: 100%;
-    font-size: 16px;
+    font-size: 18px;
   }
 
   .order {

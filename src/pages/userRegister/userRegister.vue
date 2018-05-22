@@ -20,7 +20,7 @@
                 <input type="text" class="login__input"  @blur="checkPhone" placeholder="请输入手机号" v-model="user.phone"/>
               </div>
 	          </div>
-            <checkbox-group style="padding-top:20px" @change="agreeChange">
+            <checkbox-group style="padding-top:20px;margin-left:10%;" @change="agreeChange">
               <label class="weui-agree" for="weuiAgree">
                 <div class="weui-agree__text">
                   <checkbox class="weui-agree__checkbox" id="weuiAgree" value="agree" :checked="isAgree" />
@@ -200,8 +200,10 @@
 
   .login__row {
     height: 40px;
-    padding-top: 10px;
+    padding-top: 15px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    width: 80%;
+    margin-left: 10%;
   }
 
   .login-div {
@@ -217,7 +219,7 @@
   }
 
   .title {
-    width: 20%;
+    width: 30%;
     padding-left: 10px;
     color: #fff;
     font-weight: 700;

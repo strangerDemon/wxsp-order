@@ -3,8 +3,8 @@
     <love-loading v-if="showLoading"></love-loading>
     <block v-if="!showLoading">
       <div v-if="isUserWarning||isInitWaining" :class="isUserWarning||isInitWaining?'slidown warning-background':'warning-background'">
-        <div v-if="isUserWarning&&!isLogin" class="warning-text" @click="userRegister">{{userWarningText}}</div>
-        <div v-else-if="isUserWarning&&isLogin" class="warning-text">{{userWarningText}}</div>
+        <div v-if="isUserWarning&&!isLogin" class="warning-text" @click="userRegister" v-html="userWarningText"></div>
+        <div v-else-if="isUserWarning&&isLogin" class="warning-text" v-html="userWarningText"></div>
       </div>
       <user-info :isShowName="true" :isShowBalance="false"></user-info>
       <div v-if="isLogin" class="orderList">
@@ -137,7 +137,7 @@
             today.setTime(today.getTime() - 24 * 60 * 60 * 1000)
           ).toLocaleDateString());
         }
-      }
+      },
     },
     beforeCreate() {},
     created() {},
@@ -170,7 +170,7 @@
     position: fixed;
     top: 0px;
     width: 100%;
-    height: 25px;
+    height: 28px;
     background-color: red;
   }
 
@@ -178,7 +178,7 @@
     color: #fff;
     text-align: center;
     width: 100%;
-    font-size: 16px;
+    font-size: 18px;
   }
 
   @keyframes slidown {

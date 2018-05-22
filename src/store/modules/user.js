@@ -7,7 +7,7 @@ const state = {
   isLogin: false, //是否登录,其实为未注册
   //用户信息
   userInfo: null,
-  loadUserError:false,
+  loadUserError: false,
   userWarningText: "", //提醒文字
   isUserWarning: false, //是否警告
 };
@@ -26,13 +26,13 @@ const mutations = {
   //用户信息
   getUserInfo(state, info) {
     new Promise((resolve, reject) => {
-      requestTask.wxRequest("getUserInfo", info, resolve, reject)
+      requestTask.wxRequest("getUserInfo", info, resolve, reject,true)
     }).then(res => {
       state.userInfo = res;
-      state.loadUserError=false;
+      state.loadUserError = false;
       if (res.userName != "") {
         state.isLogin = true;
-        state.userWarningText="";
+        state.userWarningText = "";
         if (res.isExamine != 1 || res.isForbidden == 1) {
           if (res.isExamine == 0) {
             state.userWarningText = "账号未审核"
@@ -43,22 +43,17 @@ const mutations = {
           }
           state.userWarningText += ",请联系管理员";
           state.isUserWarning = true;
-          //不能跳转页面这里 会造成不好的用户交互
-          /*wx.navigateTo({
-            url: '/pages/msg/msg_fail/main?title=' + title +
-              '&redirect=/pages/index/main'
-          });*/
         } else {
           state.userWarningText = "";
           state.isUserWarning = false;
         }
       } else {
         state.isLogin = false; //用户登录的时候被删掉
-        state.userWarningText = "用户未注册，请点击注册";
+        state.userWarningText = "用户未注册，请【<span style='color:blue'>点击注册</span>】";
         state.isUserWarning = true;
       }
     }).catch(err => {
-      state.loadUserError=true;
+      state.loadUserError = true;
       wx.navigateTo({
         url: '/pages/msg/msg_fail/main?title=' + err.errMsg +
           '&redirect=/pages/main/Order/main'
@@ -74,11 +69,12 @@ const mutations = {
   //注册
   register(state, info) {
     new Promise((resolve, reject) => {
-      requestTask.wxRequest("userRegister", info, resolve, reject)
+      requestTask.wxRequest("userRegister", info, resolve, reject,false)
     }).then(res => {
       state.userWarningText = "用户注册成功，正在审核，请稍后";
       wx.navigateTo({
-        url: '/pages/msg/msg_success/main?title='+state.userWarningText+'&redirect=/pages/main/Order/main'
+        url: '/pages/msg/msg_success/main?title=' + state.userWarningText +
+          '&redirect=/pages/main/Order/main'
       });
       state.isLogin = true;
     }).catch(err => {
@@ -89,10 +85,23 @@ const mutations = {
     })
   },
 
+  updateLocal(state, info) {
+    if (state.userInfo == null) {
+      state.userInfo = info.user
+    } else {
+      state.userInfo.nickName = info.user.nickName
+      state.userInfo.avatarUrl = info.user.avatarUrl
+    }
+    state.isLogin = info.isLogin;
+  },
   //更新用户
   userUpdate(state, info) {
     new Promise((resolve, reject) => {
-      requestTask.wxRequest("userUpdate", info, resolve, reject)
+      requestTask.wxRequest("userUpdate", {
+        openId: state.userInfo.openId,
+        nickName: state.userInfo.nickName,
+        avatarUrl: state.userInfo.avatarUrl
+      }, resolve, reject,false)
     }).then(res => {
       wx.navigateTo({
         url: '/pages/msg/msg_success/main?title=用户更新成功'

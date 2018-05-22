@@ -44,7 +44,7 @@ const mutations = {
   //获取点餐参数
   getOrderParam(state, info) {
     new Promise((resolve, reject) => {
-      requestTask.wxRequest("getOrderParam", info, resolve, reject)
+      requestTask.wxRequest("getOrderParam", info, resolve, reject, false)
     }).then(res => {
       state.orderParam = res;
     }).catch(err => {
@@ -57,7 +57,7 @@ const mutations = {
   //获取菜单列表
   getMeunList(state, info) {
     new Promise((resolve, reject) => {
-      requestTask.wxRequest("getMeunList", info, resolve, reject)
+      requestTask.wxRequest("getMeunList", info, resolve, reject, false)
     }).then(res => {
       state.menuList = res;
     }).catch(err => {
@@ -70,7 +70,8 @@ const mutations = {
   //获取换购列表
   getRedemptionList(state, info) {
     new Promise((resolve, reject) => {
-      requestTask.wxRequest("getChangeBuyList", info, resolve, reject)
+      requestTask.wxRequest("getChangeBuyList", info, resolve, reject,
+        false)
     }).then(res => {
       state.redemptionList = res;
     }).catch(err => {
@@ -83,7 +84,7 @@ const mutations = {
   //获取订单列表，时间、
   getOrderList(state, info) {
     new Promise((resolve, reject) => {
-      requestTask.wxRequest("doSearch", info, resolve, reject)
+      requestTask.wxRequest("doSearch", info, resolve, reject, false)
     }).then(res => {
       switch (info.from) {
         case "order":
@@ -116,14 +117,16 @@ const mutations = {
   order(state, info) {
     state.orderLoading = true;
     new Promise((resolve, reject) => {
-      requestTask.wxRequest("doOrder", info, resolve, reject)
+      requestTask.wxRequest("doOrder", info, resolve, reject, true)
     }).then(res => {
       state.orderLoading = false;
-      wx.navigateTo({
-        url: '/pages/msg/msg_success/main?title=点餐成功'
-      });
-      if (info.func != undefined) {
-        info.func();
+      if (res != "") {
+        wx.navigateTo({
+          url: '/pages/msg/msg_success/main?title=点餐成功'
+        });
+        if (info.func != undefined) {
+          info.func();
+        }
       }
     }).catch(err => {
       state.orderLoading = false;
@@ -135,14 +138,16 @@ const mutations = {
   cancle(state, info) {
     state.orderLoading = true;
     new Promise((resolve, reject) => {
-      requestTask.wxRequest("doCancle", info, resolve, reject)
+      requestTask.wxRequest("doCancle", info, resolve, reject, true)
     }).then(res => {
       state.orderLoading = false;
-      wx.navigateTo({
-        url: '/pages/msg/msg_success/main?title=取消点餐成功'
-      });
-      if (info.func != undefined) {
-        info.func();
+      if (res != "") {
+        wx.navigateTo({
+          url: '/pages/msg/msg_success/main?title=取消点餐成功'
+        });
+        if (info.func != undefined) {
+          info.func();
+        }
       }
     }).catch(err => {
       state.orderLoading = false;
@@ -154,7 +159,7 @@ const mutations = {
   doChangeBuy(state, info) {
     state.redemptionLoading = true;
     new Promise((resolve, reject) => {
-      requestTask.wxRequest("doChangeBuy", info, resolve, reject)
+      requestTask.wxRequest("doChangeBuy", info, resolve, reject, true)
     }).then(res => {
       state.redemptionLoading = false;
       state.redemptionResult = res + ":" + new Date();

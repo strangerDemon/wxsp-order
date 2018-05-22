@@ -30,7 +30,7 @@ const mutations = {
   //系统参数
   getSystemParam(state, info) {
     new Promise((resolve, reject) => {
-      requestTask.wxRequest("getSystemParam", info, resolve, reject)
+      requestTask.wxRequest("getSystemParam", info, resolve, reject,false)
     }).then(res => {
       state.systemParamInit = true;
       state.systemParam = res;
@@ -46,7 +46,7 @@ const mutations = {
   //公司列表
   getCompanyList(state, info) {
     new Promise((resolve, reject) => {
-      requestTask.wxRequest("getCompanyList", info, resolve, reject)
+      requestTask.wxRequest("getCompanyList", info, resolve, reject,false)
     }).then(res => {
       state.companyList = res.companyList;
     }).catch(err => {

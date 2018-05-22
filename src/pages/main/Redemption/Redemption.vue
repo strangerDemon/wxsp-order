@@ -4,11 +4,9 @@
     <block v-if="!showLoading">
       <mini-loading v-if="redemptionLoading" :type="1" :isFullScreen="true"></mini-loading>
       <div v-if="isUserWarning||isWarning" :class="isUserWarning||isWarning?'warning-background slidown':'warning-background'">
-        <div v-if="isUserWarning&&!isLogin" class="warning-text" @click="userRegister">{{userWarningText}}</div>
-        <div v-else-if="isUserWarning&&isLogin" class="warning-text">{{userWarningText}}</div>
-        <div v-else-if="isWarning" class="warning-text">
-          {{warningText}}
-        </div>
+        <div v-if="isUserWarning&&!isLogin" class="warning-text" @click="userRegister" v-html="userWarningText"></div>
+        <div v-else-if="isUserWarning&&isLogin" class="warning-text" v-html="userWarningText"></div>
+        <div v-else-if="isWarning" class="warning-text" v-html="warningText"></div>
       </div>
       <user-info :isShowName="true" :isShowBalance="true"></user-info>
       <div v-if="isLogin&&redemptionList.length>0" class="admire write-bg-color page__bd">请现场与工作人员操作</div>
@@ -31,15 +29,15 @@
               </div>
           </checkbox-group>
         </div>
-        <div v-else class="el-card" style="background-color:#EEEEE0">
+        <div v-else class="el-card" style="background-color:#EEEEE0;padding:0px;">
           <div class="dishLabel" v-for="(item,index) in redemptionList" :key="index" v-if="item.checked">{{item.label}}</div>
         </div>
-        <div class="write-bg-color page__bd weui-cell weui-cell_input">
-            <div class="weui-cell__hd">
-              <div class="weui-label">金额</div>
+        <div class="write-bg-color page__bd inputDiv">
+            <div class="titleLabel">
+              <div class="">金额:</div>
             </div>
-            <div class="weui-cell__bd">
-              <input class="weui-input" :placeholder="'成交金额[0~'+userInfo.money+'元]'" type="number" onkeypress="return (/[\d]/.test(String.fromCharCode(event.keyCode)))" @focus="hideList()" @blur="showList()" v-model="money"/>
+            <div class="inputLabel">
+              <input class="" :placeholder="'成交金额[0~'+userInfo.money+'元]'" type="number" onkeypress="return (/[\d]/.test(String.fromCharCode(event.keyCode)))" @focus="hideList()" @blur="showList()" v-model="money"/>
             </div>
         </div>
       </div>
@@ -201,7 +199,7 @@
       },
       showList() {
         this.isShowRedemption = true;
-      }
+      }, 
     },
     beforeCreate() {},
     created() {},
@@ -244,7 +242,7 @@
   .warning-background {
     position: fixed;
     width: 100%;
-    height: 25px;
+    height: 28px;
     background-color: red;
     top: 0px;
   }
@@ -253,7 +251,7 @@
     color: #fff;
     text-align: center;
     width: 100%;
-    font-size: 16px;
+    font-size: 18px;
   }
 
   .userInfoDiv {
@@ -318,28 +316,6 @@
 
   .redemptionDetails {
     margin: 10px;
-  }
-
-  .titles {
-    text-align: center;
-  }
-
-  .title {
-    display: block;
-    width: 100%;
-    margin: 5px 10px;
-  }
-
-  .item {
-    margin: 20px 10px;
-  }
-
-  .money {
-    text-align: center;
-    width: 100%;
-    display: block;
-    font-size: 24px;
-    color: red;
   }
 
   .checkbox {
@@ -415,6 +391,23 @@
     display: inline-table;
     color: #666;
     /*    text-align: center;*/
-    padding-left: 10px;
+    padding: 8px 0px 8px 10px;
+  }
+
+  .inputDiv{
+    padding:5px 15px;
+  }
+
+  .titleLabel {
+    display: inline-block;
+    width: 20%;
+    margin: 5px;
+  }
+
+  .inputLabel{
+    position: absolute;
+    display: inline-block;
+    width: 70%;
+    margin: 5px;
   }
 </style>

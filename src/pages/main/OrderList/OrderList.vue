@@ -54,7 +54,7 @@
               <div class="weui-label">起始时间</div>
             </div>
             <div class="weui-cell__bd">
-              <picker mode="date" @change="updatePicker" data-key="startDate" :end="maxDate">
+              <picker mode="date" @change="updatePicker" data-key="startDate" :end="endDate">
                   <div class="weui-input">{{startDate}}</div>
               </picker>
             </div>
@@ -65,7 +65,7 @@
               <div class="weui-label">终止时间</div>
             </div>
             <div class="weui-cell__bd">
-              <picker mode="date" @change="updatePicker" data-key="endDate" :end="maxDate">
+              <picker mode="date" @change="updatePicker" data-key="endDate" :start="startDate">
                   <div class="weui-input">{{endDate}}</div>
               </picker>
             </div>
@@ -284,24 +284,30 @@
       },
       radioChange(e) {
         let vm = this
-        for (var i = 0, len = vm.changeTypeOptions.length; i < len; ++i) {
-          vm.changeTypeOptions[i].checked = vm.changeTypeOptions[i].value == e.target
-            .value;
-        }
+        vm.setRadioChecked(vm.changeTypeOptions, e.target.value);
+        vm.setRadioChecked(vm.orderTypeOptions, "");
         vm.changeType = e.target.value;
+        vm.orderType = "0";
         vm.search(1);
         vm.naviAction(1);
       },
+
       radioOrder(e) {
         let vm = this
-        for (var i = 0, len = vm.orderTypeOptions.length; i < len; ++i) {
-          vm.orderTypeOptions[i].checked = vm.orderTypeOptions[i].value == e.target
-            .value;
-        }
+        vm.setRadioChecked(vm.orderTypeOptions, e.target.value);
+        vm.setRadioChecked(vm.changeTypeOptions, "");
         vm.orderType = e.target.value;
+        vm.changeType = "0";
         vm.search(1);
         vm.naviAction(2);
       },
+
+      setRadioChecked(list, value) {
+        for (var i = 0, len = list.length; i < len; ++i) {
+          list.checked = list.value == value;
+        }
+      },
+
       clearInput(input) {
         let vm = this
         switch (input) {
@@ -479,7 +485,7 @@
       vm.list = [];
       vm.page = 1;
       vm.search(vm.page);
-      wx.stopPullDownRefresh(); 
+      wx.stopPullDownRefresh();
     },
 
     /**

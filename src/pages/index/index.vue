@@ -244,11 +244,7 @@
           success: function(res) {
             if (res.confirm) {
               vm.getUnloginUserInfo(function() {
-                vm.$store.commit("userUpdate", {
-                  openId: vm.userInfo.openId,
-                  nickName: vm.userInfo.nickName,
-                  avatarUrl: vm.userInfo.avatarUrl
-                })
+                vm.$store.commit("userUpdate", {})
               });
             } else if (res.cancel) {
               console.log('用户点击取消')
