@@ -199,7 +199,7 @@
       },
       showList() {
         this.isShowRedemption = true;
-      }, 
+      },
     },
     beforeCreate() {},
     created() {},
@@ -245,6 +245,7 @@
     height: 28px;
     background-color: red;
     top: 0px;
+    z-index: 9999;
   }
 
   .warning-text {
@@ -394,8 +395,8 @@
     padding: 8px 0px 8px 10px;
   }
 
-  .inputDiv{
-    padding:5px 15px;
+  .inputDiv {
+    padding: 5px 15px;
   }
 
   .titleLabel {
@@ -404,7 +405,7 @@
     margin: 5px;
   }
 
-  .inputLabel{
+  .inputLabel {
     position: absolute;
     display: inline-block;
     width: 70%;

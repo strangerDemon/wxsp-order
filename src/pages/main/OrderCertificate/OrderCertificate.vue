@@ -172,6 +172,7 @@
     width: 100%;
     height: 28px;
     background-color: red;
+    z-index: 9999;
   }
 
   .warning-text {

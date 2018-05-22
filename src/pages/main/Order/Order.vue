@@ -114,6 +114,9 @@
             vm.requestToday();
           }
         }
+        if (vm.orderParam.lunch.length > 0) {
+          this.setLunchPicker();
+        }
       },
       menuList(list) {
         let vm = this
@@ -162,7 +165,7 @@
         if (vm.isOrderOrNot) {
           vm.isOrderOrNot = warning;
         }
-      }
+      },
     },
     methods: {
       //预览图片
@@ -303,6 +306,7 @@
           isCancle: 0 // 1 已退订的也显示
         });
         vm.$store.commit("getUserInfo", { code: "", openId: vm.userInfo.openId });
+        vm.setLunchPicker();
       },
       //初始化页面用户登录
       getUserInfo() {
@@ -321,7 +325,6 @@
       },
       getUnloginUserInfo(callback) {
         let vm = this
-        //console.log(vm.userInfo);
         // 未登录后台
         wx.login({
           success: () => {
@@ -383,7 +386,6 @@
       if (this.isLogin) {
         this.requestToday();
       }
-      //this.setLunchPicker();
     },
 
     /*
@@ -400,6 +402,7 @@
     width: 100%;
     height: 28px;
     background-color: red;
+    z-index: 9999;
   }
 
   .warning-text {

@@ -124,7 +124,6 @@
     created() {},
     destroyed() {},
     mounted() {
-      //this.$store.commit("getCompanyList", {});
     }
   }
 </script>

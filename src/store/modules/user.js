@@ -10,6 +10,7 @@ const state = {
   loadUserError: false,
   userWarningText: "", //提醒文字
   isUserWarning: false, //是否警告
+  registerLoading:false,
 };
 
 /**
@@ -68,16 +69,21 @@ const mutations = {
 
   //注册
   register(state, info) {
+    state.registerLoading=true
     new Promise((resolve, reject) => {
-      requestTask.wxRequest("userRegister", info, resolve, reject,false)
+      requestTask.wxRequest("userRegister", info, resolve, reject,true)
     }).then(res => {
-      state.userWarningText = "用户注册成功，正在审核，请稍后";
+      state.registerLoading=false
+      state.isLogin = true;
       wx.navigateTo({
-        url: '/pages/msg/msg_success/main?title=' + state.userWarningText +
+        url: '/pages/msg/msg_success/main?title=' + res +
           '&redirect=/pages/main/Order/main'
       });
-      state.isLogin = true;
+      if (info.func != undefined) {
+        info.func();
+      }
     }).catch(err => {
+      state.registerLoading=false
       wx.navigateTo({
         url: '/pages/msg/msg_fail/main?title=' + err.errMsg +
           '&redirect=/pages/main/Order/main'
