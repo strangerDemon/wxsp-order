@@ -1,6 +1,6 @@
 <template>
   <div class="Redemption">
-    <love-loading v-if="showLoading"></love-loading>
+    <mini-loading v-if="showLoading" :type="1" :isFullScreen="true"></mini-loading>
     <block v-if="!showLoading">
       <mini-loading v-if="redemptionLoading" :type="1" :isFullScreen="true"></mini-loading>
       <div v-if="isUserWarning||isWarning" :class="isUserWarning||isWarning?'warning-background slidown':'warning-background'">
@@ -9,55 +9,49 @@
         <div v-else-if="isWarning" class="warning-text" v-html="warningText"></div>
       </div>
       <user-info :isShowName="true" :isShowBalance="true"></user-info>
-      <div v-if="isLogin&&redemptionList.length>0" class="admire write-bg-color page__bd">请现场与工作人员操作</div>
-      <div v-if="isLogin&&redemptionList.length>0" slot="header">
-        <div class="list-title weui-flex kind-list__item-hd kind-list__item-hd_show">
-          <div class="weui-flex__item">换购物品（多选）</div>
-          <image class="kind-list__img" src="/static/images/icon_nav_nav.png" @click="isShowRedemption=!isShowRedemption"></image>
-        </div>
-        <div v-if="isShowRedemption" class="write-bg-color page__bd">
-          <!--<checkbox-group>
-              <div class="el-card" :style="item.checked?'border-color: #409eff;':''" v-for="(item,index) in redemptionList" :key="item" @click="checkItem(item.value)">
-                <checkbox :value="item.value" :checked="item.checked"/>
-                <span>{{item.label}}</span>
-              </div>
-          </checkbox-group>-->
-           <checkbox-group @change="checkboxChange">
+      <div v-if="isLogin&&redemptionList.length>0" class="admire write-bg-color page__bd">换购时请与食堂管理人员联系</div>
+      <form report-submit="ture">
+        <div v-if="isLogin&&redemptionList.length>0" slot="header">
+          <div class="list-title weui-flex kind-list__item-hd kind-list__item-hd_show">
+            <div class="weui-flex__item">换购物品（多选）</div>
+            <image class="kind-list__img" src="/static/images/icon_nav_nav.png" @click="isShowRedemption=!isShowRedemption"></image>
+          </div>
+          <div v-if="isShowRedemption" class="write-bg-color page__bd">
+            <checkbox-group @change="checkboxChange">
               <div class="el-card" :style="item.checked?'border-color: #409eff;':''" v-for="(item,index) in redemptionList" :key="item">
                 <checkbox :value="item.value" :checked="item.checked"/>
                 <span>{{item.label}}</span>
               </div>
-          </checkbox-group>
-        </div>
-        <div v-else class="el-card" style="background-color:#EEEEE0;padding:0px;">
-          <div class="dishLabel" v-for="(item,index) in redemptionList" :key="index" v-if="item.checked">{{item.label}}</div>
-        </div>
-        <div class="write-bg-color page__bd inputDiv">
+            </checkbox-group>
+          </div>
+          <div v-else class="el-card" style="background-color:#EEEEE0;padding:0px;">
+            <div class="dishLabel" v-for="(item,index) in redemptionList" :key="index" v-if="item.checked">{{item.label}}</div>
+          </div>
+          <div class="write-bg-color page__bd inputDiv">
             <div class="titleLabel">
               <div class="">金额:</div>
             </div>
             <div class="inputLabel">
               <input class="" :placeholder="'成交金额[0~'+userInfo.money+'元]'" type="number" onkeypress="return (/[\d]/.test(String.fromCharCode(event.keyCode)))" @focus="hideList()" @blur="showList()" v-model="money"/>
             </div>
+          </div>
         </div>
-      </div>
-      <div v-if="!isUserWarning&&money>0?true:false" @click="commit" style="text-align: center;margin: 13px 8px 8px;">
+        <div v-if="!isUserWarning&&money>0?true:false" @click="commit" style="text-align: center;margin: 13px 8px 8px;">
           <image src="/static/images/orderCommit.png"  class="orderCommit commitImage"></image>
           <text class="orderCommit commitText">确定</text>
-      </div>
+        </div>
+      </form>
     </block>
   </div>
 </template>
 <script>
   import userInfo from "@/components/usetInfo";
-  import loveLoading from "@/components/loading";
   import miniLoading from "@/components/miniLoading";
   export default {
     name: "Redemption",
     directives: {},
     components: {
       userInfo,
-      loveLoading,
       miniLoading
     },
     data() {
@@ -122,7 +116,7 @@
         })
         return list
       },
-      commit() {
+      commit(e) {console.log(e)
         let vm = this;
         if (vm.money > vm.userInfo.money) {
           vm.isWarning = true;
@@ -178,22 +172,6 @@
           }
         })
       },
-      /*checkItem(value) {
-        let vm = this
-        vm.redemption = [];
-        vm.redemptionList.forEach(function(item) {
-          if (value == item.value) {
-            if (!item["checked"] || item["checked"] == "") {
-              item["checked"] = true;
-            } else {
-              item["checked"] = false;
-            }
-          }
-          if (item["checked"]) {
-            vm.redemption.push(item.value);
-          }
-        })
-      },*/
       hideList() {
         this.isShowRedemption = false;
       },

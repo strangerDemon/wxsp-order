@@ -1,6 +1,6 @@
 <template>
   <view class="container">
-    <love-loading v-if="showLoading"></love-loading>
+    <mini-loading v-if="showLoading" :type="1" :isFullScreen="true"></mini-loading>
     <div v-if="!showLoading">
       <div class="userinfo">
         <button v-if="!hasUserInfo && canIUse" open-type="getUnloginUserInfo" bindgetuserinfo="getUnloginUserInfo"> 获取头像昵称 </button>
@@ -21,7 +21,7 @@
 </template>
 <script>
   import footerInfo from "@/components/footerInfo"
-  import loveLoading from "@/components/loading"
+  import miniLoading from "@/components/miniLoading";
   export default {
     ///
     // 微信原始的函数 
@@ -94,7 +94,7 @@
 
     components: {
       footerInfo,
-      loveLoading
+      miniLoading
     },
     computed: {
       toReload() {

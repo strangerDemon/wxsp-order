@@ -26,21 +26,23 @@ wechat small project about order lunch
 
 mpvue 版本的微信小程序 点餐系统前端demo
 
-演示
-![video](https://github.com/strangerDemon/wxsp-order/blob/master/demo/operation.mp4)
+注册(需后台先拥有该用户，才允许注册，即不对外开放):
 
-注册(需后台先拥有该用户，才允许注册，即不对外开放)
 ![image](https://github.com/strangerDemon/wxsp-order/blob/master/demo/register.gif)
 
-点餐退餐
+点餐退餐:
+
 ![image](https://github.com/strangerDemon/wxsp-order/blob/master/demo/order.gif)
 
-凭证
+凭证:
+
 ![image](https://github.com/strangerDemon/wxsp-order/blob/master/demo/certificate.gif)
 
-换购
+换购:
+
 ![image](https://github.com/strangerDemon/wxsp-order/blob/master/demo/redemption.gif)
 
-查询
+查询:
+
 ![image](https://github.com/strangerDemon/wxsp-order/blob/master/demo/search.gif)
 

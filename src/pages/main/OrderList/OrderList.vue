@@ -1,6 +1,6 @@
 <template>
   <div class="orderList">
-    <love-loading v-if="showLoading"></love-loading>
+    <mini-loading v-if="showLoading" :type="1" :isFullScreen="true"></mini-loading>
     <block v-if="!showLoading">
       <block>
         <div class="nav">
@@ -81,7 +81,7 @@
           <div v-if="list.length==0" style="position:absoulte;text-align:center;width:100%;">
             <image src="/static/images/undefined.png" />
           </div>
-          <mini-loading v-if="requesting"></mini-loading>
+          <mini-loading v-if="requesting" :type="1" :myStyle="'margin:6px auto'"></mini-loading>
           <div v-if="page>1&&!requesting" class="backToTop" @click="backToTop()">点击返回顶部</div>
         </ul>
       </div>
@@ -89,13 +89,12 @@
   </div>
 </template>
 <script>
-  import loveLoading from "@/components/loading";
   import miniLoading from "@/components/miniLoading";
   import record from "@/components/record";
   export default {
     name: "orderList",
     directives: {},
-    components: { loveLoading, record, miniLoading },
+    components: { record, miniLoading },
     data() {
       return {
         //nav

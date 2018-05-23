@@ -1,6 +1,6 @@
 <template>
   <div class="OrderCertificate">
-    <love-loading v-if="showLoading"></love-loading>
+    <mini-loading v-if="showLoading" :type="1" :isFullScreen="true"></mini-loading>
     <block v-if="!showLoading">
       <div v-if="isUserWarning||isInitWaining" :class="isUserWarning||isInitWaining?'slidown warning-background':'warning-background'">
         <div v-if="isUserWarning&&!isLogin" class="warning-text" @click="userRegister" v-html="userWarningText"></div>
@@ -28,14 +28,12 @@
     "星期六"
   ];
   import userInfo from "@/components/usetInfo";
-  import loveLoading from "@/components/loading";
   import ticket from "@/components/ticket";
   export default {
     name: "OrderCertificate",
     directives: {},
     components: {
       userInfo,
-      loveLoading,
       ticket
     },
     data() {

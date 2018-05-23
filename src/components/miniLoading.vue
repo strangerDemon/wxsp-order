@@ -1,6 +1,6 @@
 <template>
   <div class="miniLoading" :class="isFullScreen?'fullScreen':''">
-    <div :class="'loader-'+type" style="z-index:9001">Loading...</div>
+    <div :class="'loader-'+type" :style="'z-index:9001;'+myStyle">Loading...</div>
   </div>
 </template>
 <script>
@@ -17,6 +17,9 @@
       },
       type: {
         default: 4,
+      },
+      myStyle:{
+        default:""
       }
     },
     computed: {},
@@ -42,7 +45,7 @@
   .loader-1,
   .loader-1:before,
   .loader-1:after {
-    background: #ffffff;
+    background: #409EFF;
     -webkit-animation: load-1 1s infinite ease-in-out;
     animation: load-1 1s infinite ease-in-out;
     width: 1em;
@@ -50,7 +53,7 @@
   }
 
   .loader-1 {
-    color: #ffffff;
+    color: #409EFF;
     text-indent: -9999em;
     margin: 88px auto;
     position: relative;
@@ -118,7 +121,7 @@
   }
 
   .loader-2 {
-    color: #ffffff;
+    color: #409EFF;
     font-size: 10px;
     margin: 80px auto;
     position: relative;
@@ -170,7 +173,7 @@
   }
 
   .loader-3 {
-    color: #ffffff;
+    color: #409EFF;
     font-size: 90px;
     text-indent: -9999em;
     overflow: hidden;

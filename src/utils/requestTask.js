@@ -1,14 +1,13 @@
-//import tokenUtil from './tokenUtil'
+import services from '../services/index'
 // wx.request 封装
 
 export const wxRequest = function wxRequest(method, data, resolve, reject,isMustReturn) {
   let config = {};
- // data["Token"] = tokenUtil.token
   config = {
     para: JSON.stringify(data)
   }
   wx.request({
-    url: 'https://www.ztgis.com/lpb.asmx/' + method,
+    url: services.requestApiUrl + method,
     data: config,
     method: 'GET',
     header: {

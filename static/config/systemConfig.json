@@ -1,4 +1,4 @@
 {
-  "requestApiUrl":"http://192.168.1.100:7982/lpb.asmx",
-  "requestApiUrl0":"https://www.ztgis.com"
+  "requestApiUrl0":"http://192.168.1.100:7982/lpb.asmx",
+  "requestApiUrl":"https://www.ztgis.com/lpb.asmx/"
 }

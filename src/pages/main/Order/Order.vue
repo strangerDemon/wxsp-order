@@ -1,6 +1,6 @@
 <template>
   <div class="order">
-    <love-loading v-if="showLoading"></love-loading>
+    <mini-loading v-if="showLoading" :type="1" :isFullScreen="true"></mini-loading>
     <block v-if="!showLoading">
       <mini-loading v-if="orderLoading" :type="1" :isFullScreen="true"></mini-loading>
       <div v-if="isUserWarning||isInitWaining" :class="isUserWarning||isInitWaining?'slidown warning-background':'warning-background'">
@@ -39,25 +39,25 @@
         </div>
         <record v-for="(order,index) in orderList" :key="index" v-if="order.orderType>0" :record="order" :fromSource="'order'" @cancel="cancel(order.id)"></record>
       </blobk>
-      <picker style="text-align:center;margin: 13px 8px 8px;" @change="commitAction" :range="lunchTypeOptions" range-key="label">
-        <block v-if="isOrderOrNot">
-          <image  src="/static/images/orderCommit.png"  class="orderCommit commitImage"></image>
-          <text class="orderCommit commitText">点餐</text>
-        </block>
-      </picker>
+      
+        <picker style="text-align:center;margin: 13px 8px 8px;" @change="commitAction" :range="lunchTypeOptions" range-key="label">
+          <block v-if="isOrderOrNot">
+            <image  src="/static/images/orderCommit.png"  class="orderCommit commitImage"></image>
+            <text class="orderCommit commitText">点餐</text>
+          </block>
+        </picker>
     </block>
   </div>
 </template>
 <script>
   import userInfo from "@/components/usetInfo";
-  import loveLoading from "@/components/loading";
   import record from "@/components/record";
   import miniLoading from "@/components/miniLoading";
 
   export default {
     name: "Order",
     directives: {},
-    components: { userInfo, loveLoading, record, miniLoading },
+    components: { userInfo, record, miniLoading },
     data() {
       return {
         isInitWaining: false,
