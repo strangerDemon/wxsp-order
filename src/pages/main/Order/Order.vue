@@ -41,13 +41,14 @@
       </blobk>
       <picker style="text-align:center;margin: 13px 8px 8px;"  @change="pickerAction" :range="lunchTypeOptions" range-key="label">
         <block v-if="isOrderOrNot">
-          <image  src="/static/images/orderCommit.png"  class="orderCommit commitImage"></image>
-          <text class="orderCommit commitText">点餐</text>
+          <form report-submit="ture" @submit="formCommit">
+            <button id="formButton" formType="submit">
+              <image  src="/static/images/orderCommit.png"  class="orderCommit commitImage"></image>
+              <text class="orderCommit commitText">点餐</text>
+            </button>
+          </form>
         </block>
       </picker>
-      <form v-if="false" report-submit="ture" @submit="commit">
-        <button id="formButton" formType="submit"></button>
-      </form>
     </block>
   </div>
 </template>
@@ -70,6 +71,7 @@
         lunchTypeTimes: [],
         lunchTypeOptions: [],
         imageList: [],
+        formId:""//提交订餐的form id
       };
     },
     props: {},
@@ -271,7 +273,7 @@
         }
       },
       //picker action
-      pickerAction() {
+      pickerAction(e) {
         let vm = this;
         if (!vm.checkDate()) {
           wx.showModal({
@@ -282,24 +284,23 @@
               return;
             }
           })
-        } else {console.log(this,window,document)
-          vm.click('formButton')
+        } else {
+          vm.$store.commit("order", {
+            openId: vm.userInfo.openId,
+            formId: vm.formId,
+            orderType: vm.orderParam.lunch[e.target.value].value,
+            func: function() {
+              vm.requestToday();
+            }
+          });
         }
       },
-      formCommit(e) {console.log(e)
+      formCommit(e) {
         let vm = this;
-        let formId = "";
+        vm.formId = "";
         if (e && e.target && e.target.formId) {
-          formId = e.target.formId
+          vm.formId = e.target.formId
         }
-        vm.$store.commit("order", {
-          openId: vm.userInfo.openId,
-          formId: formId,
-          orderType: vm.orderParam.lunch[e.target.value].value,
-          func: function() {
-            vm.requestToday();
-          }
-        });
       },
       //请求今日点餐
       requestToday() {
@@ -457,7 +458,7 @@
   .commitImage {}
 
   .commitText {
-    height: 95rpx;
+    height: 110rpx;
     color: #fff;
   }
 

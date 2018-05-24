@@ -41,8 +41,7 @@ module.exports = {
     extensions: ['.js', '.vue', '.json'],
     alias: {
       'vue': 'mpvue',
-      '@': resolve('src'),
-      'jquery': path.resolve(__dirname, '../static/js/jquery.min.js'),
+      '@': resolve('src')
     },
     symlinks: false
   },
@@ -92,11 +91,6 @@ module.exports = {
     ]
   },
   plugins: [
-    new MpvuePlugin({
-      $: "jquery",
-      jQuery: "jquery",
-      jquery: "jquery",
-      "window.jQuery": "jquery"
-    })
+    new MpvuePlugin()
   ]
 }
