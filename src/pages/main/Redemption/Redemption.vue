@@ -10,7 +10,7 @@
       </div>
       <user-info :isShowName="true" :isShowBalance="true"></user-info>
       <div v-if="isLogin&&redemptionList.length>0" class="admire write-bg-color page__bd">换购时请与食堂管理人员联系</div>
-      <form report-submit="ture">
+      <form report-submit="ture" @submit="commit">
         <div v-if="isLogin&&redemptionList.length>0" slot="header">
           <div class="list-title weui-flex kind-list__item-hd kind-list__item-hd_show">
             <div class="weui-flex__item">换购物品（多选）</div>
@@ -36,10 +36,10 @@
             </div>
           </div>
         </div>
-        <div v-if="!isUserWarning&&money>0?true:false" @click="commit" style="text-align: center;margin: 13px 8px 8px;">
+        <button formType="submit" v-if="!isUserWarning&&money>0?true:false">
           <image src="/static/images/orderCommit.png"  class="orderCommit commitImage"></image>
           <text class="orderCommit commitText">确定</text>
-        </div>
+        </button>
       </form>
     </block>
   </div>
@@ -116,7 +116,8 @@
         })
         return list
       },
-      commit(e) {console.log(e)
+      commit(e) {
+        console.log(e)
         let vm = this;
         if (vm.money > vm.userInfo.money) {
           vm.isWarning = true;
@@ -146,8 +147,13 @@
               vm.redemptionName.push(element.label);
             }
           });
+          let formId = "";
+          if (e && e.target && e.target.formId) {
+            formId = e.target.formId
+          }
           vm.$store.commit("doChangeBuy", {
             openId: vm.userInfo.openId,
+            formId: formId,
             value: vm.redemption.toString(),
             money: vm.money
           });
@@ -271,7 +277,7 @@
   .commitImage {}
 
   .commitText {
-    height: 95rpx;
+    height: 110rpx;
     color: #fff;
   }
 
