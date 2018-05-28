@@ -5,6 +5,7 @@ import * as requestTask from "../../utils/requestTask";
  * @type {Object}
  */
 const state = {
+  orderDay:new Date().toLocaleDateString(),//订餐的星期
   //系统参数
   orderParam: {
     startTime: "8", //点餐起始时间
@@ -170,6 +171,9 @@ const mutations = {
       });
     })
   },
+  setOrderDay(state,info){
+    state.orderDay=info.orderDay
+  }
 };
 
 /**

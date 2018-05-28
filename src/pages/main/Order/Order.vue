@@ -10,35 +10,38 @@
       </div>
       <user-info :isShowName="true" :isShowBalance="true">
       </user-info>
-      <div class="menuDiv">
-        <div  class="list-title weui-flex kind-list__item-hd kind-list__item-hd_show">
-          <div class="weui-flex__item">菜品明细：</div>
-          <image class="kind-list__img" src="/static/images/icon_nav_nav.png" @click="isShowMenu=!isShowMenu"></image>
-        </div>
-        <div v-if="isShowMenu" class="write-bg-color page__bd">
-          <div class="weui-grids">
-            <div v-for="(dish,index) in menuList" :key="index" class="weui-grid dish">
-              <block v-if="dish.name!=''">
-                <image class="weui-grid__icon dishImage" :src="dish.image"  @click="previewImage(index)"/>
-                <div class="weui-grid__label dishName">{{dish.name}}</div>
-              </block>
-              <block v-else>
-                <image class="weui-grid__icon dishImage" :src="dish.image"  @click="previewImage(index)"/>
-                <div class="weui-grid__label dishName"> 暂无</div>
-              </block>
+      <div>
+        <left-navigation-bar></left-navigation-bar>
+        <div class="menuDiv">
+          <div  class="list-title weui-flex kind-list__item-hd kind-list__item-hd_show">
+            <div class="weui-flex__item">菜品明细：</div>
+            <image class="kind-list__img" src="/static/images/icon_nav_nav.png" @click="isShowMenu=!isShowMenu"></image>
+          </div>
+          <div v-if="isShowMenu" class="write-bg-color page__bd">
+            <div class="weui-grids">
+              <div v-for="(dish,index) in menuList" :key="index" class="weui-grid dish">
+                <block v-if="dish.name!=''">
+                  <image class="weui-grid__icon dishImage" :src="dish.image"  @click="previewImage(index)"/>
+                  <div class="weui-grid__label dishName">{{dish.name}}</div>
+                </block>
+                <block v-else>
+                  <image class="weui-grid__icon dishImage" :src="dish.image"  @click="previewImage(index)"/>
+                  <div class="weui-grid__label dishName"> 暂无</div>
+                </block>
+              </div>
             </div>
           </div>
+          <div v-else class="page__bd" style="background-color:#EEEEE0">
+            <div class="dishLabel" v-for="(dish,index) in menuList" :key="index">{{dish.name}}</div>
+          </div>
         </div>
-        <div v-else class="page__bd" style="background-color:#EEEEE0">
-          <div class="dishLabel" v-for="(dish,index) in menuList" :key="index">{{dish.name}}</div>
-        </div>
+        <blobk>
+          <div class="list-title weui-flex kind-list__item-hd kind-list__item-hd_show" v-if="orderList.length>0">
+            <span class="weui-flex__item title">今日点餐情况:</span>
+          </div>
+          <record v-for="(order,index) in orderList" :key="index" v-if="order.orderType>0" :record="order" :fromSource="'order'" @cancel="cancel(order.id)"></record>
+        </blobk>
       </div>
-      <blobk>
-        <div class="list-title weui-flex kind-list__item-hd kind-list__item-hd_show" v-if="orderList.length>0">
-          <span class="weui-flex__item title">今日点餐情况:</span>
-        </div>
-        <record v-for="(order,index) in orderList" :key="index" v-if="order.orderType>0" :record="order" :fromSource="'order'" @cancel="cancel(order.id)"></record>
-      </blobk>
       <picker style="text-align:center;margin: 13px 8px 8px;"  @change="pickerAction" :range="lunchTypeOptions" range-key="label">
         <block v-if="isOrderOrNot">
           <form report-submit="ture" @submit="formCommit">
@@ -56,11 +59,12 @@
   import userInfo from "@/components/usetInfo";
   import record from "@/components/record";
   import miniLoading from "@/components/miniLoading";
+  import leftNavigationBar from "@/components/leftNavigationBar";
 
   export default {
     name: "Order",
     directives: {},
-    components: { userInfo, record, miniLoading },
+    components: { userInfo, record, miniLoading, leftNavigationBar },
     data() {
       return {
         isInitWaining: false,
@@ -71,7 +75,7 @@
         lunchTypeTimes: [],
         lunchTypeOptions: [],
         imageList: [],
-        formId:""//提交订餐的form id
+        formId: "" //提交订餐的form id
       };
     },
     props: {},
@@ -105,6 +109,9 @@
       },
       orderLoading() {
         return this.$store.state.order.orderLoading;
+      },
+      orderDay() {
+        return this.$store.state.order.orderDay;
       }
     },
     watch: {
@@ -127,12 +134,12 @@
         let ROW = 3;
         let length = list.length
         //补全行缺失
-        if (length % ROW != 0) {
+        /*if (length % ROW != 0) {
           let addItemNum = ROW - length % ROW;
           for (let i = 0; i < addItemNum; i++) {
             list.push({ name: "", image: "/static/images/undefined.png" });
           }
-        }
+        }*/
         //提取图片
         vm.imageList = [];
         list.forEach(function(item) {
@@ -170,6 +177,13 @@
           vm.isOrderOrNot = warning;
         }
       },
+      orderDay(week) {
+        let vm = this
+        //请求菜单
+        vm.$store.commit("getMeunList", { openId: "" });
+        //请求点餐情况
+        vm.requestToday();
+      }
     },
     methods: {
       //预览图片
@@ -267,10 +281,11 @@
           vm.isInitWaining = true;
           vm.initWarningText = "余额不足，无法点餐";
           vm.isOrderOrNot = false;
-        } else {
-          vm.isInitWaining = false;
-          vm.isOrderOrNot = true;
         }
+        /* else {
+                  vm.isInitWaining = false;
+                  vm.isOrderOrNot = true;
+                }*/
       },
       //picker action
       pickerAction(e) {
@@ -310,8 +325,8 @@
           from: "order",
           name: "null",
           openId: vm.userInfo.openId,
-          startDate: today,
-          endDate: today,
+          startDate: vm.orderDay, //today,
+          endDate: vm.orderDay, //today,
           orderType: 0,
           changeType: 2,
           page: 0,
@@ -369,7 +384,8 @@
       },
     },
     beforeCreate() {},
-    created() {},
+    created() {
+    },
     destroyed() {},
     mounted() {
       this.getUserInfo();
