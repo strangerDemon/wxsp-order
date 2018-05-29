@@ -3,4 +3,5 @@
  */
 
 import requestTask from './requestTask'
-export { requestTask }
+import date from './date'
+export { requestTask,date }

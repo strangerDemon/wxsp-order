@@ -77,7 +77,7 @@
       </block>
       <div class="list">
         <ul infinite-scroll-disabled="loading" infinite-scroll-distance="10">
-          <record v-for="(order,index) in list" :key="index" :isShowName="userInfo.isAdmin?true:false" :record="order" :fromSource="'search'" @cancel="cancel(order.id)"></record>
+          <record v-for="(order,index) in list" :key="index" :isShowName="userInfo.isAdmin?true:false" :isShowMealDate="true" :record="order" :fromSource="'search'" @cancel="cancel(order.id)"></record>
           <div v-if="list.length==0" style="position:absoulte;text-align:center;width:100%;">
             <image src="/static/images/undefined.png" />
           </div>

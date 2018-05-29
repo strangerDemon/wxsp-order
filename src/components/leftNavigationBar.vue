@@ -4,22 +4,14 @@
       <image src="/static/images/fly.png"  class="fly" :class="isShow?'fly-left':'fly-right'"></image>
     </div>
     <div class="part weekDiv">
-      <div class="week" v-for="(item,index) in weeks"  :class="(today==item.value&&currentWeek=='')||currentWeek==item.value?'active':''" :key="index" @click="selectWeek(item)">
+      <div class="week" v-for="(item,index) in weeks"  :class="(today==item.value&&currentDay=='')||currentDay==item.value?'active':''" :key="index" @click="selectWeek(item)">
         {{item.label}}<image v-if="today==item.value" src="/static/images/star.png" style="width:20px;height:20px;position:fixed;"></image>
       </div>
     </div>
   </div>
 </template>
 <script>
-  const week = [
-    "星期天",
-    "星期一",
-    "星期二",
-    "星期三",
-    "星期四",
-    "星期五",
-    "星期六"
-  ];
+  import * as dateUtils from "../utils/date.js"
   export default {
     name: "leftNavigationBar",
     directives: {},
@@ -28,7 +20,7 @@
       return {
         isShow: false,
         today: '',
-        currentWeek: '',
+        currentDay: '',
         weeks: []
       }
     },
@@ -38,28 +30,17 @@
     methods: {
       initWeek() {
         let vm = this
-        vm.today = vm.getDateStr(0)
+        vm.today = dateUtils.getDateStr(0)
         for (let i = 0; i < 7; i++) {
-          vm.weeks.push({ label: vm.getWeek(i), value: vm.getDateStr(i) });
+          vm.weeks.push({ label: dateUtils.getWeekStr_add(i), value: dateUtils.getDateStr(i) });
         }
         vm.weeks.sort(function(a,b){return b-a;})
       },
-      getWeek(AddDayCount) {
-        let dd = new Date();
-        return week[(dd.getDay()+ AddDayCount)%7];
-      },
-      getDateStr(AddDayCount) {
-        let dd = new Date();
-        dd.setDate(dd.getDate() + AddDayCount); //获取AddDayCount天后的日期 
-        let y = dd.getFullYear();
-        let m = dd.getMonth() + 1; //获取当前月份的日期 
-        let d = dd.getDate();
-        return y + "/" + m + "/" + d;
-      },
+     
       selectWeek(week) {
         let vm = this
-        vm.currentWeek = week.value;
-        vm.$store.commit("setOrderDay", { orderDay: vm.currentWeek });
+        vm.currentDay = week.value;
+        vm.$store.commit("setOrderDay", { orderDay: vm.currentDay });
       }
     },
     beforeCreate() {},
@@ -67,7 +48,6 @@
     destroyed() {},
     mounted() {
       this.initWeek();
-
     }
   }
 </script>

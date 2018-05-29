@@ -2,18 +2,18 @@
    <div class="record">
       <div class="el-card" style="padding: 14px;">
         <span v-if="isShowName">{{record.name}}&nbsp;</span>
-        <span>{{record.orderName}}
-        </span>
+        <span>{{record.orderName}}</span>
+        <span v-if="isShowMealDate" class="time" style="margin-left:10px;">({{record.mealDate}})</span>
         <div class="bottom clearfix">
           <time class="time">{{record.createDate}}</time>    
           <div class="action">
             <span v-if="record.isCancle" style="color: red">已退订</span>
-            <span v-else-if="fromSource=='order'||(fromSource=='search'&&!userInfo.isAdmin&&record.canCancle)" >
-              <button class="weui-btn button" type="warn" plain="true" @click="cancel()">退订</button>
+            <span v-else-if="fromSource=='order'&&!isToday" @click="cancel()">
+              <button class="weui-btn button" type="warn" plain="true" >退订</button>
             </span>
-            <!--<span v-else-if="fromSource=='search'&&!userInfo.isAdmin&&record.canCancle"  @click="cancel()">
-              <button class="weui-btn button" type="warn" plain="true" >退订2</button>
-            </span>-->
+            <span v-else-if="fromSource=='search'&&!userInfo.isAdmin&&record.canCancle"  @click="cancel()">
+              <button class="weui-btn button" type="warn" plain="true" >退订</button>
+            </span>
           </div> 
         </div>
       </div>
@@ -28,6 +28,12 @@
         default: "",
       },
       isShowName: {
+        default: false,
+      },
+      isShowMealDate:{
+        default:false,
+      },
+      isToday: {
         default: false,
       },
       record: {

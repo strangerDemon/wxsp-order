@@ -18,17 +18,9 @@
   </div>
 </template>
 <script>
-  const week = [
-    "星期天",
-    "星期一",
-    "星期二",
-    "星期三",
-    "星期四",
-    "星期五",
-    "星期六"
-  ];
   import userInfo from "@/components/usetInfo";
   import ticket from "@/components/ticket";
+  import * as dateUtils from "../../../utils/date.js"
   export default {
     name: "OrderCertificate",
     directives: {},
@@ -87,7 +79,7 @@
           "月" +
           date.getDate() +
           "日  " +
-          week[date.getDay()];
+          dateUtils.getWeekStr_week(date.getDay());
         vm.pickerDate = (date.getYear() + 1900) + "-" + (date.getMonth() + 1) +
           "-" + date.getDate();
       },
@@ -101,9 +93,7 @@
         } else {
           vm.isToday = false;
         }
-        vm.getCertificate(new Date(
-          dd.setTime(dd.getTime() - 24 * 60 * 60 * 1000)
-        ).toLocaleDateString());
+        vm.getCertificate(new Date(dd).toLocaleDateString());
       },
       getCertificate(day) {
         let vm = this;
@@ -132,7 +122,7 @@
           vm.today = vm.pickerDate;
           vm.isToday = true;
           vm.getCertificate(new Date(
-            today.setTime(today.getTime() - 24 * 60 * 60 * 1000)
+            today.setTime(today.getTime())
           ).toLocaleDateString());
         }
       },

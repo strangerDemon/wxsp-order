@@ -37,13 +37,13 @@
         </div>
         <blobk>
           <div class="list-title weui-flex kind-list__item-hd kind-list__item-hd_show" v-if="orderList.length>0">
-            <span class="weui-flex__item title">今日点餐情况:</span>
+            <span class="weui-flex__item title">{{week}}点餐情况:</span>
           </div>
-          <record v-for="(order,index) in orderList" :key="index" v-if="order.orderType>0" :record="order" :fromSource="'order'" @cancel="cancel(order.id)"></record>
+          <record v-for="(order,index) in orderList" :key="index" v-if="order.orderType>0" :record="order" :fromSource="'order'" :isToday="orderDay==today" @cancel="cancel(order.id)"></record>
         </blobk>
       </div>
       <picker style="text-align:center;margin: 13px 8px 8px;"  @change="pickerAction" :range="lunchTypeOptions" range-key="label">
-        <block v-if="isOrderOrNot">
+        <block v-if="isOrderOrNot&&orderDay!=today">
           <form report-submit="ture" @submit="formCommit">
             <button id="formButton" formType="submit">
               <image  src="/static/images/orderCommit.png"  class="orderCommit commitImage"></image>
@@ -60,13 +60,15 @@
   import record from "@/components/record";
   import miniLoading from "@/components/miniLoading";
   import leftNavigationBar from "@/components/leftNavigationBar";
-
+  import * as dateUtils from "../../../utils/date.js"
   export default {
     name: "Order",
     directives: {},
     components: { userInfo, record, miniLoading, leftNavigationBar },
     data() {
       return {
+        week: dateUtils.getWeekStr_str(new Date().toLocaleDateString()),
+        today: new Date().toLocaleDateString(),
         isInitWaining: false,
         initWarningText: "warning",
         isOrderOrNot: false,
@@ -112,6 +114,9 @@
       },
       orderDay() {
         return this.$store.state.order.orderDay;
+      },
+      orderWeek() {
+        return this.$store.state.order.orderWeek;
       }
     },
     watch: {
@@ -120,9 +125,9 @@
         if (!vm.systemParamInit) {
           vm.$store.commit("getSystemParam", {});
           vm.$store.commit("getOrderParam", { openId: "" });
-          vm.$store.commit("getMeunList", { openId: "" });
+          vm.$store.commit("getMeunList", { openId: "", week: vm.orderWeek });
           if (vm.isLogin) {
-            vm.requestToday();
+            vm.requestOrderList();
           }
         }
         if (vm.orderParam.lunch.length > 0) {
@@ -179,10 +184,11 @@
       },
       orderDay(week) {
         let vm = this
+        vm.week = dateUtils.getWeekStr_str(week);
         //请求菜单
-        vm.$store.commit("getMeunList", { openId: "" });
+        vm.$store.commit("getMeunList", { openId: "", week: vm.orderWeek });
         //请求点餐情况
-        vm.requestToday();
+        vm.requestOrderList();
       }
     },
     methods: {
@@ -235,7 +241,7 @@
                   openId: vm.userInfo.openId,
                   Id: orderId,
                   func: function() {
-                    vm.requestToday();
+                    vm.requestOrderList();
                   }
                 });
               } else if (res.cancel) {
@@ -304,8 +310,9 @@
             openId: vm.userInfo.openId,
             formId: vm.formId,
             orderType: vm.orderParam.lunch[e.target.value].value,
+            mealDate: vm.orderDay,
             func: function() {
-              vm.requestToday();
+              vm.requestOrderList();
             }
           });
         }
@@ -318,7 +325,7 @@
         }
       },
       //请求今日点餐
-      requestToday() {
+      requestOrderList() {
         let vm = this
         let today = new Date().toLocaleDateString();
         vm.$store.commit("getOrderList", {
@@ -384,8 +391,7 @@
       },
     },
     beforeCreate() {},
-    created() {
-    },
+    created() {},
     destroyed() {},
     mounted() {
       this.getUserInfo();
@@ -395,7 +401,7 @@
       this.getUserInfo();
       this.$store.commit("getSystemParam", {});
       if (vm.menuList.length == 0) {
-        vm.$store.commit("getMeunList", { openId: "" });
+        vm.$store.commit("getMeunList", { openId: "", week: vm.orderWeek });
       }
       if (vm.orderParam.lunch.length == 0) {
         vm.$store.commit("getOrderParam", { openId: "" });
@@ -412,7 +418,7 @@
       })
       if (this.showLoading) return;
       if (this.isLogin) {
-        this.requestToday();
+        this.requestOrderList();
       }
     },
 
