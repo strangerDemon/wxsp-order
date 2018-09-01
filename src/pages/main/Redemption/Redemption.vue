@@ -14,11 +14,11 @@
         <div v-if="isLogin&&redemptionList.length>0" slot="header">
           <div class="list-title weui-flex kind-list__item-hd kind-list__item-hd_show">
             <div class="weui-flex__item">换购物品（多选）</div>
-            <image class="kind-list__img" src="/static/images/icon_nav_nav.png" @click="isShowRedemption=!isShowRedemption"></image>
+            <image class="kind-list__img" src="/static/images/icon_nav_nav.png" @click="isShowRedemption=!isShowRedemption"/>
           </div>
           <div v-if="isShowRedemption" class="write-bg-color page__bd">
             <checkbox-group @change="checkboxChange">
-              <div class="el-card" :style="item.checked?'border-color: #409eff;':''" v-for="(item,index) in redemptionList" :key="item">
+              <div class="el-card" :style="item.checked?'border-color: #409eff;':''" v-for="(item,index) in redemptionList" :key="index">
                 <checkbox :value="item.value" :checked="item.checked"/>
                 <span>{{item.label}}</span>
               </div>
@@ -37,7 +37,7 @@
           </div>
         </div>
         <button formType="submit" v-if="!isUserWarning&&money>0?true:false">
-          <image src="/static/images/orderCommit.png"  class="orderCommit commitImage"></image>
+          <image src="/static/images/orderCommit.png"  class="orderCommit commitImage"/>
           <text class="orderCommit commitText">确定</text>
         </button>
       </form>

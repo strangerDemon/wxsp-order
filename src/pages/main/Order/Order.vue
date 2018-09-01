@@ -15,7 +15,7 @@
         <div class="menuDiv">
           <div  class="list-title weui-flex kind-list__item-hd kind-list__item-hd_show">
             <div class="weui-flex__item">菜品明细：</div>
-            <image class="kind-list__img" src="/static/images/icon_nav_nav.png" @click="isShowMenu=!isShowMenu"></image>
+            <image class="kind-list__img" src="/static/images/icon_nav_nav.png" @click="isShowMenu=!isShowMenu"/>
           </div>
           <div v-if="isShowMenu" class="write-bg-color page__bd">
             <div class="weui-grids">
@@ -46,7 +46,7 @@
         <block v-if="isOrderOrNot&&orderDay!=today">
           <form report-submit="ture" @submit="formCommit">
             <button id="formButton" formType="submit">
-              <image  src="/static/images/orderCommit.png"  class="orderCommit commitImage"></image>
+              <image  src="/static/images/orderCommit.png"  class="orderCommit commitImage"/>
               <text class="orderCommit commitText">点餐</text>
             </button>
           </form>

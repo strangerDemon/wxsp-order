@@ -1,11 +1,11 @@
 <template>
   <div class="user-register">
-    <image src="/static/images/background.jpg" class="background-image"></image>
+    <image src="/static/images/background.jpg" class="background-image"/>
     <div class="cont">
 	    <div class="demo">
 	      <div class="login">
           <div style="text-align:center">
-            <image src="/static/images/logo.png" class="logo-image"></image>
+            <image src="/static/images/logo.png" class="logo-image"/>
           </div>
 	        <div class="login__form">
 	          <div class="login__row">

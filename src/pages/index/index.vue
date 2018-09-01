@@ -5,13 +5,13 @@
       <div class="userinfo">
         <button v-if="!hasUserInfo && canIUse" open-type="getUnloginUserInfo" bindgetuserinfo="getUnloginUserInfo"> 获取头像昵称 </button>
         <block v-else>
-          <image class="userinfo-avatar" :src="userInfo.avatarUrl" background-size="cover" @click="eggWhite"></image>
+          <image class="userinfo-avatar" :src="userInfo.avatarUrl" background-size="cover" @click="eggWhite"/>
           <text class="userinfo-nickname">{{userInfo.nickName}}</text>
         </block>
       </div>
       <div class="application" >
         <div class="app-item" v-for="(item ,index) in buttonTexts" :key="index">
-          <image class="munuImage" :src="item.icon" background-size="cover"></image>
+          <image class="munuImage" :src="item.icon" background-size="cover"/>
           <text class="item" @click="binddivTap(item.value)">{{item.name}}</text>
         </div>
       </div>
