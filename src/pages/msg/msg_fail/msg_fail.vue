@@ -23,7 +23,7 @@
   export default {
     name: "mag_fail",
     directives: {},
-    components: {},
+    components: {footerInfo},
     data() {
       return {
         title: "",

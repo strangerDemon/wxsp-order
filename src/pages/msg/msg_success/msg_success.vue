@@ -23,7 +23,7 @@
   export default {
     name: "msg_success",
     directives: {},
-    components: {},
+    components: {footerInfo},
     data() {
       return {
         title: "",
